@@ -1,0 +1,2812 @@
+{
+  "generatedAt": "2026-05-06T17:54:50.394Z",
+  "targets": [
+    "apt-001",
+    "apt-002",
+    "apt-003",
+    "apt-004",
+    "apt-005",
+    "apt-006",
+    "apt-007",
+    "apt-008",
+    "apt-009",
+    "apt-010",
+    "apt-011",
+    "apt-012",
+    "apt-013",
+    "apt-014",
+    "apt-015",
+    "apt-016",
+    "apt-017",
+    "apt-018",
+    "apt-019",
+    "apt-020",
+    "apt-021",
+    "apt-022",
+    "apt-023",
+    "apt-024",
+    "apt-025",
+    "apt-026",
+    "apt-027",
+    "apt-028",
+    "apt-029"
+  ],
+  "dealMonth": "202603",
+  "transactionLookbackMonths": 6,
+  "seoulRenewal": {
+    "serviceName": "upisRebuild",
+    "rows": 20,
+    "regulationRecords": 20,
+    "sample": [
+      {
+        "legalDongCode": "",
+        "complexName": "소공4-1도시환경정비지구",
+        "allowedFar": 250,
+        "stage": "검토",
+        "regulationRisk": "중간",
+        "residentMomentum": "중간",
+        "updatedMonth": "unknown"
+      },
+      {
+        "legalDongCode": "",
+        "complexName": "소공4-2도시환경정비지구",
+        "allowedFar": 250,
+        "stage": "검토",
+        "regulationRisk": "중간",
+        "residentMomentum": "중간",
+        "updatedMonth": "unknown"
+      },
+      {
+        "legalDongCode": "",
+        "complexName": "소공4-3도시환경정비지구",
+        "allowedFar": 250,
+        "stage": "검토",
+        "regulationRisk": "중간",
+        "residentMomentum": "중간",
+        "updatedMonth": "unknown"
+      },
+      {
+        "legalDongCode": "",
+        "complexName": "하왕제1구역제1지구",
+        "allowedFar": 250,
+        "stage": "검토",
+        "regulationRisk": "중간",
+        "residentMomentum": "중간",
+        "updatedMonth": "unknown"
+      },
+      {
+        "legalDongCode": "",
+        "complexName": "서린구역제12지구",
+        "allowedFar": 250,
+        "stage": "검토",
+        "regulationRisk": "중간",
+        "residentMomentum": "중간",
+        "updatedMonth": "unknown"
+      }
+    ]
+  },
+  "kaptMatches": [
+    {
+      "complexId": "apt-001",
+      "matched": true,
+      "score": 1,
+      "kaptCode": "A13583507",
+      "kaptName": "은마"
+    },
+    {
+      "complexId": "apt-002",
+      "matched": true,
+      "score": 1,
+      "kaptCode": "A13879102",
+      "kaptName": "잠실5단지아파트"
+    },
+    {
+      "complexId": "apt-003",
+      "matched": true,
+      "score": 1,
+      "kaptCode": "A15805115",
+      "kaptName": "목동7단지"
+    },
+    {
+      "complexId": "apt-004",
+      "matched": true,
+      "score": 1,
+      "kaptCode": "A13920703",
+      "kaptName": "상계주공5단지"
+    },
+    {
+      "complexId": "apt-005",
+      "matched": true,
+      "score": 0.895,
+      "kaptCode": "A13589802",
+      "kaptName": "압구정현대아파트"
+    },
+    {
+      "complexId": "apt-006",
+      "matched": true,
+      "score": 1,
+      "kaptCode": "A13511004",
+      "kaptName": "압구정신현대"
+    },
+    {
+      "complexId": "apt-007",
+      "matched": true,
+      "score": 1,
+      "kaptCode": "A13511001",
+      "kaptName": "압구정미성1차"
+    },
+    {
+      "complexId": "apt-008",
+      "matched": true,
+      "score": 1,
+      "kaptCode": "A13551103",
+      "kaptName": "압구정한양아파트제1단지"
+    },
+    {
+      "complexId": "apt-009",
+      "matched": true,
+      "score": 1,
+      "kaptCode": "A13822701",
+      "kaptName": "잠실아시아선수촌"
+    },
+    {
+      "complexId": "apt-010",
+      "matched": true,
+      "score": 1,
+      "kaptCode": "A13822902",
+      "kaptName": "잠실우성4차"
+    },
+    {
+      "complexId": "apt-011",
+      "matched": true,
+      "score": 1,
+      "kaptCode": "A13805002",
+      "kaptName": "올림픽선수기자촌아파트"
+    },
+    {
+      "complexId": "apt-012",
+      "matched": true,
+      "score": 1,
+      "kaptCode": "A13881204",
+      "kaptName": "가락프라자"
+    },
+    {
+      "complexId": "apt-013",
+      "matched": true,
+      "score": 1,
+      "kaptCode": "A15875101",
+      "kaptName": "목동1단지"
+    },
+    {
+      "complexId": "apt-014",
+      "matched": true,
+      "score": 1,
+      "kaptCode": "A15805504",
+      "kaptName": "목동5단지"
+    },
+    {
+      "complexId": "apt-015",
+      "matched": true,
+      "score": 1,
+      "kaptCode": "A15807101",
+      "kaptName": "목동9단지"
+    },
+    {
+      "complexId": "apt-016",
+      "matched": true,
+      "score": 1,
+      "kaptCode": "A13920804",
+      "kaptName": "상계주공10단지"
+    },
+    {
+      "complexId": "apt-017",
+      "matched": true,
+      "score": 1,
+      "kaptCode": "A13528004",
+      "kaptName": "대치미도맨션"
+    },
+    {
+      "complexId": "apt-018",
+      "matched": true,
+      "score": 1,
+      "kaptCode": "A13583403",
+      "kaptName": "대치우성1차아파트"
+    },
+    {
+      "complexId": "apt-019",
+      "matched": true,
+      "score": 1,
+      "kaptCode": "A12185004",
+      "kaptName": "성산시영아파트"
+    },
+    {
+      "complexId": "apt-020",
+      "matched": true,
+      "score": 1,
+      "kaptCode": "A15807606",
+      "kaptName": "목동14단지"
+    },
+    {
+      "complexId": "apt-021",
+      "matched": true,
+      "score": 1,
+      "kaptCode": "A15807705",
+      "kaptName": "목동11단지"
+    },
+    {
+      "complexId": "apt-022",
+      "matched": true,
+      "score": 1,
+      "kaptCode": "A43575501",
+      "kaptName": "산본 주공3단지 다산아파트"
+    },
+    {
+      "complexId": "apt-023",
+      "matched": true,
+      "score": 1,
+      "kaptCode": "A42084804",
+      "kaptName": "중동은하마을주공1단지"
+    },
+    {
+      "complexId": "apt-024",
+      "matched": true,
+      "score": 1,
+      "kaptCode": "A42084706",
+      "kaptName": "중동한라마을주공3단지"
+    },
+    {
+      "complexId": "apt-025",
+      "matched": true,
+      "score": 1,
+      "kaptCode": "A43170906",
+      "kaptName": "꿈마을우성"
+    },
+    {
+      "complexId": "apt-026",
+      "matched": true,
+      "score": 1,
+      "kaptCode": "A43170303",
+      "kaptName": "샘마을우방"
+    },
+    {
+      "complexId": "apt-027",
+      "matched": true,
+      "score": 1,
+      "kaptCode": "A41081102",
+      "kaptName": "강촌마을3단지"
+    },
+    {
+      "complexId": "apt-028",
+      "matched": true,
+      "score": 1,
+      "kaptCode": "A41182706",
+      "kaptName": "후곡마을10단지아파트"
+    },
+    {
+      "complexId": "apt-029",
+      "matched": true,
+      "score": 1,
+      "kaptCode": "A46374012",
+      "kaptName": "까치마을2단지주공아파트"
+    }
+  ],
+  "renewalMatches": [
+    {
+      "complexId": "apt-001",
+      "complexName": "은마아파트",
+      "matched": true,
+      "score": 55,
+      "sourceRecordName": "은마아파트 재건축 정비구역",
+      "reason": "단지명 정확 일치"
+    },
+    {
+      "complexId": "apt-002",
+      "complexName": "잠실주공5단지",
+      "matched": true,
+      "score": 55,
+      "sourceRecordName": "잠실주공5단지아파트 재건축사업 정비구역",
+      "reason": "단지명 정확 일치"
+    },
+    {
+      "complexId": "apt-003",
+      "complexName": "목동신시가지 7단지",
+      "matched": true,
+      "score": 55,
+      "sourceRecordName": "목동7단지 아파트 재건축 정비구역",
+      "reason": "단지명 정확 일치"
+    },
+    {
+      "complexId": "apt-004",
+      "complexName": "상계주공 5단지",
+      "matched": true,
+      "score": 58,
+      "sourceRecordName": "상계5재정비촉진구역(주택재개발사업)",
+      "reason": "정비구역명에 단지명 포함"
+    },
+    {
+      "complexId": "apt-005",
+      "complexName": "압구정 현대 3차",
+      "matched": false,
+      "score": 0.12,
+      "sourceRecordName": "강남구 대치쌍용2차아파트 주택재건축사업",
+      "reason": "자치구명 일치"
+    },
+    {
+      "complexId": "apt-006",
+      "complexName": "압구정신현대",
+      "matched": false,
+      "score": 0.12,
+      "sourceRecordName": "강남구 대치쌍용2차아파트 주택재건축사업",
+      "reason": "자치구명 일치"
+    },
+    {
+      "complexId": "apt-007",
+      "complexName": "압구정미성1차",
+      "matched": false,
+      "score": 0.12,
+      "sourceRecordName": "강남구 대치쌍용2차아파트 주택재건축사업",
+      "reason": "자치구명 일치"
+    },
+    {
+      "complexId": "apt-008",
+      "complexName": "압구정한양아파트제1단지",
+      "matched": true,
+      "score": 52,
+      "sourceRecordName": "쌍문한양1차아파트 재건축 정비구역",
+      "reason": "정비구역명에 단지명 포함"
+    },
+    {
+      "complexId": "apt-009",
+      "complexName": "잠실아시아선수촌",
+      "matched": false,
+      "score": 0.12,
+      "sourceRecordName": "송파구 가락동 479번지일대 가락시영아파트 주택재건축 정비구역",
+      "reason": "자치구명 일치"
+    },
+    {
+      "complexId": "apt-010",
+      "complexName": "잠실우성4차",
+      "matched": true,
+      "score": 55,
+      "sourceRecordName": "잠실우성4차아파트 주택재건축 정비구역",
+      "reason": "단지명 정확 일치"
+    },
+    {
+      "complexId": "apt-011",
+      "complexName": "올림픽선수기자촌아파트",
+      "matched": false,
+      "score": 0.12,
+      "sourceRecordName": "송파구 가락동 479번지일대 가락시영아파트 주택재건축 정비구역",
+      "reason": "자치구명 일치"
+    },
+    {
+      "complexId": "apt-012",
+      "complexName": "가락프라자",
+      "matched": true,
+      "score": 55,
+      "sourceRecordName": "가락프라자아파트 주택재건축사업",
+      "reason": "단지명 정확 일치"
+    },
+    {
+      "complexId": "apt-013",
+      "complexName": "목동1단지",
+      "matched": true,
+      "score": 55,
+      "sourceRecordName": "목동1단지아파트 재건축 정비구역",
+      "reason": "단지명 정확 일치"
+    },
+    {
+      "complexId": "apt-014",
+      "complexName": "목동5단지",
+      "matched": true,
+      "score": 55,
+      "sourceRecordName": "목동5단지아파트 재건축사업 정비구역",
+      "reason": "단지명 정확 일치"
+    },
+    {
+      "complexId": "apt-015",
+      "complexName": "목동9단지",
+      "matched": true,
+      "score": 55,
+      "sourceRecordName": "목동9단지 아파트 재건축사업 정비구역",
+      "reason": "단지명 정확 일치"
+    },
+    {
+      "complexId": "apt-016",
+      "complexName": "상계주공10단지",
+      "matched": false,
+      "score": 0.4,
+      "sourceRecordName": "상계1주택재건축정비구역",
+      "reason": "단지명 부분 일치"
+    },
+    {
+      "complexId": "apt-017",
+      "complexName": "대치미도맨션",
+      "matched": true,
+      "score": 55,
+      "sourceRecordName": "대치미도아파트 재건축정비사업",
+      "reason": "단지명 정확 일치"
+    },
+    {
+      "complexId": "apt-018",
+      "complexName": "대치우성1차아파트",
+      "matched": true,
+      "score": 55,
+      "sourceRecordName": "대치우성1차아파트 주택재건축정비사업",
+      "reason": "단지명 정확 일치"
+    },
+    {
+      "complexId": "apt-019",
+      "complexName": "성산시영아파트",
+      "matched": true,
+      "score": 55,
+      "sourceRecordName": "성산시영아파트  주택재건축 정비사업",
+      "reason": "단지명 정확 일치"
+    },
+    {
+      "complexId": "apt-020",
+      "complexName": "목동14단지",
+      "matched": true,
+      "score": 55,
+      "sourceRecordName": "목동14단지 재건축 정비구역",
+      "reason": "단지명 정확 일치"
+    },
+    {
+      "complexId": "apt-021",
+      "complexName": "목동11단지",
+      "matched": true,
+      "score": 55,
+      "sourceRecordName": "목동11단지아파트 재건축사업 정비구역",
+      "reason": "단지명 정확 일치"
+    },
+    {
+      "complexId": "apt-022",
+      "complexName": "산본 주공3단지 다산아파트",
+      "matched": false,
+      "score": 0.06,
+      "sourceRecordName": "소공4-1도시환경정비지구",
+      "reason": "명칭 유사도 낮음"
+    },
+    {
+      "complexId": "apt-023",
+      "complexName": "중동은하마을주공1단지",
+      "matched": false,
+      "score": 0.06,
+      "sourceRecordName": "소공4-1도시환경정비지구",
+      "reason": "명칭 유사도 낮음"
+    },
+    {
+      "complexId": "apt-024",
+      "complexName": "중동한라마을주공3단지",
+      "matched": false,
+      "score": 0.06,
+      "sourceRecordName": "소공4-1도시환경정비지구",
+      "reason": "명칭 유사도 낮음"
+    },
+    {
+      "complexId": "apt-025",
+      "complexName": "꿈마을우성",
+      "matched": false,
+      "score": 0.06,
+      "sourceRecordName": "소공4-1도시환경정비지구",
+      "reason": "명칭 유사도 낮음"
+    },
+    {
+      "complexId": "apt-026",
+      "complexName": "샘마을우방",
+      "matched": false,
+      "score": 0.06,
+      "sourceRecordName": "소공4-1도시환경정비지구",
+      "reason": "명칭 유사도 낮음"
+    },
+    {
+      "complexId": "apt-027",
+      "complexName": "강촌마을3단지",
+      "matched": false,
+      "score": 0.06,
+      "sourceRecordName": "소공4-1도시환경정비지구",
+      "reason": "명칭 유사도 낮음"
+    },
+    {
+      "complexId": "apt-028",
+      "complexName": "후곡마을10단지아파트",
+      "matched": false,
+      "score": 0.06,
+      "sourceRecordName": "소공4-1도시환경정비지구",
+      "reason": "명칭 유사도 낮음"
+    },
+    {
+      "complexId": "apt-029",
+      "complexName": "까치마을2단지주공아파트",
+      "matched": false,
+      "score": 0.06,
+      "sourceRecordName": "소공4-1도시환경정비지구",
+      "reason": "명칭 유사도 낮음"
+    }
+  ],
+  "transactionDiagnostics": [
+    {
+      "complexName": "은마아파트",
+      "tradeCount": 16,
+      "representativeAreaRange": "60~85㎡",
+      "matchStrategy": "name+metadata",
+      "matchConfidence": 1,
+      "areaPriceStats": [
+        {
+          "areaRange": "60~85㎡",
+          "minArea": 60,
+          "maxArea": 85,
+          "tradeCount": 16,
+          "medianPrice": 37.475,
+          "medianPricePerPyeong": 1.6132941138169032
+        }
+      ]
+    },
+    {
+      "complexName": "잠실주공5단지",
+      "tradeCount": 60,
+      "representativeAreaRange": "60~85㎡",
+      "matchStrategy": "name+metadata",
+      "matchConfidence": 0.9376000000000001,
+      "areaPriceStats": [
+        {
+          "areaRange": "60~85㎡",
+          "minArea": 60,
+          "maxArea": 85,
+          "tradeCount": 60,
+          "medianPrice": 41.75,
+          "medianPricePerPyeong": 1.7289797228856276
+        }
+      ]
+    },
+    {
+      "complexName": "목동신시가지 7단지",
+      "tradeCount": 30,
+      "representativeAreaRange": "60~85㎡",
+      "matchStrategy": "name+metadata",
+      "matchConfidence": 1,
+      "areaPriceStats": [
+        {
+          "areaRange": "40~60㎡",
+          "minArea": 40,
+          "maxArea": 60,
+          "tradeCount": 16,
+          "medianPrice": 23.075,
+          "medianPricePerPyeong": 1.3629054513387968
+        },
+        {
+          "areaRange": "60~85㎡",
+          "minArea": 60,
+          "maxArea": 85,
+          "tradeCount": 12,
+          "medianPrice": 26.45,
+          "medianPricePerPyeong": 1.30047987987988
+        },
+        {
+          "areaRange": "85~102㎡",
+          "minArea": 85,
+          "maxArea": 102,
+          "tradeCount": 2,
+          "medianPrice": 34.125,
+          "medianPricePerPyeong": 1.114727519762846
+        }
+      ]
+    },
+    {
+      "complexName": "상계주공 5단지",
+      "tradeCount": 6,
+      "representativeAreaRange": "~40㎡",
+      "matchStrategy": "name+metadata",
+      "matchConfidence": 0.9376000000000001,
+      "areaPriceStats": [
+        {
+          "areaRange": "~40㎡",
+          "minArea": 0,
+          "maxArea": 40,
+          "tradeCount": 6,
+          "medianPrice": 5.575,
+          "medianPricePerPyeong": 0.5762925265791119
+        }
+      ]
+    },
+    {
+      "complexName": "압구정 현대 3차",
+      "tradeCount": 1,
+      "representativeAreaRange": "60~85㎡",
+      "matchStrategy": "name+metadata",
+      "matchConfidence": 0.7576,
+      "areaPriceStats": [
+        {
+          "areaRange": "60~85㎡",
+          "minArea": 60,
+          "maxArea": 85,
+          "tradeCount": 1,
+          "medianPrice": 60.7,
+          "medianPricePerPyeong": 2.4322673939393944
+        }
+      ]
+    },
+    {
+      "complexName": "압구정신현대",
+      "tradeCount": 20,
+      "representativeAreaRange": "135㎡~",
+      "matchStrategy": "name+metadata",
+      "matchConfidence": 0.7576,
+      "areaPriceStats": [
+        {
+          "areaRange": "102~135㎡",
+          "minArea": 102,
+          "maxArea": 135,
+          "tradeCount": 9,
+          "medianPrice": 66.2,
+          "medianPricePerPyeong": 2.0038831741366647
+        },
+        {
+          "areaRange": "135㎡~",
+          "minArea": 135,
+          "maxArea": 999,
+          "tradeCount": 11,
+          "medianPrice": 97,
+          "medianPricePerPyeong": 1.8280529835390946
+        }
+      ]
+    },
+    {
+      "complexName": "압구정미성1차",
+      "tradeCount": 1,
+      "representativeAreaRange": "102~135㎡",
+      "matchStrategy": "name+metadata",
+      "matchConfidence": 0.8200000000000001,
+      "areaPriceStats": [
+        {
+          "areaRange": "102~135㎡",
+          "minArea": 102,
+          "maxArea": 135,
+          "tradeCount": 1,
+          "medianPrice": 55.5,
+          "medianPricePerPyeong": 1.7366010411736867
+        }
+      ]
+    },
+    {
+      "complexName": "압구정한양아파트제1단지",
+      "tradeCount": 6,
+      "representativeAreaRange": "60~85㎡",
+      "matchStrategy": "name+metadata",
+      "matchConfidence": 0.7576,
+      "areaPriceStats": [
+        {
+          "areaRange": "40~60㎡",
+          "minArea": 40,
+          "maxArea": 60,
+          "tradeCount": 4,
+          "medianPrice": 41.175,
+          "medianPricePerPyeong": 2.723415666266507
+        },
+        {
+          "areaRange": "60~85㎡",
+          "minArea": 60,
+          "maxArea": 85,
+          "tradeCount": 2,
+          "medianPrice": 44.85,
+          "medianPricePerPyeong": 2.3213579145138565
+        }
+      ]
+    },
+    {
+      "complexName": "잠실아시아선수촌",
+      "tradeCount": 10,
+      "representativeAreaRange": "135㎡~",
+      "matchStrategy": "name+metadata",
+      "matchConfidence": 0.8200000000000001,
+      "areaPriceStats": [
+        {
+          "areaRange": "85~102㎡",
+          "minArea": 85,
+          "maxArea": 102,
+          "tradeCount": 3,
+          "medianPrice": 41.5,
+          "medianPricePerPyeong": 1.3803964380942797
+        },
+        {
+          "areaRange": "135㎡~",
+          "minArea": 135,
+          "maxArea": 999,
+          "tradeCount": 7,
+          "medianPrice": 56.6,
+          "medianPricePerPyeong": 1.2368728809069718
+        }
+      ]
+    },
+    {
+      "complexName": "잠실우성4차",
+      "tradeCount": 41,
+      "representativeAreaRange": "60~85㎡",
+      "matchStrategy": "name+metadata",
+      "matchConfidence": 0.7576,
+      "areaPriceStats": [
+        {
+          "areaRange": "60~85㎡",
+          "minArea": 60,
+          "maxArea": 85,
+          "tradeCount": 12,
+          "medianPrice": 28.85,
+          "medianPricePerPyeong": 1.1866653573939057
+        },
+        {
+          "areaRange": "85~102㎡",
+          "minArea": 85,
+          "maxArea": 102,
+          "tradeCount": 15,
+          "medianPrice": 28.7,
+          "medianPricePerPyeong": 0.989946368948247
+        },
+        {
+          "areaRange": "102~135㎡",
+          "minArea": 102,
+          "maxArea": 135,
+          "tradeCount": 10,
+          "medianPrice": 37.125,
+          "medianPricePerPyeong": 0.9362818507781507
+        },
+        {
+          "areaRange": "135㎡~",
+          "minArea": 135,
+          "maxArea": 999,
+          "tradeCount": 4,
+          "medianPrice": 42,
+          "medianPricePerPyeong": 0.9254759238521836
+        }
+      ]
+    },
+    {
+      "complexName": "올림픽선수기자촌아파트",
+      "tradeCount": 35,
+      "representativeAreaRange": "60~85㎡",
+      "matchStrategy": "name+metadata",
+      "matchConfidence": 0.7576,
+      "areaPriceStats": [
+        {
+          "areaRange": "60~85㎡",
+          "minArea": 60,
+          "maxArea": 85,
+          "tradeCount": 13,
+          "medianPrice": 29,
+          "medianPricePerPyeong": 1.154204189742355
+        },
+        {
+          "areaRange": "85~102㎡",
+          "minArea": 85,
+          "maxArea": 102,
+          "tradeCount": 15,
+          "medianPrice": 31.9,
+          "medianPricePerPyeong": 1.0512911972884058
+        },
+        {
+          "areaRange": "102~135㎡",
+          "minArea": 102,
+          "maxArea": 135,
+          "tradeCount": 4,
+          "medianPrice": 38.75,
+          "medianPricePerPyeong": 1.0292572391310513
+        },
+        {
+          "areaRange": "135㎡~",
+          "minArea": 135,
+          "maxArea": 999,
+          "tradeCount": 3,
+          "medianPrice": 46.1,
+          "medianPricePerPyeong": 0.9708663729809104
+        }
+      ]
+    },
+    {
+      "complexName": "가락프라자",
+      "tradeCount": 2,
+      "representativeAreaRange": "102~135㎡",
+      "matchStrategy": "name+metadata",
+      "matchConfidence": 0.7576,
+      "areaPriceStats": [
+        {
+          "areaRange": "102~135㎡",
+          "minArea": 102,
+          "maxArea": 135,
+          "tradeCount": 2,
+          "medianPrice": 17.875,
+          "medianPricePerPyeong": 0.4417701480263158
+        }
+      ]
+    },
+    {
+      "complexName": "목동1단지",
+      "tradeCount": 41,
+      "representativeAreaRange": "60~85㎡",
+      "matchStrategy": "name+metadata",
+      "matchConfidence": 0.8200000000000001,
+      "areaPriceStats": [
+        {
+          "areaRange": "40~60㎡",
+          "minArea": 40,
+          "maxArea": 60,
+          "tradeCount": 9,
+          "medianPrice": 18.8,
+          "medianPricePerPyeong": 1.232932400932401
+        },
+        {
+          "areaRange": "60~85㎡",
+          "minArea": 60,
+          "maxArea": 85,
+          "tradeCount": 20,
+          "medianPrice": 22.85,
+          "medianPricePerPyeong": 1.1484796449341903
+        },
+        {
+          "areaRange": "85~102㎡",
+          "minArea": 85,
+          "maxArea": 102,
+          "tradeCount": 10,
+          "medianPrice": 27.75,
+          "medianPricePerPyeong": 0.9370028548123981
+        },
+        {
+          "areaRange": "102~135㎡",
+          "minArea": 102,
+          "maxArea": 135,
+          "tradeCount": 1,
+          "medianPrice": 30.6,
+          "medianPricePerPyeong": 0.869872559979362
+        },
+        {
+          "areaRange": "135㎡~",
+          "minArea": 135,
+          "maxArea": 999,
+          "tradeCount": 1,
+          "medianPrice": 35,
+          "medianPricePerPyeong": 0.7491776741776742
+        }
+      ]
+    },
+    {
+      "complexName": "목동5단지",
+      "tradeCount": 15,
+      "representativeAreaRange": "60~85㎡",
+      "matchStrategy": "name+metadata",
+      "matchConfidence": 0.8200000000000001,
+      "areaPriceStats": [
+        {
+          "areaRange": "60~85㎡",
+          "minArea": 60,
+          "maxArea": 85,
+          "tradeCount": 5,
+          "medianPrice": 24.99,
+          "medianPricePerPyeong": 1.269390626920713
+        },
+        {
+          "areaRange": "85~102㎡",
+          "minArea": 85,
+          "maxArea": 102,
+          "tradeCount": 6,
+          "medianPrice": 30.11,
+          "medianPricePerPyeong": 1.0473800877139778
+        },
+        {
+          "areaRange": "102~135㎡",
+          "minArea": 102,
+          "maxArea": 135,
+          "tradeCount": 3,
+          "medianPrice": 35,
+          "medianPricePerPyeong": 0.9733887589850178
+        },
+        {
+          "areaRange": "135㎡~",
+          "minArea": 135,
+          "maxArea": 999,
+          "tradeCount": 1,
+          "medianPrice": 39.2,
+          "medianPricePerPyeong": 0.9093211704441795
+        }
+      ]
+    },
+    {
+      "complexName": "목동9단지",
+      "tradeCount": 22,
+      "representativeAreaRange": "60~85㎡",
+      "matchStrategy": "name+metadata",
+      "matchConfidence": 0.8200000000000001,
+      "areaPriceStats": [
+        {
+          "areaRange": "40~60㎡",
+          "minArea": 40,
+          "maxArea": 60,
+          "tradeCount": 2,
+          "medianPrice": 20.475,
+          "medianPricePerPyeong": 1.257641304347826
+        },
+        {
+          "areaRange": "60~85㎡",
+          "minArea": 60,
+          "maxArea": 85,
+          "tradeCount": 7,
+          "medianPrice": 22.75,
+          "medianPricePerPyeong": 1.0537613843351548
+        },
+        {
+          "areaRange": "102~135㎡",
+          "minArea": 102,
+          "maxArea": 135,
+          "tradeCount": 8,
+          "medianPrice": 28.15,
+          "medianPricePerPyeong": 0.8463521259378609
+        },
+        {
+          "areaRange": "135㎡~",
+          "minArea": 135,
+          "maxArea": 999,
+          "tradeCount": 5,
+          "medianPrice": 34.5,
+          "medianPricePerPyeong": 0.7271748278500383
+        }
+      ]
+    },
+    {
+      "complexName": "상계주공10단지",
+      "tradeCount": 64,
+      "representativeAreaRange": "60~85㎡",
+      "matchStrategy": "name+metadata",
+      "matchConfidence": 0.7576,
+      "areaPriceStats": [
+        {
+          "areaRange": "40~60㎡",
+          "minArea": 40,
+          "maxArea": 60,
+          "tradeCount": 53,
+          "medianPrice": 5.37,
+          "medianPricePerPyeong": 0.33622168591622137
+        },
+        {
+          "areaRange": "60~85㎡",
+          "minArea": 60,
+          "maxArea": 85,
+          "tradeCount": 11,
+          "medianPrice": 6.95,
+          "medianPricePerPyeong": 0.34565437118791753
+        }
+      ]
+    },
+    {
+      "complexName": "대치미도맨션",
+      "tradeCount": 8,
+      "representativeAreaRange": "60~85㎡",
+      "matchStrategy": "name+metadata",
+      "matchConfidence": 0.7576,
+      "areaPriceStats": [
+        {
+          "areaRange": "60~85㎡",
+          "minArea": 60,
+          "maxArea": 85,
+          "tradeCount": 1,
+          "medianPrice": 44.3,
+          "medianPricePerPyeong": 1.7335101799242423
+        },
+        {
+          "areaRange": "102~135㎡",
+          "minArea": 102,
+          "maxArea": 135,
+          "tradeCount": 6,
+          "medianPrice": 48.5,
+          "medianPricePerPyeong": 1.2691466793319086
+        },
+        {
+          "areaRange": "135㎡~",
+          "minArea": 135,
+          "maxArea": 999,
+          "tradeCount": 1,
+          "medianPrice": 72,
+          "medianPricePerPyeong": 1.2457089024964674
+        }
+      ]
+    },
+    {
+      "complexName": "대치우성1차아파트",
+      "tradeCount": 10,
+      "representativeAreaRange": "60~85㎡",
+      "matchStrategy": "name+metadata",
+      "matchConfidence": 0.7576,
+      "areaPriceStats": [
+        {
+          "areaRange": "60~85㎡",
+          "minArea": 60,
+          "maxArea": 85,
+          "tradeCount": 2,
+          "medianPrice": 35.75,
+          "medianPricePerPyeong": 1.3954699492265912
+        },
+        {
+          "areaRange": "102~135㎡",
+          "minArea": 102,
+          "maxArea": 135,
+          "tradeCount": 8,
+          "medianPrice": 40.85,
+          "medianPricePerPyeong": 1.1682838480837443
+        }
+      ]
+    },
+    {
+      "complexName": "성산시영아파트",
+      "tradeCount": 57,
+      "representativeAreaRange": "40~60㎡",
+      "matchStrategy": "name+metadata",
+      "matchConfidence": 0.7576,
+      "areaPriceStats": [
+        {
+          "areaRange": "40~60㎡",
+          "minArea": 40,
+          "maxArea": 60,
+          "tradeCount": 57,
+          "medianPrice": 13.3,
+          "medianPricePerPyeong": 0.8343765774861182
+        }
+      ]
+    },
+    {
+      "complexName": "목동14단지",
+      "tradeCount": 21,
+      "representativeAreaRange": "60~85㎡",
+      "matchStrategy": "name+metadata",
+      "matchConfidence": 0.8200000000000001,
+      "areaPriceStats": [
+        {
+          "areaRange": "40~60㎡",
+          "minArea": 40,
+          "maxArea": 60,
+          "tradeCount": 6,
+          "medianPrice": 18.549999999999997,
+          "medianPricePerPyeong": 1.1145508905852415
+        },
+        {
+          "areaRange": "60~85㎡",
+          "minArea": 60,
+          "maxArea": 85,
+          "tradeCount": 9,
+          "medianPrice": 22.1,
+          "medianPricePerPyeong": 1.0190219980383914
+        },
+        {
+          "areaRange": "102~135㎡",
+          "minArea": 102,
+          "maxArea": 135,
+          "tradeCount": 5,
+          "medianPrice": 28.2,
+          "medianPricePerPyeong": 0.8609490210565202
+        },
+        {
+          "areaRange": "135㎡~",
+          "minArea": 135,
+          "maxArea": 999,
+          "tradeCount": 1,
+          "medianPrice": 32.5,
+          "medianPricePerPyeong": 0.6817596294181103
+        }
+      ]
+    },
+    {
+      "complexName": "목동11단지",
+      "tradeCount": 39,
+      "representativeAreaRange": "60~85㎡",
+      "matchStrategy": "name+metadata",
+      "matchConfidence": 0.8200000000000001,
+      "areaPriceStats": [
+        {
+          "areaRange": "40~60㎡",
+          "minArea": 40,
+          "maxArea": 60,
+          "tradeCount": 22,
+          "medianPrice": 16.45,
+          "medianPricePerPyeong": 1.0563405205905205
+        },
+        {
+          "areaRange": "60~85㎡",
+          "minArea": 60,
+          "maxArea": 85,
+          "tradeCount": 17,
+          "medianPrice": 19.3,
+          "medianPricePerPyeong": 0.9631935386473431
+        }
+      ]
+    },
+    {
+      "complexName": "산본 주공3단지 다산아파트",
+      "tradeCount": 0,
+      "matchStrategy": "fallback-all-district-trades",
+      "matchConfidence": 0,
+      "areaPriceStats": []
+    },
+    {
+      "complexName": "중동은하마을주공1단지",
+      "tradeCount": 48,
+      "representativeAreaRange": "40~60㎡",
+      "matchStrategy": "name+metadata",
+      "matchConfidence": 0.8200000000000001,
+      "areaPriceStats": [
+        {
+          "areaRange": "~40㎡",
+          "minArea": 0,
+          "maxArea": 40,
+          "tradeCount": 9,
+          "medianPrice": 3.48,
+          "medianPricePerPyeong": 0.290200652119388
+        },
+        {
+          "areaRange": "40~60㎡",
+          "minArea": 40,
+          "maxArea": 60,
+          "tradeCount": 39,
+          "medianPrice": 4.9,
+          "medianPricePerPyeong": 0.32598953511773
+        }
+      ]
+    },
+    {
+      "complexName": "중동한라마을주공3단지",
+      "tradeCount": 77,
+      "representativeAreaRange": "40~60㎡",
+      "matchStrategy": "name-only",
+      "matchConfidence": 0.68,
+      "areaPriceStats": [
+        {
+          "areaRange": "~40㎡",
+          "minArea": 0,
+          "maxArea": 40,
+          "tradeCount": 3,
+          "medianPrice": 2.52,
+          "medianPricePerPyeong": 0.20831747936984246
+        },
+        {
+          "areaRange": "40~60㎡",
+          "minArea": 40,
+          "maxArea": 60,
+          "tradeCount": 74,
+          "medianPrice": 3.775,
+          "medianPricePerPyeong": 0.22245133197213995
+        }
+      ]
+    },
+    {
+      "complexName": "꿈마을우성",
+      "tradeCount": 6,
+      "representativeAreaRange": "102~135㎡",
+      "matchStrategy": "name+metadata",
+      "matchConfidence": 0.8200000000000001,
+      "areaPriceStats": [
+        {
+          "areaRange": "85~102㎡",
+          "minArea": 85,
+          "maxArea": 102,
+          "tradeCount": 1,
+          "medianPrice": 15.5,
+          "medianPricePerPyeong": 0.5065233293792013
+        },
+        {
+          "areaRange": "102~135㎡",
+          "minArea": 102,
+          "maxArea": 135,
+          "tradeCount": 4,
+          "medianPrice": 15.6,
+          "medianPricePerPyeong": 0.38865385484964954
+        },
+        {
+          "areaRange": "135㎡~",
+          "minArea": 135,
+          "maxArea": 999,
+          "tradeCount": 1,
+          "medianPrice": 17.2,
+          "medianPricePerPyeong": 0.3593715080267981
+        }
+      ]
+    },
+    {
+      "complexName": "샘마을우방",
+      "tradeCount": 18,
+      "representativeAreaRange": "102~135㎡",
+      "matchStrategy": "name+metadata",
+      "matchConfidence": 0.8200000000000001,
+      "areaPriceStats": [
+        {
+          "areaRange": "85~102㎡",
+          "minArea": 85,
+          "maxArea": 102,
+          "tradeCount": 7,
+          "medianPrice": 11.73,
+          "medianPricePerPyeong": 0.3803161435857199
+        },
+        {
+          "areaRange": "102~135㎡",
+          "minArea": 102,
+          "maxArea": 135,
+          "tradeCount": 11,
+          "medianPrice": 13.2,
+          "medianPricePerPyeong": 0.325986553115195
+        }
+      ]
+    },
+    {
+      "complexName": "강촌마을3단지",
+      "tradeCount": 84,
+      "representativeAreaRange": "60~85㎡",
+      "matchStrategy": "name+metadata",
+      "matchConfidence": 0.7576,
+      "areaPriceStats": [
+        {
+          "areaRange": "~40㎡",
+          "minArea": 0,
+          "maxArea": 40,
+          "tradeCount": 2,
+          "medianPrice": 3.05,
+          "medianPricePerPyeong": 0.27626517903599646
+        },
+        {
+          "areaRange": "40~60㎡",
+          "minArea": 40,
+          "maxArea": 60,
+          "tradeCount": 11,
+          "medianPrice": 4.02,
+          "medianPricePerPyeong": 0.270437851037851
+        },
+        {
+          "areaRange": "60~85㎡",
+          "minArea": 60,
+          "maxArea": 85,
+          "tradeCount": 36,
+          "medianPrice": 6.484999999999999,
+          "medianPricePerPyeong": 0.2524060770610381
+        },
+        {
+          "areaRange": "85~102㎡",
+          "minArea": 85,
+          "maxArea": 102,
+          "tradeCount": 7,
+          "medianPrice": 7.35,
+          "medianPricePerPyeong": 0.25456670590543456
+        },
+        {
+          "areaRange": "102~135㎡",
+          "minArea": 102,
+          "maxArea": 135,
+          "tradeCount": 17,
+          "medianPrice": 8.4,
+          "medianPricePerPyeong": 0.2069339210311875
+        },
+        {
+          "areaRange": "135㎡~",
+          "minArea": 135,
+          "maxArea": 999,
+          "tradeCount": 11,
+          "medianPrice": 9,
+          "medianPricePerPyeong": 0.1790213158197949
+        }
+      ]
+    },
+    {
+      "complexName": "후곡마을10단지아파트",
+      "tradeCount": 35,
+      "representativeAreaRange": "60~85㎡",
+      "matchStrategy": "name+metadata",
+      "matchConfidence": 0.7576,
+      "areaPriceStats": [
+        {
+          "areaRange": "40~60㎡",
+          "minArea": 40,
+          "maxArea": 60,
+          "tradeCount": 10,
+          "medianPrice": 2.975,
+          "medianPricePerPyeong": 0.16581950767155623
+        },
+        {
+          "areaRange": "60~85㎡",
+          "minArea": 60,
+          "maxArea": 85,
+          "tradeCount": 25,
+          "medianPrice": 3.5,
+          "medianPricePerPyeong": 0.16982680170262734
+        }
+      ]
+    },
+    {
+      "complexName": "까치마을2단지주공아파트",
+      "tradeCount": 14,
+      "representativeAreaRange": "40~60㎡",
+      "matchStrategy": "name+metadata",
+      "matchConfidence": 0.8200000000000001,
+      "areaPriceStats": [
+        {
+          "areaRange": "40~60㎡",
+          "minArea": 40,
+          "maxArea": 60,
+          "tradeCount": 14,
+          "medianPrice": 13.26,
+          "medianPricePerPyeong": 0.7492007850053906
+        }
+      ]
+    }
+  ],
+  "mode": "live_api",
+  "skippedSources": [],
+  "stats": {
+    "physicalRecords": 29,
+    "transactionRecords": 29,
+    "regulationRecords": 29,
+    "marketIndicatorRecords": 11,
+    "bundles": 29,
+    "normalizedComplexes": 29,
+    "warningCount": 26,
+    "errorCount": 0
+  },
+  "issues": [
+    {
+      "complexId": "seoul-gangnam-daechi-eunma",
+      "complexName": "은마아파트",
+      "field": "sourceFreshness.regulation",
+      "severity": "info",
+      "message": "regulation 원천의 갱신월을 확인할 수 없습니다."
+    },
+    {
+      "complexId": "seoul-songpa-jamsil-jugong5",
+      "complexName": "잠실주공5단지",
+      "field": "sourceFreshness.regulation",
+      "severity": "info",
+      "message": "regulation 원천의 갱신월을 확인할 수 없습니다."
+    },
+    {
+      "complexId": "seoul-yangcheon-mokdong-7",
+      "complexName": "목동신시가지 7단지",
+      "field": "sourceFreshness.regulation",
+      "severity": "info",
+      "message": "regulation 원천의 갱신월을 확인할 수 없습니다."
+    },
+    {
+      "complexId": "seoul-nowon-sanggye-jugong5",
+      "complexName": "상계주공 5단지",
+      "field": "identifiers.pnu",
+      "severity": "warning",
+      "message": "PNU가 없어 토지/도시계획 데이터 매칭 정확도가 낮아집니다."
+    },
+    {
+      "complexId": "seoul-nowon-sanggye-jugong5",
+      "complexName": "상계주공 5단지",
+      "field": "sourceFreshness.regulation",
+      "severity": "info",
+      "message": "regulation 원천의 갱신월을 확인할 수 없습니다."
+    },
+    {
+      "complexId": "seoul-gangnam-apgujeong-hyundai3",
+      "complexName": "압구정 현대 3차",
+      "field": "sourceFreshness.regulation",
+      "severity": "warning",
+      "message": "regulation 원천이 오래되었습니다."
+    },
+    {
+      "complexId": "seoul-gangnam-apgujeong-shinhyundai",
+      "complexName": "압구정신현대",
+      "field": "identifiers.pnu",
+      "severity": "warning",
+      "message": "PNU가 없어 토지/도시계획 데이터 매칭 정확도가 낮아집니다."
+    },
+    {
+      "complexId": "seoul-gangnam-apgujeong-miseong1",
+      "complexName": "압구정미성1차",
+      "field": "identifiers.pnu",
+      "severity": "warning",
+      "message": "PNU가 없어 토지/도시계획 데이터 매칭 정확도가 낮아집니다."
+    },
+    {
+      "complexId": "seoul-gangnam-apgujeong-hanyang1",
+      "complexName": "압구정한양아파트제1단지",
+      "field": "identifiers.pnu",
+      "severity": "warning",
+      "message": "PNU가 없어 토지/도시계획 데이터 매칭 정확도가 낮아집니다."
+    },
+    {
+      "complexId": "seoul-gangnam-apgujeong-hanyang1",
+      "complexName": "압구정한양아파트제1단지",
+      "field": "sourceFreshness.regulation",
+      "severity": "info",
+      "message": "regulation 원천의 갱신월을 확인할 수 없습니다."
+    },
+    {
+      "complexId": "seoul-songpa-jamsil-asia-athlete",
+      "complexName": "잠실아시아선수촌",
+      "field": "identifiers.pnu",
+      "severity": "warning",
+      "message": "PNU가 없어 토지/도시계획 데이터 매칭 정확도가 낮아집니다."
+    },
+    {
+      "complexId": "seoul-songpa-jamsil-woosung4",
+      "complexName": "잠실우성4차",
+      "field": "identifiers.pnu",
+      "severity": "warning",
+      "message": "PNU가 없어 토지/도시계획 데이터 매칭 정확도가 낮아집니다."
+    },
+    {
+      "complexId": "seoul-songpa-jamsil-woosung4",
+      "complexName": "잠실우성4차",
+      "field": "sourceFreshness.regulation",
+      "severity": "info",
+      "message": "regulation 원천의 갱신월을 확인할 수 없습니다."
+    },
+    {
+      "complexId": "seoul-songpa-bangi-olympic-athlete",
+      "complexName": "올림픽선수기자촌아파트",
+      "field": "identifiers.pnu",
+      "severity": "warning",
+      "message": "PNU가 없어 토지/도시계획 데이터 매칭 정확도가 낮아집니다."
+    },
+    {
+      "complexId": "seoul-songpa-garak-plaza",
+      "complexName": "가락프라자",
+      "field": "identifiers.pnu",
+      "severity": "warning",
+      "message": "PNU가 없어 토지/도시계획 데이터 매칭 정확도가 낮아집니다."
+    },
+    {
+      "complexId": "seoul-songpa-garak-plaza",
+      "complexName": "가락프라자",
+      "field": "sourceFreshness.regulation",
+      "severity": "info",
+      "message": "regulation 원천의 갱신월을 확인할 수 없습니다."
+    },
+    {
+      "complexId": "seoul-yangcheon-mokdong-1",
+      "complexName": "목동1단지",
+      "field": "identifiers.pnu",
+      "severity": "warning",
+      "message": "PNU가 없어 토지/도시계획 데이터 매칭 정확도가 낮아집니다."
+    },
+    {
+      "complexId": "seoul-yangcheon-mokdong-1",
+      "complexName": "목동1단지",
+      "field": "sourceFreshness.regulation",
+      "severity": "info",
+      "message": "regulation 원천의 갱신월을 확인할 수 없습니다."
+    },
+    {
+      "complexId": "seoul-yangcheon-mokdong-5",
+      "complexName": "목동5단지",
+      "field": "identifiers.pnu",
+      "severity": "warning",
+      "message": "PNU가 없어 토지/도시계획 데이터 매칭 정확도가 낮아집니다."
+    },
+    {
+      "complexId": "seoul-yangcheon-mokdong-5",
+      "complexName": "목동5단지",
+      "field": "sourceFreshness.regulation",
+      "severity": "info",
+      "message": "regulation 원천의 갱신월을 확인할 수 없습니다."
+    },
+    {
+      "complexId": "seoul-yangcheon-mokdong-9",
+      "complexName": "목동9단지",
+      "field": "identifiers.pnu",
+      "severity": "warning",
+      "message": "PNU가 없어 토지/도시계획 데이터 매칭 정확도가 낮아집니다."
+    },
+    {
+      "complexId": "seoul-yangcheon-mokdong-9",
+      "complexName": "목동9단지",
+      "field": "sourceFreshness.regulation",
+      "severity": "info",
+      "message": "regulation 원천의 갱신월을 확인할 수 없습니다."
+    },
+    {
+      "complexId": "seoul-nowon-sanggye-jugong10",
+      "complexName": "상계주공10단지",
+      "field": "identifiers.pnu",
+      "severity": "warning",
+      "message": "PNU가 없어 토지/도시계획 데이터 매칭 정확도가 낮아집니다."
+    },
+    {
+      "complexId": "seoul-gangnam-daechi-mido",
+      "complexName": "대치미도맨션",
+      "field": "identifiers.pnu",
+      "severity": "warning",
+      "message": "PNU가 없어 토지/도시계획 데이터 매칭 정확도가 낮아집니다."
+    },
+    {
+      "complexId": "seoul-gangnam-daechi-mido",
+      "complexName": "대치미도맨션",
+      "field": "sourceFreshness.regulation",
+      "severity": "info",
+      "message": "regulation 원천의 갱신월을 확인할 수 없습니다."
+    },
+    {
+      "complexId": "seoul-gangnam-daechi-woosung1",
+      "complexName": "대치우성1차아파트",
+      "field": "identifiers.pnu",
+      "severity": "warning",
+      "message": "PNU가 없어 토지/도시계획 데이터 매칭 정확도가 낮아집니다."
+    },
+    {
+      "complexId": "seoul-gangnam-daechi-woosung1",
+      "complexName": "대치우성1차아파트",
+      "field": "sourceFreshness.regulation",
+      "severity": "info",
+      "message": "regulation 원천의 갱신월을 확인할 수 없습니다."
+    },
+    {
+      "complexId": "seoul-mapo-seongsan-siyoung",
+      "complexName": "성산시영아파트",
+      "field": "identifiers.pnu",
+      "severity": "warning",
+      "message": "PNU가 없어 토지/도시계획 데이터 매칭 정확도가 낮아집니다."
+    },
+    {
+      "complexId": "seoul-mapo-seongsan-siyoung",
+      "complexName": "성산시영아파트",
+      "field": "sourceFreshness.regulation",
+      "severity": "info",
+      "message": "regulation 원천의 갱신월을 확인할 수 없습니다."
+    },
+    {
+      "complexId": "seoul-yangcheon-mokdong-14",
+      "complexName": "목동14단지",
+      "field": "identifiers.pnu",
+      "severity": "warning",
+      "message": "PNU가 없어 토지/도시계획 데이터 매칭 정확도가 낮아집니다."
+    },
+    {
+      "complexId": "seoul-yangcheon-mokdong-14",
+      "complexName": "목동14단지",
+      "field": "sourceFreshness.regulation",
+      "severity": "info",
+      "message": "regulation 원천의 갱신월을 확인할 수 없습니다."
+    },
+    {
+      "complexId": "seoul-yangcheon-mokdong-11",
+      "complexName": "목동11단지",
+      "field": "identifiers.pnu",
+      "severity": "warning",
+      "message": "PNU가 없어 토지/도시계획 데이터 매칭 정확도가 낮아집니다."
+    },
+    {
+      "complexId": "seoul-yangcheon-mokdong-11",
+      "complexName": "목동11단지",
+      "field": "sourceFreshness.regulation",
+      "severity": "info",
+      "message": "regulation 원천의 갱신월을 확인할 수 없습니다."
+    },
+    {
+      "complexId": "gyeonggi-gunpo-sanbon-jugong3-dasan",
+      "complexName": "산본 주공3단지 다산아파트",
+      "field": "identifiers.pnu",
+      "severity": "warning",
+      "message": "PNU가 없어 토지/도시계획 데이터 매칭 정확도가 낮아집니다."
+    },
+    {
+      "complexId": "gyeonggi-bucheon-jungdong-eunha-jugong1",
+      "complexName": "중동은하마을주공1단지",
+      "field": "identifiers.pnu",
+      "severity": "warning",
+      "message": "PNU가 없어 토지/도시계획 데이터 매칭 정확도가 낮아집니다."
+    },
+    {
+      "complexId": "gyeonggi-bucheon-jungdong-halla-jugong3",
+      "complexName": "중동한라마을주공3단지",
+      "field": "identifiers.pnu",
+      "severity": "warning",
+      "message": "PNU가 없어 토지/도시계획 데이터 매칭 정확도가 낮아집니다."
+    },
+    {
+      "complexId": "gyeonggi-anyang-pyeongchon-kkummaeul-woosung",
+      "complexName": "꿈마을우성",
+      "field": "identifiers.pnu",
+      "severity": "warning",
+      "message": "PNU가 없어 토지/도시계획 데이터 매칭 정확도가 낮아집니다."
+    },
+    {
+      "complexId": "gyeonggi-anyang-pyeongchon-saemmaeul-woobang",
+      "complexName": "샘마을우방",
+      "field": "identifiers.pnu",
+      "severity": "warning",
+      "message": "PNU가 없어 토지/도시계획 데이터 매칭 정확도가 낮아집니다."
+    },
+    {
+      "complexId": "gyeonggi-ilsan-madu-gangchon3",
+      "complexName": "강촌마을3단지",
+      "field": "identifiers.pnu",
+      "severity": "warning",
+      "message": "PNU가 없어 토지/도시계획 데이터 매칭 정확도가 낮아집니다."
+    },
+    {
+      "complexId": "gyeonggi-ilsan-hugok10",
+      "complexName": "후곡마을10단지아파트",
+      "field": "identifiers.pnu",
+      "severity": "warning",
+      "message": "PNU가 없어 토지/도시계획 데이터 매칭 정확도가 낮아집니다."
+    },
+    {
+      "complexId": "gyeonggi-bundang-gumi-kkachi2",
+      "complexName": "까치마을2단지주공아파트",
+      "field": "identifiers.pnu",
+      "severity": "warning",
+      "message": "PNU가 없어 토지/도시계획 데이터 매칭 정확도가 낮아집니다."
+    }
+  ],
+  "complexes": [
+    {
+      "id": "apt-001",
+      "identifiers": {
+        "complexId": "seoul-gangnam-daechi-eunma",
+        "kaptCode": "A13583507",
+        "legalDongCode": "1168010600",
+        "pnu": "1168010600103160000",
+        "roadAddress": "서울 강남구 삼성로 212",
+        "jibunAddress": "서울 강남구 대치동 316",
+        "lat": 37.4984,
+        "lng": 127.0651
+      },
+      "name": "은마아파트",
+      "aliases": [
+        "은마아파트",
+        "은마"
+      ],
+      "district": "강남구",
+      "address": "서울 강남구 대치동",
+      "legalDongCode": "1168010600",
+      "builtYear": 1979,
+      "units": 4424,
+      "currentFar": 204,
+      "allowedFar": 300,
+      "landShare": 10.8,
+      "previousAssetValue": 22.6,
+      "recentPrice": 37.475,
+      "newBuildPrice": 8210,
+      "stage": "조합설립",
+      "regulationRisk": "중간",
+      "residentMomentum": "중간",
+      "dataReliability": 100,
+      "x": 70,
+      "y": 72,
+      "note": "사업성은 주요 변수 변화에 따라 민감하게 달라질 수 있습니다.",
+      "sourceFreshness": {
+        "physicalInfo": "2026-04",
+        "transaction": "202603",
+        "regulation": "unknown",
+        "costIndex": "2026-03"
+      }
+    },
+    {
+      "id": "apt-002",
+      "identifiers": {
+        "complexId": "seoul-songpa-jamsil-jugong5",
+        "kaptCode": "A13879102",
+        "legalDongCode": "1171010100",
+        "pnu": "1171010100100270000",
+        "roadAddress": "서울 송파구 송파대로 567",
+        "jibunAddress": "서울 송파구 잠실동 27",
+        "lat": 37.5166,
+        "lng": 127.0995
+      },
+      "name": "잠실주공5단지",
+      "aliases": [
+        "잠실주공5단지"
+      ],
+      "district": "송파구",
+      "address": "서울 송파구 잠실동",
+      "legalDongCode": "1171010100",
+      "builtYear": 1978,
+      "units": 3930,
+      "currentFar": 138,
+      "allowedFar": 300,
+      "landShare": 15.9,
+      "previousAssetValue": 20.1,
+      "recentPrice": 41.75,
+      "newBuildPrice": 4800,
+      "stage": "사업시행인가",
+      "regulationRisk": "중간",
+      "residentMomentum": "중간",
+      "dataReliability": 100,
+      "x": 78,
+      "y": 66,
+      "note": "낮은 현재 용적률과 충분한 대지지분으로 사업성 확인 가치가 큽니다.",
+      "sourceFreshness": {
+        "physicalInfo": "2026-04",
+        "transaction": "202603",
+        "regulation": "unknown",
+        "costIndex": "2026-03"
+      }
+    },
+    {
+      "id": "apt-003",
+      "identifiers": {
+        "complexId": "seoul-yangcheon-mokdong-7",
+        "kaptCode": "A15805115",
+        "legalDongCode": "1147010200",
+        "pnu": "1147010200109250000",
+        "roadAddress": "서울 양천구 목동서로 280",
+        "jibunAddress": "서울 양천구 목동 925",
+        "lat": 37.5295,
+        "lng": 126.8719
+      },
+      "name": "목동신시가지 7단지",
+      "aliases": [
+        "목동신시가지 7단지",
+        "목동신시가지7단지"
+      ],
+      "district": "양천구",
+      "address": "서울 양천구 목동",
+      "legalDongCode": "1147010200",
+      "builtYear": 1986,
+      "units": 2550,
+      "currentFar": 128,
+      "allowedFar": 300,
+      "landShare": 14.6,
+      "previousAssetValue": 14.7,
+      "recentPrice": 26.45,
+      "newBuildPrice": 4550,
+      "stage": "추진위",
+      "regulationRisk": "중간",
+      "residentMomentum": "중간",
+      "dataReliability": 100,
+      "x": 27,
+      "y": 61,
+      "note": "낮은 현재 용적률과 충분한 대지지분으로 사업성 확인 가치가 큽니다.",
+      "sourceFreshness": {
+        "physicalInfo": "2026-04",
+        "transaction": "202603",
+        "regulation": "unknown",
+        "costIndex": "2026-03"
+      }
+    },
+    {
+      "id": "apt-004",
+      "identifiers": {
+        "complexId": "seoul-nowon-sanggye-jugong5",
+        "kaptCode": "A13920703",
+        "legalDongCode": "1135010500",
+        "roadAddress": "서울 노원구 동일로 1456",
+        "jibunAddress": "서울 노원구 상계동 721",
+        "lat": 37.6543,
+        "lng": 127.0617
+      },
+      "name": "상계주공 5단지",
+      "aliases": [
+        "상계주공 5단지",
+        "상계주공5단지"
+      ],
+      "district": "노원구",
+      "address": "서울 노원구 상계동",
+      "legalDongCode": "1135010500",
+      "builtYear": 1987,
+      "units": 840,
+      "currentFar": 175,
+      "allowedFar": 300,
+      "landShare": 9.4,
+      "previousAssetValue": 5.8,
+      "recentPrice": 5.575,
+      "newBuildPrice": 2580,
+      "stage": "관리처분인가",
+      "regulationRisk": "중간",
+      "residentMomentum": "중간",
+      "dataReliability": 89,
+      "x": 69,
+      "y": 16,
+      "note": "사업성은 주요 변수 변화에 따라 민감하게 달라질 수 있습니다.",
+      "sourceFreshness": {
+        "physicalInfo": "2026-04",
+        "transaction": "202603",
+        "regulation": "unknown",
+        "costIndex": "2026-03"
+      }
+    },
+    {
+      "id": "apt-005",
+      "identifiers": {
+        "complexId": "seoul-gangnam-apgujeong-hyundai3",
+        "kaptCode": "A13589802",
+        "legalDongCode": "1168011000",
+        "pnu": "1168011000103690000",
+        "roadAddress": "서울 강남구 압구정로 201",
+        "jibunAddress": "서울 강남구 압구정동 369",
+        "lat": 37.5277,
+        "lng": 127.0282
+      },
+      "name": "압구정 현대 3차",
+      "aliases": [
+        "압구정 현대 3차",
+        "압구정현대3차"
+      ],
+      "district": "강남구",
+      "address": "서울 강남구 압구정동",
+      "legalDongCode": "1168011000",
+      "builtYear": 1976,
+      "units": 432,
+      "currentFar": 194,
+      "allowedFar": 300,
+      "landShare": 18.2,
+      "previousAssetValue": 38.5,
+      "recentPrice": 60.7,
+      "newBuildPrice": 8210,
+      "stage": "검토",
+      "regulationRisk": "높음",
+      "residentMomentum": "중간",
+      "dataReliability": 100,
+      "x": 62,
+      "y": 62,
+      "note": "사업성은 주요 변수 변화에 따라 민감하게 달라질 수 있습니다.",
+      "sourceFreshness": {
+        "physicalInfo": "2026-03",
+        "transaction": "202603",
+        "regulation": "2026-02",
+        "costIndex": "2026-03"
+      }
+    },
+    {
+      "id": "apt-006",
+      "identifiers": {
+        "complexId": "seoul-gangnam-apgujeong-shinhyundai",
+        "kaptCode": "A13511004",
+        "legalDongCode": "1168011000",
+        "roadAddress": "서울 강남구 압구정로 151",
+        "jibunAddress": "서울 강남구 압구정동",
+        "lat": 37.527,
+        "lng": 127.03
+      },
+      "name": "압구정신현대",
+      "aliases": [
+        "압구정신현대"
+      ],
+      "district": "강남구",
+      "address": "서울 강남구 압구정동",
+      "legalDongCode": "1168011000",
+      "builtYear": 1982,
+      "units": 1924,
+      "currentFar": 192,
+      "allowedFar": 300,
+      "landShare": 17.4,
+      "previousAssetValue": 34,
+      "recentPrice": 97,
+      "newBuildPrice": 8210,
+      "stage": "검토",
+      "regulationRisk": "높음",
+      "residentMomentum": "중간",
+      "dataReliability": 89,
+      "x": 62,
+      "y": 62,
+      "note": "사업성은 주요 변수 변화에 따라 민감하게 달라질 수 있습니다.",
+      "sourceFreshness": {
+        "physicalInfo": "2026-04",
+        "transaction": "202603",
+        "regulation": "2026-03",
+        "costIndex": "2026-03"
+      }
+    },
+    {
+      "id": "apt-007",
+      "identifiers": {
+        "complexId": "seoul-gangnam-apgujeong-miseong1",
+        "kaptCode": "A13511001",
+        "legalDongCode": "1168011000",
+        "roadAddress": "서울 강남구 압구정로",
+        "jibunAddress": "서울 강남구 압구정동",
+        "lat": 37.526,
+        "lng": 127.032
+      },
+      "name": "압구정미성1차",
+      "aliases": [
+        "압구정미성1차"
+      ],
+      "district": "강남구",
+      "address": "서울 강남구 압구정동",
+      "legalDongCode": "1168011000",
+      "builtYear": 1982,
+      "units": 322,
+      "currentFar": 180,
+      "allowedFar": 300,
+      "landShare": 16.5,
+      "previousAssetValue": 27,
+      "recentPrice": 55.5,
+      "newBuildPrice": 8210,
+      "stage": "검토",
+      "regulationRisk": "높음",
+      "residentMomentum": "중간",
+      "dataReliability": 89,
+      "x": 63,
+      "y": 62,
+      "note": "사업성은 주요 변수 변화에 따라 민감하게 달라질 수 있습니다.",
+      "sourceFreshness": {
+        "physicalInfo": "2026-04",
+        "transaction": "202603",
+        "regulation": "2026-03",
+        "costIndex": "2026-03"
+      }
+    },
+    {
+      "id": "apt-008",
+      "identifiers": {
+        "complexId": "seoul-gangnam-apgujeong-hanyang1",
+        "kaptCode": "A13551103",
+        "legalDongCode": "1168011000",
+        "roadAddress": "서울 강남구 압구정로",
+        "jibunAddress": "서울 강남구 압구정동",
+        "lat": 37.529,
+        "lng": 127.035
+      },
+      "name": "압구정한양아파트제1단지",
+      "aliases": [
+        "압구정한양아파트제1단지",
+        "압구정한양제1단지"
+      ],
+      "district": "강남구",
+      "address": "서울 강남구 압구정동",
+      "legalDongCode": "1168011000",
+      "builtYear": 1977,
+      "units": 936,
+      "currentFar": 170,
+      "allowedFar": 300,
+      "landShare": 18,
+      "previousAssetValue": 31,
+      "recentPrice": 44.85,
+      "newBuildPrice": 8210,
+      "stage": "검토",
+      "regulationRisk": "중간",
+      "residentMomentum": "중간",
+      "dataReliability": 89,
+      "x": 63,
+      "y": 61,
+      "note": "사업성은 주요 변수 변화에 따라 민감하게 달라질 수 있습니다.",
+      "sourceFreshness": {
+        "physicalInfo": "2026-04",
+        "transaction": "202603",
+        "regulation": "unknown",
+        "costIndex": "2026-03"
+      }
+    },
+    {
+      "id": "apt-009",
+      "identifiers": {
+        "complexId": "seoul-songpa-jamsil-asia-athlete",
+        "kaptCode": "A13822701",
+        "legalDongCode": "1171010100",
+        "roadAddress": "서울 송파구 올림픽로",
+        "jibunAddress": "서울 송파구 잠실동",
+        "lat": 37.51,
+        "lng": 127.08
+      },
+      "name": "잠실아시아선수촌",
+      "aliases": [
+        "잠실아시아선수촌"
+      ],
+      "district": "송파구",
+      "address": "서울 송파구 잠실동",
+      "legalDongCode": "1171010100",
+      "builtYear": 1986,
+      "units": 1356,
+      "currentFar": 152,
+      "allowedFar": 300,
+      "landShare": 19,
+      "previousAssetValue": 28,
+      "recentPrice": 56.6,
+      "newBuildPrice": 4800,
+      "stage": "검토",
+      "regulationRisk": "중간",
+      "residentMomentum": "중간",
+      "dataReliability": 89,
+      "x": 73,
+      "y": 68,
+      "note": "낮은 현재 용적률과 충분한 대지지분으로 사업성 확인 가치가 큽니다.",
+      "sourceFreshness": {
+        "physicalInfo": "2026-04",
+        "transaction": "202603",
+        "regulation": "2026-03",
+        "costIndex": "2026-03"
+      }
+    },
+    {
+      "id": "apt-010",
+      "identifiers": {
+        "complexId": "seoul-songpa-jamsil-woosung4",
+        "kaptCode": "A13822902",
+        "legalDongCode": "1171010100",
+        "roadAddress": "서울 송파구 잠실동",
+        "jibunAddress": "서울 송파구 잠실동",
+        "lat": 37.512,
+        "lng": 127.088
+      },
+      "name": "잠실우성4차",
+      "aliases": [
+        "잠실우성4차"
+      ],
+      "district": "송파구",
+      "address": "서울 송파구 잠실동",
+      "legalDongCode": "1171010100",
+      "builtYear": 1983,
+      "units": 555,
+      "currentFar": 180,
+      "allowedFar": 300,
+      "landShare": 12.4,
+      "previousAssetValue": 14,
+      "recentPrice": 28.85,
+      "newBuildPrice": 4800,
+      "stage": "검토",
+      "regulationRisk": "중간",
+      "residentMomentum": "중간",
+      "dataReliability": 89,
+      "x": 75,
+      "y": 67,
+      "note": "사업성은 주요 변수 변화에 따라 민감하게 달라질 수 있습니다.",
+      "sourceFreshness": {
+        "physicalInfo": "2026-04",
+        "transaction": "202603",
+        "regulation": "unknown",
+        "costIndex": "2026-03"
+      }
+    },
+    {
+      "id": "apt-011",
+      "identifiers": {
+        "complexId": "seoul-songpa-bangi-olympic-athlete",
+        "kaptCode": "A13805002",
+        "legalDongCode": "1171011100",
+        "roadAddress": "서울 송파구 양재대로",
+        "jibunAddress": "서울 송파구 방이동",
+        "lat": 37.515,
+        "lng": 127.13
+      },
+      "name": "올림픽선수기자촌아파트",
+      "aliases": [
+        "올림픽선수기자촌아파트",
+        "올림픽선수기자촌"
+      ],
+      "district": "송파구",
+      "address": "서울 송파구 방이동",
+      "legalDongCode": "1171011100",
+      "builtYear": 1988,
+      "units": 5540,
+      "currentFar": 137,
+      "allowedFar": 300,
+      "landShare": 17.8,
+      "previousAssetValue": 18,
+      "recentPrice": 29,
+      "newBuildPrice": 4800,
+      "stage": "검토",
+      "regulationRisk": "중간",
+      "residentMomentum": "중간",
+      "dataReliability": 89,
+      "x": 84,
+      "y": 66,
+      "note": "낮은 현재 용적률과 충분한 대지지분으로 사업성 확인 가치가 큽니다.",
+      "sourceFreshness": {
+        "physicalInfo": "2026-04",
+        "transaction": "202603",
+        "regulation": "2026-03",
+        "costIndex": "2026-03"
+      }
+    },
+    {
+      "id": "apt-012",
+      "identifiers": {
+        "complexId": "seoul-songpa-garak-plaza",
+        "kaptCode": "A13881204",
+        "legalDongCode": "1171010700",
+        "roadAddress": "서울 송파구 문정로",
+        "jibunAddress": "서울 송파구 가락동",
+        "lat": 37.497,
+        "lng": 127.124
+      },
+      "name": "가락프라자",
+      "aliases": [
+        "가락프라자"
+      ],
+      "district": "송파구",
+      "address": "서울 송파구 가락동",
+      "legalDongCode": "1171010700",
+      "builtYear": 1985,
+      "units": 672,
+      "currentFar": 178,
+      "allowedFar": 300,
+      "landShare": 11.2,
+      "previousAssetValue": 10.5,
+      "recentPrice": 17.875,
+      "newBuildPrice": 4800,
+      "stage": "검토",
+      "regulationRisk": "중간",
+      "residentMomentum": "중간",
+      "dataReliability": 89,
+      "x": 83,
+      "y": 73,
+      "note": "사업성은 주요 변수 변화에 따라 민감하게 달라질 수 있습니다.",
+      "sourceFreshness": {
+        "physicalInfo": "2026-04",
+        "transaction": "202603",
+        "regulation": "unknown",
+        "costIndex": "2026-03"
+      }
+    },
+    {
+      "id": "apt-013",
+      "identifiers": {
+        "complexId": "seoul-yangcheon-mokdong-1",
+        "kaptCode": "A15875101",
+        "legalDongCode": "1147010200",
+        "roadAddress": "서울 양천구 목동",
+        "jibunAddress": "서울 양천구 목동",
+        "lat": 37.535,
+        "lng": 126.88
+      },
+      "name": "목동1단지",
+      "aliases": [
+        "목동1단지"
+      ],
+      "district": "양천구",
+      "address": "서울 양천구 목동",
+      "legalDongCode": "1147010200",
+      "builtYear": 1985,
+      "units": 1882,
+      "currentFar": 128,
+      "allowedFar": 300,
+      "landShare": 14.4,
+      "previousAssetValue": 14.2,
+      "recentPrice": 22.85,
+      "newBuildPrice": 4550,
+      "stage": "추진위",
+      "regulationRisk": "중간",
+      "residentMomentum": "중간",
+      "dataReliability": 89,
+      "x": 29,
+      "y": 59,
+      "note": "낮은 현재 용적률과 충분한 대지지분으로 사업성 확인 가치가 큽니다.",
+      "sourceFreshness": {
+        "physicalInfo": "2026-04",
+        "transaction": "202603",
+        "regulation": "unknown",
+        "costIndex": "2026-03"
+      }
+    },
+    {
+      "id": "apt-014",
+      "identifiers": {
+        "complexId": "seoul-yangcheon-mokdong-5",
+        "kaptCode": "A15805504",
+        "legalDongCode": "1147010200",
+        "roadAddress": "서울 양천구 목동",
+        "jibunAddress": "서울 양천구 목동",
+        "lat": 37.531,
+        "lng": 126.875
+      },
+      "name": "목동5단지",
+      "aliases": [
+        "목동5단지"
+      ],
+      "district": "양천구",
+      "address": "서울 양천구 목동",
+      "legalDongCode": "1147010200",
+      "builtYear": 1986,
+      "units": 1848,
+      "currentFar": 128,
+      "allowedFar": 300,
+      "landShare": 14.5,
+      "previousAssetValue": 14.4,
+      "recentPrice": 24.99,
+      "newBuildPrice": 4550,
+      "stage": "추진위",
+      "regulationRisk": "중간",
+      "residentMomentum": "중간",
+      "dataReliability": 89,
+      "x": 28,
+      "y": 60,
+      "note": "낮은 현재 용적률과 충분한 대지지분으로 사업성 확인 가치가 큽니다.",
+      "sourceFreshness": {
+        "physicalInfo": "2026-04",
+        "transaction": "202603",
+        "regulation": "unknown",
+        "costIndex": "2026-03"
+      }
+    },
+    {
+      "id": "apt-015",
+      "identifiers": {
+        "complexId": "seoul-yangcheon-mokdong-9",
+        "kaptCode": "A15807101",
+        "legalDongCode": "1147010100",
+        "roadAddress": "서울 양천구 신정동",
+        "jibunAddress": "서울 양천구 신정동",
+        "lat": 37.523,
+        "lng": 126.86
+      },
+      "name": "목동9단지",
+      "aliases": [
+        "목동9단지"
+      ],
+      "district": "양천구",
+      "address": "서울 양천구 신정동",
+      "legalDongCode": "1147010100",
+      "builtYear": 1987,
+      "units": 2030,
+      "currentFar": 145,
+      "allowedFar": 300,
+      "landShare": 13.2,
+      "previousAssetValue": 13.3,
+      "recentPrice": 22.75,
+      "newBuildPrice": 4550,
+      "stage": "추진위",
+      "regulationRisk": "중간",
+      "residentMomentum": "중간",
+      "dataReliability": 89,
+      "x": 24,
+      "y": 63,
+      "note": "사업성은 주요 변수 변화에 따라 민감하게 달라질 수 있습니다.",
+      "sourceFreshness": {
+        "physicalInfo": "2026-04",
+        "transaction": "202603",
+        "regulation": "unknown",
+        "costIndex": "2026-03"
+      }
+    },
+    {
+      "id": "apt-016",
+      "identifiers": {
+        "complexId": "seoul-nowon-sanggye-jugong10",
+        "kaptCode": "A13920804",
+        "legalDongCode": "1135010500",
+        "roadAddress": "서울 노원구 동일로",
+        "jibunAddress": "서울 노원구 상계동",
+        "lat": 37.66,
+        "lng": 127.06
+      },
+      "name": "상계주공10단지",
+      "aliases": [
+        "상계주공10단지"
+      ],
+      "district": "노원구",
+      "address": "서울 노원구 상계동",
+      "legalDongCode": "1135010500",
+      "builtYear": 1988,
+      "units": 2654,
+      "currentFar": 190,
+      "allowedFar": 300,
+      "landShare": 8.8,
+      "previousAssetValue": 5.2,
+      "recentPrice": 6.95,
+      "newBuildPrice": 2580,
+      "stage": "검토",
+      "regulationRisk": "중간",
+      "residentMomentum": "중간",
+      "dataReliability": 89,
+      "x": 69,
+      "y": 14,
+      "note": "사업성은 주요 변수 변화에 따라 민감하게 달라질 수 있습니다.",
+      "sourceFreshness": {
+        "physicalInfo": "2026-04",
+        "transaction": "202603",
+        "regulation": "2026-03",
+        "costIndex": "2026-03"
+      }
+    },
+    {
+      "id": "apt-017",
+      "identifiers": {
+        "complexId": "seoul-gangnam-daechi-mido",
+        "kaptCode": "A13528004",
+        "legalDongCode": "1168010600",
+        "roadAddress": "서울 강남구 대치동",
+        "jibunAddress": "서울 강남구 대치동",
+        "lat": 37.496,
+        "lng": 127.066
+      },
+      "name": "대치미도맨션",
+      "aliases": [
+        "대치미도맨션"
+      ],
+      "district": "강남구",
+      "address": "서울 강남구 대치동",
+      "legalDongCode": "1168010600",
+      "builtYear": 1983,
+      "units": 2436,
+      "currentFar": 210,
+      "allowedFar": 300,
+      "landShare": 10.5,
+      "previousAssetValue": 24,
+      "recentPrice": 44.3,
+      "newBuildPrice": 8210,
+      "stage": "검토",
+      "regulationRisk": "중간",
+      "residentMomentum": "중간",
+      "dataReliability": 89,
+      "x": 70,
+      "y": 73,
+      "note": "사업성은 주요 변수 변화에 따라 민감하게 달라질 수 있습니다.",
+      "sourceFreshness": {
+        "physicalInfo": "2026-04",
+        "transaction": "202603",
+        "regulation": "unknown",
+        "costIndex": "2026-03"
+      }
+    },
+    {
+      "id": "apt-018",
+      "identifiers": {
+        "complexId": "seoul-gangnam-daechi-woosung1",
+        "kaptCode": "A13583403",
+        "legalDongCode": "1168010600",
+        "roadAddress": "서울 강남구 대치동",
+        "jibunAddress": "서울 강남구 대치동",
+        "lat": 37.497,
+        "lng": 127.061
+      },
+      "name": "대치우성1차아파트",
+      "aliases": [
+        "대치우성1차아파트",
+        "대치우성1차"
+      ],
+      "district": "강남구",
+      "address": "서울 강남구 대치동",
+      "legalDongCode": "1168010600",
+      "builtYear": 1984,
+      "units": 476,
+      "currentFar": 205,
+      "allowedFar": 300,
+      "landShare": 10.2,
+      "previousAssetValue": 21,
+      "recentPrice": 35.75,
+      "newBuildPrice": 8210,
+      "stage": "검토",
+      "regulationRisk": "중간",
+      "residentMomentum": "중간",
+      "dataReliability": 89,
+      "x": 69,
+      "y": 73,
+      "note": "사업성은 주요 변수 변화에 따라 민감하게 달라질 수 있습니다.",
+      "sourceFreshness": {
+        "physicalInfo": "2026-04",
+        "transaction": "202603",
+        "regulation": "unknown",
+        "costIndex": "2026-03"
+      }
+    },
+    {
+      "id": "apt-019",
+      "identifiers": {
+        "complexId": "seoul-mapo-seongsan-siyoung",
+        "kaptCode": "A12185004",
+        "legalDongCode": "1144012500",
+        "roadAddress": "서울 마포구 성산동",
+        "jibunAddress": "서울 마포구 성산동",
+        "lat": 37.568,
+        "lng": 126.91
+      },
+      "name": "성산시영아파트",
+      "aliases": [
+        "성산시영아파트",
+        "성산시영"
+      ],
+      "district": "마포구",
+      "address": "서울 마포구 성산동",
+      "legalDongCode": "1144012500",
+      "builtYear": 1986,
+      "units": 3710,
+      "currentFar": 165,
+      "allowedFar": 250,
+      "landShare": 9.5,
+      "previousAssetValue": 7.5,
+      "recentPrice": 13.3,
+      "newBuildPrice": 3600,
+      "stage": "검토",
+      "regulationRisk": "중간",
+      "residentMomentum": "중간",
+      "dataReliability": 89,
+      "x": 36,
+      "y": 47,
+      "note": "사업성은 주요 변수 변화에 따라 민감하게 달라질 수 있습니다.",
+      "sourceFreshness": {
+        "physicalInfo": "2026-04",
+        "transaction": "202603",
+        "regulation": "unknown",
+        "costIndex": "2026-03"
+      }
+    },
+    {
+      "id": "apt-020",
+      "identifiers": {
+        "complexId": "seoul-yangcheon-mokdong-14",
+        "kaptCode": "A15807606",
+        "legalDongCode": "1147010100",
+        "roadAddress": "서울 양천구 신정동",
+        "jibunAddress": "서울 양천구 신정동",
+        "lat": 37.518,
+        "lng": 126.862
+      },
+      "name": "목동14단지",
+      "aliases": [
+        "목동14단지"
+      ],
+      "district": "양천구",
+      "address": "서울 양천구 신정동",
+      "legalDongCode": "1147010100",
+      "builtYear": 1987,
+      "units": 3100,
+      "currentFar": 150,
+      "allowedFar": 300,
+      "landShare": 12.6,
+      "previousAssetValue": 12.5,
+      "recentPrice": 22.1,
+      "newBuildPrice": 4550,
+      "stage": "추진위",
+      "regulationRisk": "중간",
+      "residentMomentum": "중간",
+      "dataReliability": 89,
+      "x": 25,
+      "y": 65,
+      "note": "사업성은 주요 변수 변화에 따라 민감하게 달라질 수 있습니다.",
+      "sourceFreshness": {
+        "physicalInfo": "2026-04",
+        "transaction": "202603",
+        "regulation": "unknown",
+        "costIndex": "2026-03"
+      }
+    },
+    {
+      "id": "apt-021",
+      "identifiers": {
+        "complexId": "seoul-yangcheon-mokdong-11",
+        "kaptCode": "A15807705",
+        "legalDongCode": "1147010100",
+        "roadAddress": "서울 양천구 신정동",
+        "jibunAddress": "서울 양천구 신정동",
+        "lat": 37.522,
+        "lng": 126.866
+      },
+      "name": "목동11단지",
+      "aliases": [
+        "목동11단지"
+      ],
+      "district": "양천구",
+      "address": "서울 양천구 신정동",
+      "legalDongCode": "1147010100",
+      "builtYear": 1988,
+      "units": 1595,
+      "currentFar": 150,
+      "allowedFar": 300,
+      "landShare": 13,
+      "previousAssetValue": 13,
+      "recentPrice": 19.3,
+      "newBuildPrice": 4550,
+      "stage": "추진위",
+      "regulationRisk": "중간",
+      "residentMomentum": "중간",
+      "dataReliability": 89,
+      "x": 26,
+      "y": 64,
+      "note": "사업성은 주요 변수 변화에 따라 민감하게 달라질 수 있습니다.",
+      "sourceFreshness": {
+        "physicalInfo": "2026-04",
+        "transaction": "202603",
+        "regulation": "unknown",
+        "costIndex": "2026-03"
+      }
+    },
+    {
+      "id": "apt-022",
+      "identifiers": {
+        "complexId": "gyeonggi-gunpo-sanbon-jugong3-dasan",
+        "kaptCode": "A43575501",
+        "legalDongCode": "4141010500",
+        "roadAddress": "경기 군포시 금정동",
+        "jibunAddress": "경기 군포시 금정동",
+        "lat": 37.36,
+        "lng": 126.93
+      },
+      "name": "산본 주공3단지 다산아파트",
+      "aliases": [
+        "산본 주공3단지 다산아파트",
+        "산본주공3단지다산아파트",
+        "산본 주공3단지 다산",
+        "산본주공3단지다산"
+      ],
+      "district": "군포시",
+      "address": "경기 군포시 금정동",
+      "legalDongCode": "4141010500",
+      "builtYear": 1992,
+      "units": 1040,
+      "currentFar": 205,
+      "allowedFar": 300,
+      "landShare": 8.5,
+      "previousAssetValue": 4.2,
+      "recentPrice": 5.2,
+      "newBuildPrice": 2300,
+      "stage": "검토",
+      "regulationRisk": "중간",
+      "residentMomentum": "중간",
+      "dataReliability": 89,
+      "x": 40,
+      "y": 92,
+      "note": "사업성은 주요 변수 변화에 따라 민감하게 달라질 수 있습니다.",
+      "sourceFreshness": {
+        "physicalInfo": "2026-04",
+        "transaction": "2026-03",
+        "regulation": "2026-03",
+        "costIndex": "2026-03"
+      }
+    },
+    {
+      "id": "apt-023",
+      "identifiers": {
+        "complexId": "gyeonggi-bucheon-jungdong-eunha-jugong1",
+        "kaptCode": "A42084804",
+        "legalDongCode": "4119210800",
+        "roadAddress": "경기 부천시 원미구 중동",
+        "jibunAddress": "경기 부천시 원미구 중동",
+        "lat": 37.5,
+        "lng": 126.77
+      },
+      "name": "중동은하마을주공1단지",
+      "aliases": [
+        "중동은하마을주공1단지"
+      ],
+      "district": "부천원미구",
+      "address": "경기 부천시 원미구",
+      "legalDongCode": "4119210800",
+      "builtYear": 1993,
+      "units": 795,
+      "currentFar": 215,
+      "allowedFar": 300,
+      "landShare": 8.2,
+      "previousAssetValue": 4.8,
+      "recentPrice": 4.9,
+      "newBuildPrice": 2500,
+      "stage": "검토",
+      "regulationRisk": "중간",
+      "residentMomentum": "중간",
+      "dataReliability": 89,
+      "x": 8,
+      "y": 71,
+      "note": "사업성은 주요 변수 변화에 따라 민감하게 달라질 수 있습니다.",
+      "sourceFreshness": {
+        "physicalInfo": "2026-04",
+        "transaction": "202603",
+        "regulation": "2026-03",
+        "costIndex": "2026-03"
+      }
+    },
+    {
+      "id": "apt-024",
+      "identifiers": {
+        "complexId": "gyeonggi-bucheon-jungdong-halla-jugong3",
+        "kaptCode": "A42084706",
+        "legalDongCode": "4119210800",
+        "roadAddress": "경기 부천시 원미구 중동",
+        "jibunAddress": "경기 부천시 원미구 중동",
+        "lat": 37.5,
+        "lng": 126.77
+      },
+      "name": "중동한라마을주공3단지",
+      "aliases": [
+        "중동한라마을주공3단지"
+      ],
+      "district": "부천원미구",
+      "address": "경기 부천시 원미구",
+      "legalDongCode": "4119210800",
+      "builtYear": 1993,
+      "units": 1200,
+      "currentFar": 215,
+      "allowedFar": 300,
+      "landShare": 8.1,
+      "previousAssetValue": 4.6,
+      "recentPrice": 3.775,
+      "newBuildPrice": 2500,
+      "stage": "검토",
+      "regulationRisk": "중간",
+      "residentMomentum": "중간",
+      "dataReliability": 89,
+      "x": 8,
+      "y": 71,
+      "note": "사업성은 주요 변수 변화에 따라 민감하게 달라질 수 있습니다.",
+      "sourceFreshness": {
+        "physicalInfo": "2026-04",
+        "transaction": "202603",
+        "regulation": "2026-03",
+        "costIndex": "2026-03"
+      }
+    },
+    {
+      "id": "apt-025",
+      "identifiers": {
+        "complexId": "gyeonggi-anyang-pyeongchon-kkummaeul-woosung",
+        "kaptCode": "A43170906",
+        "legalDongCode": "4117310300",
+        "roadAddress": "경기 안양시 동안구 평촌동",
+        "jibunAddress": "경기 안양시 동안구 평촌동",
+        "lat": 37.39,
+        "lng": 126.96
+      },
+      "name": "꿈마을우성",
+      "aliases": [
+        "꿈마을우성"
+      ],
+      "district": "안양동안구",
+      "address": "경기 안양시 동안구",
+      "legalDongCode": "4117310300",
+      "builtYear": 1993,
+      "units": 590,
+      "currentFar": 210,
+      "allowedFar": 300,
+      "landShare": 8.8,
+      "previousAssetValue": 6.5,
+      "recentPrice": 15.6,
+      "newBuildPrice": 3000,
+      "stage": "검토",
+      "regulationRisk": "중간",
+      "residentMomentum": "중간",
+      "dataReliability": 89,
+      "x": 47,
+      "y": 92,
+      "note": "사업성은 주요 변수 변화에 따라 민감하게 달라질 수 있습니다.",
+      "sourceFreshness": {
+        "physicalInfo": "2026-04",
+        "transaction": "202603",
+        "regulation": "2026-03",
+        "costIndex": "2026-03"
+      }
+    },
+    {
+      "id": "apt-026",
+      "identifiers": {
+        "complexId": "gyeonggi-anyang-pyeongchon-saemmaeul-woobang",
+        "kaptCode": "A43170303",
+        "legalDongCode": "4117310400",
+        "roadAddress": "경기 안양시 동안구 호계동",
+        "jibunAddress": "경기 안양시 동안구 호계동",
+        "lat": 37.38,
+        "lng": 126.95
+      },
+      "name": "샘마을우방",
+      "aliases": [
+        "샘마을우방"
+      ],
+      "district": "안양동안구",
+      "address": "경기 안양시 동안구",
+      "legalDongCode": "4117310400",
+      "builtYear": 1993,
+      "units": 488,
+      "currentFar": 215,
+      "allowedFar": 300,
+      "landShare": 8.4,
+      "previousAssetValue": 6,
+      "recentPrice": 13.2,
+      "newBuildPrice": 3000,
+      "stage": "검토",
+      "regulationRisk": "중간",
+      "residentMomentum": "중간",
+      "dataReliability": 89,
+      "x": 44,
+      "y": 92,
+      "note": "사업성은 주요 변수 변화에 따라 민감하게 달라질 수 있습니다.",
+      "sourceFreshness": {
+        "physicalInfo": "2026-04",
+        "transaction": "202603",
+        "regulation": "2026-03",
+        "costIndex": "2026-03"
+      }
+    },
+    {
+      "id": "apt-027",
+      "identifiers": {
+        "complexId": "gyeonggi-ilsan-madu-gangchon3",
+        "kaptCode": "A41081102",
+        "legalDongCode": "4128510500",
+        "roadAddress": "경기 고양시 일산동구 마두동",
+        "jibunAddress": "경기 고양시 일산동구 마두동",
+        "lat": 37.65,
+        "lng": 126.78
+      },
+      "name": "강촌마을3단지",
+      "aliases": [
+        "강촌마을3단지"
+      ],
+      "district": "고양일산동구",
+      "address": "경기 고양시 일산동구",
+      "legalDongCode": "4128510500",
+      "builtYear": 1993,
+      "units": 720,
+      "currentFar": 210,
+      "allowedFar": 300,
+      "landShare": 8.6,
+      "previousAssetValue": 5.8,
+      "recentPrice": 6.484999999999999,
+      "newBuildPrice": 2600,
+      "stage": "검토",
+      "regulationRisk": "중간",
+      "residentMomentum": "중간",
+      "dataReliability": 89,
+      "x": 8,
+      "y": 18,
+      "note": "사업성은 주요 변수 변화에 따라 민감하게 달라질 수 있습니다.",
+      "sourceFreshness": {
+        "physicalInfo": "2026-04",
+        "transaction": "202603",
+        "regulation": "2026-03",
+        "costIndex": "2026-03"
+      }
+    },
+    {
+      "id": "apt-028",
+      "identifiers": {
+        "complexId": "gyeonggi-ilsan-hugok10",
+        "kaptCode": "A41182706",
+        "legalDongCode": "4128710100",
+        "roadAddress": "경기 고양시 일산서구 일산동",
+        "jibunAddress": "경기 고양시 일산서구 일산동",
+        "lat": 37.68,
+        "lng": 126.77
+      },
+      "name": "후곡마을10단지아파트",
+      "aliases": [
+        "후곡마을10단지아파트",
+        "후곡마을10단지"
+      ],
+      "district": "고양일산서구",
+      "address": "경기 고양시 일산서구",
+      "legalDongCode": "4128710100",
+      "builtYear": 1994,
+      "units": 690,
+      "currentFar": 215,
+      "allowedFar": 300,
+      "landShare": 8.3,
+      "previousAssetValue": 5.5,
+      "recentPrice": 3.5,
+      "newBuildPrice": 2500,
+      "stage": "검토",
+      "regulationRisk": "중간",
+      "residentMomentum": "중간",
+      "dataReliability": 89,
+      "x": 8,
+      "y": 8,
+      "note": "사업성은 주요 변수 변화에 따라 민감하게 달라질 수 있습니다.",
+      "sourceFreshness": {
+        "physicalInfo": "2026-04",
+        "transaction": "202603",
+        "regulation": "2026-03",
+        "costIndex": "2026-03"
+      }
+    },
+    {
+      "id": "apt-029",
+      "identifiers": {
+        "complexId": "gyeonggi-bundang-gumi-kkachi2",
+        "kaptCode": "A46374012",
+        "legalDongCode": "4113511400",
+        "roadAddress": "경기 성남시 분당구 구미동",
+        "jibunAddress": "경기 성남시 분당구 구미동",
+        "lat": 37.34,
+        "lng": 127.12
+      },
+      "name": "까치마을2단지주공아파트",
+      "aliases": [
+        "까치마을2단지주공아파트",
+        "까치마을2단지주공"
+      ],
+      "district": "성남분당구",
+      "address": "경기 성남시 분당구",
+      "legalDongCode": "4113511400",
+      "builtYear": 1995,
+      "units": 768,
+      "currentFar": 220,
+      "allowedFar": 300,
+      "landShare": 8,
+      "previousAssetValue": 7,
+      "recentPrice": 13.26,
+      "newBuildPrice": 3400,
+      "stage": "검토",
+      "regulationRisk": "중간",
+      "residentMomentum": "중간",
+      "dataReliability": 89,
+      "x": 82,
+      "y": 92,
+      "note": "사업성은 주요 변수 변화에 따라 민감하게 달라질 수 있습니다.",
+      "sourceFreshness": {
+        "physicalInfo": "2026-04",
+        "transaction": "202603",
+        "regulation": "2026-03",
+        "costIndex": "2026-03"
+      }
+    }
+  ]
+}
