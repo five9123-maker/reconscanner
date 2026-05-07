@@ -165,6 +165,7 @@ export type RankedComplex = {
 
 export type DataQualitySummary = {
   totalComplexes: number
+  inferredCandidateCount: number
   averageReliability: number
   missingKaptCode: number
   missingPnu: number

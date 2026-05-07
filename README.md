@@ -39,6 +39,12 @@ npm run dev
 http://127.0.0.1:5173/
 ```
 
+GitHub Pages 배포 URL:
+
+```text
+https://five9123-maker.github.io/reconscanner/
+```
+
 ## 검증 명령
 
 ```bash
@@ -48,6 +54,7 @@ npm run test
 npm run api:check
 npm run etl:sample
 npm run etl:live
+npm run etl:plan
 ```
 
 ## 실제 공공 API 연동
@@ -79,6 +86,14 @@ npm run api:check
 
 현재 live ETL은 국토교통부 실거래가 API를 최근 N개월 window로 호출하고, 서울 정비사업 API를 단지명/법정동 기준으로 매칭합니다. key가 없거나 API가 실패하면 기존 공개 추정값 또는 지역 기준 추정값을 fallback으로 유지합니다. 실패 사유는 `missing_key`, `auth`, `quota`, `server`, `provider` 등으로 분류됩니다. 결과는 `public/data/live-etl-result.json`에 저장됩니다.
 
+추정 후보 단지의 API 실매칭 우선순위는 아래 명령으로 생성합니다.
+
+```bash
+npm run etl:plan
+```
+
+결과는 `public/data/api-enrichment-plan.json`에 저장됩니다. 각 batch에는 바로 실행 가능한 `RECON_LIVE_TARGETS=... npm run etl:live` 명령이 포함됩니다.
+
 ## 프로젝트 구조
 
 ```text
@@ -95,6 +110,7 @@ src/etl
   pipeline
   validation
   live ETL runner
+  API enrichment plan
 
 src/repositories
   UI/진단 엔진이 읽는 데이터 접근 계층
@@ -136,9 +152,8 @@ raw public data
 
 ## 다음 개발 후보
 
-- 분석 대상 단지 추가와 자동 검색 index 고도화
+- GitHub Pages 배포 상태 badge와 release note 자동화
 - 신축 레퍼런스 데이터의 출처/갱신일 관리
 - PDF 리포트 renderer
-- 관심 단지 저장
 - 관리자용 ETL 실행 화면
 - 공공 API 실패/누락 상태의 UI 복구 흐름 개선

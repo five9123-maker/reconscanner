@@ -1,0 +1,1051 @@
+{
+  "generatedAt": "2026-05-07T12:54:39.493Z",
+  "totalCandidates": 56,
+  "batchSize": 10,
+  "batches": [
+    {
+      "index": 1,
+      "targets": [
+        {
+          "id": "apt-061",
+          "name": "이촌왕궁아파트",
+          "district": "용산구",
+          "priorityScore": 61.4,
+          "reconScore": 79,
+          "businessScore": 89.3,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 79점",
+            "사업성 89점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-061"
+        },
+        {
+          "id": "apt-073",
+          "name": "목동6단지",
+          "district": "양천구",
+          "priorityScore": 60.7,
+          "reconScore": 79.5,
+          "businessScore": 85.6,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 79점",
+            "사업성 86점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-073"
+        },
+        {
+          "id": "apt-059",
+          "name": "여의도 공작아파트",
+          "district": "영등포구",
+          "priorityScore": 60.3,
+          "reconScore": 81.1,
+          "businessScore": 81.7,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 81점",
+            "사업성 82점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-059"
+        },
+        {
+          "id": "apt-049",
+          "name": "청담삼익아파트",
+          "district": "강남구",
+          "priorityScore": 60.3,
+          "reconScore": 81,
+          "businessScore": 81.5,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 81점",
+            "사업성 82점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-049"
+        },
+        {
+          "id": "apt-071",
+          "name": "목동3단지",
+          "district": "양천구",
+          "priorityScore": 59.8,
+          "reconScore": 77,
+          "businessScore": 85.8,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 77점",
+            "사업성 86점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-071"
+        },
+        {
+          "id": "apt-070",
+          "name": "목동2단지",
+          "district": "양천구",
+          "priorityScore": 59.7,
+          "reconScore": 76.9,
+          "businessScore": 85.5,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 77점",
+            "사업성 86점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-070"
+        },
+        {
+          "id": "apt-072",
+          "name": "목동4단지",
+          "district": "양천구",
+          "priorityScore": 59.6,
+          "reconScore": 76.8,
+          "businessScore": 85.2,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 77점",
+            "사업성 85점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-072"
+        },
+        {
+          "id": "apt-060",
+          "name": "여의도 광장아파트",
+          "district": "영등포구",
+          "priorityScore": 59.5,
+          "reconScore": 79.6,
+          "businessScore": 80.6,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 80점",
+            "사업성 81점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-060"
+        },
+        {
+          "id": "apt-074",
+          "name": "목동8단지",
+          "district": "양천구",
+          "priorityScore": 59.1,
+          "reconScore": 76.1,
+          "businessScore": 84.7,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 76점",
+            "사업성 85점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-074"
+        },
+        {
+          "id": "apt-050",
+          "name": "압구정한양7차아파트",
+          "district": "강남구",
+          "priorityScore": 59.1,
+          "reconScore": 79.2,
+          "businessScore": 79.5,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 79점",
+            "사업성 79점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-050"
+        }
+      ],
+      "command": "RECON_LIVE_TARGETS=apt-061,apt-073,apt-059,apt-049,apt-071,apt-070,apt-072,apt-060,apt-074,apt-050 npm run etl:live"
+    },
+    {
+      "index": 2,
+      "targets": [
+        {
+          "id": "apt-075",
+          "name": "목동10단지",
+          "district": "양천구",
+          "priorityScore": 57.9,
+          "reconScore": 74,
+          "businessScore": 82.9,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 74점",
+            "사업성 83점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-075"
+        },
+        {
+          "id": "apt-047",
+          "name": "개포현대1차아파트",
+          "district": "강남구",
+          "priorityScore": 57.7,
+          "reconScore": 74.8,
+          "businessScore": 80.7,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 75점",
+            "사업성 81점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-047"
+        },
+        {
+          "id": "apt-076",
+          "name": "목동12단지",
+          "district": "양천구",
+          "priorityScore": 57.3,
+          "reconScore": 73.1,
+          "businessScore": 81.9,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 73점",
+            "사업성 82점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-076"
+        },
+        {
+          "id": "apt-077",
+          "name": "목동13단지",
+          "district": "양천구",
+          "priorityScore": 57.3,
+          "reconScore": 73.4,
+          "businessScore": 81.2,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 73점",
+            "사업성 81점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-077"
+        },
+        {
+          "id": "apt-046",
+          "name": "개포경남아파트",
+          "district": "강남구",
+          "priorityScore": 57,
+          "reconScore": 74.1,
+          "businessScore": 78.8,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 74점",
+            "사업성 79점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-046"
+        },
+        {
+          "id": "apt-048",
+          "name": "도곡삼익아파트",
+          "district": "강남구",
+          "priorityScore": 56.8,
+          "reconScore": 75.1,
+          "businessScore": 76.3,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 75점",
+            "사업성 76점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-048"
+        },
+        {
+          "id": "apt-063",
+          "name": "서빙고신동아아파트",
+          "district": "용산구",
+          "priorityScore": 56.8,
+          "reconScore": 74.8,
+          "businessScore": 77,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 75점",
+            "사업성 77점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-063"
+        },
+        {
+          "id": "apt-064",
+          "name": "성수장미아파트",
+          "district": "성동구",
+          "priorityScore": 56.2,
+          "reconScore": 73.7,
+          "businessScore": 76.3,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 74점",
+            "사업성 76점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-064"
+        },
+        {
+          "id": "apt-045",
+          "name": "개포우성7차아파트",
+          "district": "강남구",
+          "priorityScore": 56.1,
+          "reconScore": 72.2,
+          "businessScore": 78,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 72점",
+            "사업성 78점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-045"
+        },
+        {
+          "id": "apt-051",
+          "name": "압구정미성2차아파트",
+          "district": "강남구",
+          "priorityScore": 56.1,
+          "reconScore": 74.6,
+          "businessScore": 74.2,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 75점",
+            "사업성 74점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-051"
+        }
+      ],
+      "command": "RECON_LIVE_TARGETS=apt-075,apt-047,apt-076,apt-077,apt-046,apt-048,apt-063,apt-064,apt-045,apt-051 npm run etl:live"
+    },
+    {
+      "index": 3,
+      "targets": [
+        {
+          "id": "apt-054",
+          "name": "미성크로바아파트",
+          "district": "송파구",
+          "priorityScore": 55.8,
+          "reconScore": 76.6,
+          "businessScore": 69.8,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 77점",
+            "사업성 70점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-054"
+        },
+        {
+          "id": "apt-052",
+          "name": "잠실장미1차아파트",
+          "district": "송파구",
+          "priorityScore": 55.7,
+          "reconScore": 74.3,
+          "businessScore": 73.2,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 74점",
+            "사업성 73점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-052"
+        },
+        {
+          "id": "apt-056",
+          "name": "고덕주공9단지",
+          "district": "강동구",
+          "priorityScore": 52.1,
+          "reconScore": 68.9,
+          "businessScore": 66.5,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 69점",
+            "사업성 67점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-056"
+        },
+        {
+          "id": "apt-057",
+          "name": "삼익그린2차아파트",
+          "district": "강동구",
+          "priorityScore": 51.5,
+          "reconScore": 69.9,
+          "businessScore": 62.6,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 70점",
+            "사업성 63점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-057"
+        },
+        {
+          "id": "apt-053",
+          "name": "잠실우성1차아파트",
+          "district": "송파구",
+          "priorityScore": 51.1,
+          "reconScore": 68.9,
+          "businessScore": 62.7,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 69점",
+            "사업성 63점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-053"
+        },
+        {
+          "id": "apt-065",
+          "name": "옥수극동아파트",
+          "district": "성동구",
+          "priorityScore": 49.8,
+          "reconScore": 66.3,
+          "businessScore": 61.2,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 66점",
+            "사업성 61점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-065"
+        },
+        {
+          "id": "apt-099",
+          "name": "철산주공12단지",
+          "district": "광명시",
+          "priorityScore": 48.9,
+          "reconScore": 66.2,
+          "businessScore": 57.4,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 66점",
+            "사업성 57점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-099"
+        },
+        {
+          "id": "apt-055",
+          "name": "문정시영아파트",
+          "district": "송파구",
+          "priorityScore": 48.6,
+          "reconScore": 64.1,
+          "businessScore": 59.5,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 64점",
+            "사업성 60점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-055"
+        },
+        {
+          "id": "apt-100",
+          "name": "하안주공5단지",
+          "district": "광명시",
+          "priorityScore": 46.4,
+          "reconScore": 61.9,
+          "businessScore": 53.8,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 62점",
+            "사업성 54점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-100"
+        },
+        {
+          "id": "apt-079",
+          "name": "상계주공3단지",
+          "district": "노원구",
+          "priorityScore": 46.1,
+          "reconScore": 62.3,
+          "businessScore": 52.1,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 62점",
+            "사업성 52점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-079"
+        }
+      ],
+      "command": "RECON_LIVE_TARGETS=apt-054,apt-052,apt-056,apt-057,apt-053,apt-065,apt-099,apt-055,apt-100,apt-079 npm run etl:live"
+    },
+    {
+      "index": 4,
+      "targets": [
+        {
+          "id": "apt-080",
+          "name": "상계주공6단지",
+          "district": "노원구",
+          "priorityScore": 45.6,
+          "reconScore": 61.5,
+          "businessScore": 51.4,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 62점",
+            "사업성 51점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-080"
+        },
+        {
+          "id": "apt-081",
+          "name": "상계주공7단지",
+          "district": "노원구",
+          "priorityScore": 45.6,
+          "reconScore": 61.5,
+          "businessScore": 51.4,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 62점",
+            "사업성 51점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-081"
+        },
+        {
+          "id": "apt-078",
+          "name": "상계주공1단지",
+          "district": "노원구",
+          "priorityScore": 45.5,
+          "reconScore": 61.3,
+          "businessScore": 51,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 61점",
+            "사업성 51점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-078"
+        },
+        {
+          "id": "apt-085",
+          "name": "양지마을금호아파트",
+          "district": "성남분당구",
+          "priorityScore": 45.5,
+          "reconScore": 60,
+          "businessScore": 53.3,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 60점",
+            "사업성 53점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-085"
+        },
+        {
+          "id": "apt-082",
+          "name": "상계주공9단지",
+          "district": "노원구",
+          "priorityScore": 45.3,
+          "reconScore": 61.2,
+          "businessScore": 50.6,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 61점",
+            "사업성 51점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-082"
+        },
+        {
+          "id": "apt-087",
+          "name": "한솔마을주공5단지",
+          "district": "성남분당구",
+          "priorityScore": 45.1,
+          "reconScore": 58.9,
+          "businessScore": 53.2,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 59점",
+            "사업성 53점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-087"
+        },
+        {
+          "id": "apt-084",
+          "name": "하계장미아파트",
+          "district": "노원구",
+          "priorityScore": 44.6,
+          "reconScore": 60.1,
+          "businessScore": 49.3,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 60점",
+            "사업성 49점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-084"
+        },
+        {
+          "id": "apt-062",
+          "name": "이촌한가람아파트",
+          "district": "용산구",
+          "priorityScore": 44.5,
+          "reconScore": 57,
+          "businessScore": 53.9,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 57점",
+            "사업성 54점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-062"
+        },
+        {
+          "id": "apt-086",
+          "name": "정든마을동아아파트",
+          "district": "성남분당구",
+          "priorityScore": 43.9,
+          "reconScore": 57.7,
+          "businessScore": 50,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 58점",
+            "사업성 50점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-086"
+        },
+        {
+          "id": "apt-083",
+          "name": "중계주공5단지",
+          "district": "노원구",
+          "priorityScore": 43.6,
+          "reconScore": 58.1,
+          "businessScore": 48.2,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 58점",
+            "사업성 48점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-083"
+        }
+      ],
+      "command": "RECON_LIVE_TARGETS=apt-080,apt-081,apt-078,apt-085,apt-082,apt-087,apt-084,apt-062,apt-086,apt-083 npm run etl:live"
+    },
+    {
+      "index": 5,
+      "targets": [
+        {
+          "id": "apt-092",
+          "name": "개나리주공13단지",
+          "district": "군포시",
+          "priorityScore": 42.9,
+          "reconScore": 57.4,
+          "businessScore": 46.3,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 57점",
+            "사업성 46점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-092"
+        },
+        {
+          "id": "apt-094",
+          "name": "미리내마을아파트",
+          "district": "부천원미구",
+          "priorityScore": 42.8,
+          "reconScore": 57,
+          "businessScore": 46.6,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 57점",
+            "사업성 47점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-094"
+        },
+        {
+          "id": "apt-090",
+          "name": "향촌현대아파트",
+          "district": "안양동안구",
+          "priorityScore": 42.8,
+          "reconScore": 57.3,
+          "businessScore": 46.1,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 57점",
+            "사업성 46점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-090"
+        },
+        {
+          "id": "apt-089",
+          "name": "초원부영아파트",
+          "district": "안양동안구",
+          "priorityScore": 42.5,
+          "reconScore": 57,
+          "businessScore": 45.4,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 57점",
+            "사업성 45점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-089"
+        },
+        {
+          "id": "apt-093",
+          "name": "매화주공14단지",
+          "district": "군포시",
+          "priorityScore": 42.4,
+          "reconScore": 56.6,
+          "businessScore": 45.7,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 57점",
+            "사업성 46점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-093"
+        },
+        {
+          "id": "apt-088",
+          "name": "무지개마을청구아파트",
+          "district": "성남분당구",
+          "priorityScore": 42,
+          "reconScore": 55.5,
+          "businessScore": 45.6,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 55점",
+            "사업성 46점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-088"
+        },
+        {
+          "id": "apt-095",
+          "name": "보람마을아파트",
+          "district": "부천원미구",
+          "priorityScore": 42,
+          "reconScore": 55.6,
+          "businessScore": 45.8,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 56점",
+            "사업성 46점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-095"
+        },
+        {
+          "id": "apt-098",
+          "name": "백송마을아파트",
+          "district": "고양일산동구",
+          "priorityScore": 41.6,
+          "reconScore": 55.8,
+          "businessScore": 43.5,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 56점",
+            "사업성 44점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-098"
+        },
+        {
+          "id": "apt-096",
+          "name": "문촌마을아파트",
+          "district": "고양일산서구",
+          "priorityScore": 41.1,
+          "reconScore": 55,
+          "businessScore": 42.9,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 55점",
+            "사업성 43점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-096"
+        },
+        {
+          "id": "apt-097",
+          "name": "강선마을아파트",
+          "district": "고양일산서구",
+          "priorityScore": 41,
+          "reconScore": 54.9,
+          "businessScore": 42.5,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 55점",
+            "사업성 42점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-097"
+        }
+      ],
+      "command": "RECON_LIVE_TARGETS=apt-092,apt-094,apt-090,apt-089,apt-093,apt-088,apt-095,apt-098,apt-096,apt-097 npm run etl:live"
+    },
+    {
+      "index": 6,
+      "targets": [
+        {
+          "id": "apt-091",
+          "name": "한가람한양아파트",
+          "district": "안양동안구",
+          "priorityScore": 41,
+          "reconScore": 54.5,
+          "businessScore": 43,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 55점",
+            "사업성 43점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-091"
+        },
+        {
+          "id": "apt-069",
+          "name": "독립문극동아파트",
+          "district": "서대문구",
+          "priorityScore": 40.8,
+          "reconScore": 53.3,
+          "businessScore": 44.1,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 53점",
+            "사업성 44점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-069"
+        },
+        {
+          "id": "apt-068",
+          "name": "서강삼성아파트",
+          "district": "마포구",
+          "priorityScore": 40.5,
+          "reconScore": 52.7,
+          "businessScore": 44.1,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 53점",
+            "사업성 44점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-068"
+        },
+        {
+          "id": "apt-067",
+          "name": "대흥태영아파트",
+          "district": "마포구",
+          "priorityScore": 40.2,
+          "reconScore": 52.4,
+          "businessScore": 43.2,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 52점",
+            "사업성 43점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-067"
+        },
+        {
+          "id": "apt-058",
+          "name": "선사현대아파트",
+          "district": "강동구",
+          "priorityScore": 40.2,
+          "reconScore": 52.1,
+          "businessScore": 43.7,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 52점",
+            "사업성 44점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-058"
+        },
+        {
+          "id": "apt-066",
+          "name": "행당한진타운아파트",
+          "district": "성동구",
+          "priorityScore": 39.8,
+          "reconScore": 51.7,
+          "businessScore": 42.7,
+          "dataReliability": 66,
+          "reasons": [
+            "종합 52점",
+            "사업성 43점",
+            "신뢰도 66%",
+            "품질 이슈 2건",
+            "PNU 매칭 필요",
+            "후보 추정값 검증 필요"
+          ],
+          "commandTarget": "apt-066"
+        }
+      ],
+      "command": "RECON_LIVE_TARGETS=apt-091,apt-069,apt-068,apt-067,apt-058,apt-066 npm run etl:live"
+    }
+  ]
+}

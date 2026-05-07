@@ -1,3 +1,6 @@
+import { useId } from 'react'
+import { CircleHelp } from 'lucide-react'
+
 type ControlProps = {
   label: string
   value: number
@@ -10,16 +13,31 @@ type ControlProps = {
 }
 
 export function Control({ label, value, min, max, step, suffix, tooltip, onChange }: ControlProps) {
+  const inputId = useId()
+
   return (
-    <label className={`control ${tooltip ? 'tooltip-target' : ''}`} data-tooltip={tooltip} tabIndex={tooltip ? 0 : undefined}>
-      <div>
-        <span>{label}</span>
+    <div className="control">
+      <div className="control-header">
+        <span className="control-label-wrap">
+          <label htmlFor={inputId}>{label}</label>
+          {tooltip && (
+            <span
+              className="control-help tooltip-target"
+              data-tooltip={tooltip}
+              aria-label={`${label} 설명`}
+              tabIndex={0}
+            >
+              <CircleHelp size={13} />
+            </span>
+          )}
+        </span>
         <b>
           {value.toLocaleString('ko-KR', { maximumFractionDigits: 1 })}
           {suffix}
         </b>
       </div>
       <input
+        id={inputId}
         type="range"
         min={min}
         max={max}
@@ -27,6 +45,6 @@ export function Control({ label, value, min, max, step, suffix, tooltip, onChang
         value={value}
         onChange={(event) => onChange(Number(event.target.value))}
       />
-    </label>
+    </div>
   )
 }

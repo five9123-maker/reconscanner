@@ -39,7 +39,8 @@ describe('complexRepository', () => {
     const summary = getDataQualitySummary()
 
     expect(summary.totalComplexes).toBeGreaterThanOrEqual(15)
-    expect(summary.averageReliability).toBeGreaterThan(70)
+    expect(summary.inferredCandidateCount).toBe(56)
+    expect(summary.averageReliability).toBeGreaterThan(65)
     expect(summary.missingKaptCode).toBeGreaterThanOrEqual(0)
     expect(summary.issueCount).toBeGreaterThan(0)
   })

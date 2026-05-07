@@ -8,25 +8,54 @@ import {
   Download,
   FileText,
   Gauge,
+  Clock3,
   MapPin,
   RefreshCw,
   Search,
   ShieldAlert,
   SlidersHorizontal,
+  Star,
   TrendingUp,
 } from 'lucide-react'
 import { ComparisonTable } from './components/ComparisonTable'
 import { Control } from './components/Control'
+import { FactRow } from './components/FactRow'
+import { QuickAccessGroup } from './components/QuickAccessGroup'
+import { RankList } from './components/RankList'
 import { ReportPreview } from './components/ReportPreview'
+import { useJsonResource } from './hooks/useJsonResource'
+import { useLocalStorageState } from './hooks/useLocalStorageState'
+import {
+  createScenarioDelta,
+  createScoreEvidenceItems,
+  createScoreTooltip,
+  getDataEvidenceLabel,
+  getStageTooltip,
+  getUnitTypeCountLabel,
+  getUnitTypeCountTooltip,
+} from './lib/analysisDisplay'
 import { baseScenario, calculateDiagnosis, formatCurrency, getContributionRange } from './lib/diagnosis'
+import { formatSettlementCurrency, formatSettlementDelta, formatSignedPoint, formatSourceType } from './lib/displayFormat'
+import { findRenewalMatch, findTransactionDiagnostic, formatMatchStrategy, mergeLiveComplexes } from './lib/livePayloadMerge'
+import {
+  describeCurrentPricePerPyeong,
+  describeExpectedSalePricePerPyeong,
+  estimateCurrentPricePerPyeong,
+  estimateExpectedSalePricePerPyeong,
+} from './lib/marketPrice'
 import { buildReportPayload } from './lib/report'
+import { validateApiEnrichmentPlan, validateLiveEtlStatus, validateSearchIndexPayload } from './lib/payloadValidation'
 import { getScenarioStressLabel, isBaseScenario, sanitizeScenario } from './lib/scenario'
+import { getSearchItemLabel, searchIndexByComplexName } from './lib/searchIndex'
 import {
   createComplexRepository,
   getDefaultComplexId,
   listComplexes,
 } from './repositories/complexRepository'
 import type { Complex, DataSignal, RankedComplex, Scenario, SourceType } from './types'
+import type { ApiEnrichmentPlan } from './types/apiEnrichment'
+import type { LiveEtlStatus } from './types/liveEtl'
+import type { SearchIndexItem, SearchIndexPayload } from './types/searchIndex'
 import './App.css'
 
 function App() {
@@ -35,11 +64,17 @@ function App() {
   const [isSearchFocused, setIsSearchFocused] = useState(false)
   const [showReport, setShowReport] = useState(false)
   const [scenario, setScenario] = useState<Scenario>(baseScenario)
-  const [liveEtlStatus, setLiveEtlStatus] = useState<LiveEtlStatus | null>(null)
+  const [comparisonMode, setComparisonMode] = useState<'business' | 'success'>('business')
   const [liveEtlRefreshKey, setLiveEtlRefreshKey] = useState(0)
-  const [searchIndex, setSearchIndex] = useState<SearchIndexItem[]>([])
   const [pendingSearchOnlyItem, setPendingSearchOnlyItem] = useState<SearchIndexItem | null>(null)
   const [areaRangeOverrides, setAreaRangeOverrides] = useState<Record<string, string>>({})
+  const [favoriteIds, setFavoriteIds] = useLocalStorageState<string[]>('reconscanner.favoriteIds', [])
+  const [recentIds, setRecentIds] = useLocalStorageState<string[]>('reconscanner.recentIds', [])
+  const [requestedSearchOnlyIds, setRequestedSearchOnlyIds] = useLocalStorageState<string[]>('reconscanner.requestedSearchOnlyIds', [])
+  const liveEtlStatus = useJsonResource<LiveEtlStatus | null>('/data/live-etl-result.json', validateLiveEtlStatus, null, liveEtlRefreshKey)
+  const searchIndexPayload = useJsonResource<SearchIndexPayload | null>('/data/search-index.json', validateSearchIndexPayload, null)
+  const apiEnrichmentPlan = useJsonResource<ApiEnrichmentPlan | null>('/data/api-enrichment-plan.json', validateApiEnrichmentPlan, null)
+  const searchIndex = useMemo(() => searchIndexPayload?.items ?? [], [searchIndexPayload])
 
   const repository = useMemo(() => createComplexRepository(mergeLiveComplexes(listComplexes(), liveEtlStatus?.complexes ?? []), []), [liveEtlStatus])
   const baseSelected = repository.getComplexById(selectedId) ?? repository.getComplexById(repository.getDefaultComplexId())!
@@ -57,6 +92,8 @@ function App() {
     [baseSelected, selectedAreaStat],
   )
   const diagnosis = useMemo(() => calculateDiagnosis(selected, scenario), [selected, scenario])
+  const baselineDiagnosis = useMemo(() => calculateDiagnosis(selected, baseScenario), [selected])
+  const scenarioDelta = useMemo(() => createScenarioDelta(diagnosis, baselineDiagnosis), [diagnosis, baselineDiagnosis])
   const rankedComplexes = useMemo<RankedComplex[]>(
     () => repository.getRankedComplexes(scenario),
     [repository, scenario],
@@ -77,51 +114,37 @@ function App() {
   const selectedRank = rankedComplexes.findIndex(({ complex }) => complex.id === selected.id) + 1
   const selectedBusinessRank = businessRankedComplexes.findIndex(({ complex }) => complex.id === selected.id) + 1
   const dataProfile = selected.dataProfile
+  const scoreEvidenceItems = useMemo(() => createScoreEvidenceItems(selected, diagnosis, scenario), [selected, diagnosis, scenario])
   const renewalMatch = useMemo(() => findRenewalMatch(liveEtlStatus?.renewalMatches ?? [], selected), [liveEtlStatus, selected])
   const dataQuality = useMemo(() => repository.getDataQualitySummary(), [repository])
   const validationIssues = useMemo(() => repository.getValidationIssues().slice(0, 3), [repository])
+  const favoriteComplexes = useMemo(() => favoriteIds.map((id) => repository.getComplexById(id)).filter(Boolean) as Complex[], [favoriteIds, repository])
+  const requestedSearchOnlyItems = useMemo(
+    () => requestedSearchOnlyIds.map((id) => searchIndex.find((item) => item.id === id)).filter(Boolean) as SearchIndexItem[],
+    [requestedSearchOnlyIds, searchIndex],
+  )
+  const recentComplexes = useMemo(
+    () => recentIds.filter((id) => id !== selected.id).map((id) => repository.getComplexById(id)).filter(Boolean) as Complex[],
+    [recentIds, repository, selected.id],
+  )
+  const isFavorite = favoriteIds.includes(selected.id)
+
+  const selectAnalysisComplex = (id: string) => {
+    setSelectedId(id)
+    setPendingSearchOnlyItem(null)
+  }
+
+  const toggleFavorite = () => {
+    setFavoriteIds((current) => (current.includes(selected.id) ? current.filter((id) => id !== selected.id) : [selected.id, ...current].slice(0, 12)))
+  }
+
+  const requestSearchOnlyAnalysis = (item: SearchIndexItem) => {
+    setRequestedSearchOnlyIds((current) => (current.includes(item.id) ? current : [item.id, ...current].slice(0, 30)))
+  }
 
   useEffect(() => {
-    let mounted = true
-
-    fetch('/data/live-etl-result.json')
-      .then((response) => (response.ok ? response.json() : null))
-      .then((payload: LiveEtlStatus | null) => {
-        if (mounted) {
-          setLiveEtlStatus(payload)
-        }
-      })
-      .catch(() => {
-        if (mounted) {
-          setLiveEtlStatus(null)
-        }
-      })
-
-    return () => {
-      mounted = false
-    }
-  }, [liveEtlRefreshKey])
-
-  useEffect(() => {
-    let mounted = true
-
-    fetch('/data/search-index.json')
-      .then((response) => (response.ok ? response.json() : null))
-      .then((payload: SearchIndexPayload | null) => {
-        if (mounted && payload?.items) {
-          setSearchIndex(payload.items)
-        }
-      })
-      .catch(() => {
-        if (mounted) {
-          setSearchIndex([])
-        }
-      })
-
-    return () => {
-      mounted = false
-    }
-  }, [])
+    setRecentIds((current) => [selected.id, ...current.filter((id) => id !== selected.id)].slice(0, 8))
+  }, [selected.id, setRecentIds])
 
   return (
     <main className="app-shell">
@@ -180,8 +203,7 @@ function App() {
                       onMouseDown={(event) => event.preventDefault()}
                       onClick={() => {
                         if (item.status === 'analysis_ready') {
-                          setSelectedId(item.id)
-                          setPendingSearchOnlyItem(null)
+                          selectAnalysisComplex(item.id)
                         } else {
                           setPendingSearchOnlyItem(item)
                         }
@@ -193,7 +215,7 @@ function App() {
                         <strong>{item.name}</strong>
                         <small>{item.aliases.slice(0, 2).join(' · ') || item.district}</small>
                       </span>
-                      <b>{item.status === 'analysis_ready' ? '분석' : '준비중'}</b>
+                      <b className={item.source === 'analysis_candidate' ? 'candidate' : undefined}>{getSearchItemLabel(item)}</b>
                     </button>
                   ))
                 ) : (
@@ -209,9 +231,39 @@ function App() {
                   {pendingSearchOnlyItem.district || '자치구 미상'} · 법정동코드 {pendingSearchOnlyItem.legalDongCode || '미상'}
                 </p>
                 <small>아직 분석용 물리·거래·정비사업 묶음이 생성되지 않은 단지</small>
+                <button
+                  type="button"
+                  disabled={requestedSearchOnlyIds.includes(pendingSearchOnlyItem.id)}
+                  onClick={() => requestSearchOnlyAnalysis(pendingSearchOnlyItem)}
+                >
+                  {requestedSearchOnlyIds.includes(pendingSearchOnlyItem.id) ? '분석 요청 저장됨' : '분석 요청 목록에 추가'}
+                </button>
               </div>
             )}
           </div>
+
+          {(favoriteComplexes.length > 0 || recentComplexes.length > 0) && (
+            <div className="quick-access-panel">
+              {favoriteComplexes.length > 0 && (
+                <QuickAccessGroup
+                  icon={<Star size={14} />}
+                  title="관심 단지"
+                  complexes={favoriteComplexes.slice(0, 5)}
+                  selectedId={selected.id}
+                  onSelect={selectAnalysisComplex}
+                />
+              )}
+              {recentComplexes.length > 0 && (
+                <QuickAccessGroup
+                  icon={<Clock3 size={14} />}
+                  title="최근 본 단지"
+                  complexes={recentComplexes.slice(0, 5)}
+                  selectedId={selected.id}
+                  onSelect={selectAnalysisComplex}
+                />
+              )}
+            </div>
+          )}
 
           <div className="list-panel">
             <div className="section-title">
@@ -223,7 +275,7 @@ function App() {
               caption="대지지분·용적률·분양가 체급 중심"
               items={businessRankedComplexes.slice(0, 10)}
               selectedId={selectedId}
-              onSelect={setSelectedId}
+              onSelect={selectAnalysisComplex}
               renderValue={({ diagnosis: itemDiagnosis }) => `${itemDiagnosis.businessScore.toFixed(0)}점`}
             />
             <RankList
@@ -231,7 +283,7 @@ function App() {
               caption="사업성에 단계·규제·추진력 반영"
               items={rankedComplexes.slice(0, 10)}
               selectedId={selectedId}
-              onSelect={setSelectedId}
+              onSelect={selectAnalysisComplex}
               renderValue={({ diagnosis: itemDiagnosis }) => itemDiagnosis.grade}
             />
           </div>
@@ -244,7 +296,17 @@ function App() {
                 <MapPin size={15} />
                 {selected.address}
               </span>
-              <h1>{selected.name}</h1>
+              <div className="title-row">
+                <h1>{selected.name}</h1>
+                <button
+                  className={`favorite-button ${isFavorite ? 'active' : ''}`}
+                  type="button"
+                  aria-label={isFavorite ? '관심 단지 해제' : '관심 단지 저장'}
+                  onClick={toggleFavorite}
+                >
+                  <Star size={18} fill={isFavorite ? 'currentColor' : 'none'} />
+                </button>
+              </div>
               <p>{selected.note}</p>
             </div>
             <div className="score-gauge" style={{ '--score': `${diagnosis.reconScore * 3.6}deg` } as React.CSSProperties}>
@@ -258,14 +320,16 @@ function App() {
 
           <div className="metric-grid">
             <article
-              className="metric tooltip-target"
-              data-tooltip={`산식: 비례율·대지지분·용적률 여력·신축 분양가 체급·공사비 민감도 가중합. 순수 사업성 ${selectedBusinessRank}위`}
+              className="metric primary tooltip-target"
+              data-tooltip={`정비사업식: ${diagnosis.finance.accountingSettlementSource}. 시장가치식: ${diagnosis.finance.sameSizeSettlementSource}. 같은 평형을 받는다는 가정에서 부담 또는 환급 방향을 먼저 확인`}
               tabIndex={0}
             >
-              <Gauge size={19} />
-              <span>사업성</span>
-              <strong>{diagnosis.businessLabel}</strong>
-              <small>{diagnosis.businessScore.toFixed(0)}점 · 사업성 {selectedBusinessRank}위</small>
+              <CircleDollarSign size={19} />
+              <span>핵심 결론 · 동일평형 정산</span>
+              <strong className={diagnosis.finance.accountingSameSizeSettlement < 0 ? 'refund' : 'burden'}>
+                {formatSettlementCurrency(diagnosis.finance.accountingSameSizeSettlement)}
+              </strong>
+              <small>시장가치식 {formatSettlementCurrency(diagnosis.finance.sameSizeSettlement)}</small>
             </article>
             <article
               className="metric tooltip-target"
@@ -279,13 +343,13 @@ function App() {
             </article>
             <article
               className="metric tooltip-target"
-              data-tooltip={`정비사업식: ${diagnosis.finance.accountingSettlementSource}. 시장가치식: ${diagnosis.finance.sameSizeSettlementSource}`}
+              data-tooltip={`산식: 비례율·대지지분·용적률 여력·신축 분양가 체급·공사비 민감도 가중합. 순수 사업성 ${selectedBusinessRank}위`}
               tabIndex={0}
             >
-              <CircleDollarSign size={19} />
-              <span>동일평형 정산 비교</span>
-              <strong>{formatSettlementCurrency(diagnosis.finance.accountingSameSizeSettlement)}</strong>
-              <small>시장가치식 {formatSettlementCurrency(diagnosis.finance.sameSizeSettlement)}</small>
+              <Gauge size={19} />
+              <span>사업성</span>
+              <strong>{diagnosis.businessLabel}</strong>
+              <small>{diagnosis.businessScore.toFixed(0)}점 · 사업성 {selectedBusinessRank}위</small>
             </article>
             <article
               className="metric tooltip-target"
@@ -295,7 +359,7 @@ function App() {
               <ShieldAlert size={19} />
               <span>데이터 신뢰도</span>
               <strong>{selected.dataReliability}%</strong>
-              <small>{dataProfile?.estimationMode === 'manual_enriched' ? '추가 근거 포함' : '공공 추정'}</small>
+              <small>{getDataEvidenceLabel(selected)}</small>
             </article>
           </div>
 
@@ -322,6 +386,26 @@ function App() {
                     value={`${selected.landShare.toFixed(1)}평`}
                     tooltip="산식: 대지면적 / 세대수. 용도: 토지지분 가격, 일반분양 여력, 사업성 점수"
                   />
+                  <FactRow
+                    label="평당 실거래가"
+                    value={`${estimateCurrentPricePerPyeong(selected).toLocaleString()}만원/평`}
+                    tooltip={describeCurrentPricePerPyeong(selected)}
+                  />
+                  <FactRow
+                    label="평당 예상 분양가"
+                    value={`${estimateExpectedSalePricePerPyeong(selected, scenario).toLocaleString()}만원/평`}
+                    tooltip={describeExpectedSalePricePerPyeong(selected, scenario)}
+                  />
+                  <FactRow
+                    label="평형 종류"
+                    value={getUnitTypeCountLabel(selected, transactionDiagnostic)}
+                    tooltip={getUnitTypeCountTooltip(selected, transactionDiagnostic)}
+                  />
+                  <FactRow
+                    label="사업 단계"
+                    value={selected.stage}
+                    tooltip={getStageTooltip(selected)}
+                  />
                 </div>
               </div>
               <div className="reason-list">
@@ -346,6 +430,16 @@ function App() {
                       <i style={{ width: `${value}%` }} />
                     </div>
                     <b>{value.toFixed(0)}</b>
+                  </div>
+                ))}
+              </div>
+              <div className="evidence-panel">
+                <span>산정 근거 요약</span>
+                {scoreEvidenceItems.map((item) => (
+                  <div key={item.label}>
+                    <b>{item.label}</b>
+                    <p>{item.evidence}</p>
+                    <small>{item.method}</small>
                   </div>
                 ))}
               </div>
@@ -686,22 +780,21 @@ function App() {
             </section>
           )}
 
+          <div className="comparison-tabs">
+            <button className={comparisonMode === 'business' ? 'active' : ''} type="button" onClick={() => setComparisonMode('business')}>
+              순수 사업성
+            </button>
+            <button className={comparisonMode === 'success' ? 'active' : ''} type="button" onClick={() => setComparisonMode('success')}>
+              추진 성공 가능성
+            </button>
+          </div>
           <ComparisonTable
-            rankedComplexes={businessRankedComplexes}
+            rankedComplexes={comparisonMode === 'business' ? businessRankedComplexes : rankedComplexes}
             selectedId={selectedId}
-            onSelect={setSelectedId}
-            title="순수 사업성 비교"
-            caption="단계와 규제를 빼고 경제성 신호를 우선 비교"
-            mode="business"
-          />
-
-          <ComparisonTable
-            rankedComplexes={rankedComplexes}
-            selectedId={selectedId}
-            onSelect={setSelectedId}
-            title="현재 추진 성공 가능성"
-            caption="사업성에 인허가 단계·규제·주민 추진력을 반영"
-            mode="success"
+            onSelect={selectAnalysisComplex}
+            title={comparisonMode === 'business' ? '순수 사업성 비교' : '현재 추진 성공 가능성'}
+            caption={comparisonMode === 'business' ? '단계와 규제를 빼고 경제성 신호를 우선 비교' : '사업성에 인허가 단계·규제·주민 추진력을 반영'}
+            mode={comparisonMode}
           />
 
           {showReport && (
@@ -719,6 +812,31 @@ function App() {
           <div className="section-title">
             <SlidersHorizontal size={18} />
             <span>시나리오 조정 · {scenarioLabel}</span>
+          </div>
+          <div className="scenario-delta-card">
+            <span>기준 대비 변화</span>
+            <div className="scenario-delta-grid">
+              <div className="tooltip-target" data-tooltip="기준 시나리오와 현재 시나리오의 정비사업식 동일평형 정산금 차이. 양수는 부담 증가, 음수는 부담 완화 또는 환급 증가" tabIndex={0}>
+                <small>정비사업식</small>
+                <b className={scenarioDelta.accountingSettlementDelta > 0 ? 'burden' : scenarioDelta.accountingSettlementDelta < 0 ? 'refund' : ''}>
+                  {formatSettlementDelta(scenarioDelta.accountingSettlementDelta)}
+                </b>
+              </div>
+              <div className="tooltip-target" data-tooltip="기준 시나리오와 현재 시나리오의 시장가치식 동일평형 정산금 차이. 시장 시세와 신축 원가 기반 추정값" tabIndex={0}>
+                <small>시장가치식</small>
+                <b className={scenarioDelta.marketSettlementDelta > 0 ? 'burden' : scenarioDelta.marketSettlementDelta < 0 ? 'refund' : ''}>
+                  {formatSettlementDelta(scenarioDelta.marketSettlementDelta)}
+                </b>
+              </div>
+              <div className="tooltip-target" data-tooltip="기준 시나리오 대비 예상 비례율 변화. 일반분양가·공사비·금리·공공기여 조정이 반영됨" tabIndex={0}>
+                <small>비례율</small>
+                <b>{formatSignedPoint(scenarioDelta.proRataDelta, '%p')}</b>
+              </div>
+              <div className="tooltip-target" data-tooltip="기준 시나리오 대비 현재 추진 성공 가능성 점수 변화. 사업성·노후도·규제·추진력·시장 환경 가중합" tabIndex={0}>
+                <small>종합점수</small>
+                <b>{formatSignedPoint(scenarioDelta.scoreDelta, '점')}</b>
+              </div>
+            </div>
           </div>
           <Control
             label="공사비"
@@ -838,6 +956,14 @@ function App() {
             <div className="data-status-grid">
               <span className="tooltip-target" data-tooltip="현재 화면에서 분석 가능한 단지 수" tabIndex={0}>대상 단지</span>
               <b>{dataQuality.totalComplexes}개</b>
+              <span
+                className="tooltip-target"
+                data-tooltip="분석은 가능하지만 아직 K-apt/PNU/실거래가 실매칭 전인 후보 단지 수. UI에서는 후보 추정으로 표시"
+                tabIndex={0}
+              >
+                추정 후보
+              </span>
+              <b>{dataQuality.inferredCandidateCount}개</b>
               <span className="tooltip-target" data-tooltip="단지별 필수 데이터 확보율을 평균낸 값. K-apt, PNU, 좌표, 거래가, 정비사업, 주변 신축가 포함" tabIndex={0}>평균 신뢰도</span>
               <b>{dataQuality.averageReliability.toFixed(0)}%</b>
               <span className="tooltip-target" data-tooltip="K-apt 단지 코드가 아직 연결되지 않은 단지 수" tabIndex={0}>K-apt 누락</span>
@@ -862,6 +988,50 @@ function App() {
                 </div>
               ))}
             </div>
+            {requestedSearchOnlyItems.length > 0 && (
+              <div className="request-queue-card">
+                <span>분석 요청 목록</span>
+                <b>{requestedSearchOnlyItems.length}개 단지 대기</b>
+                <ol>
+                  {requestedSearchOnlyItems.slice(0, 5).map((item) => (
+                    <li key={item.id}>
+                      <strong>{item.name}</strong>
+                      <small>
+                        {item.district || '자치구 미상'} · 법정동코드 {item.legalDongCode || '미상'}
+                      </small>
+                    </li>
+                  ))}
+                </ol>
+                <button type="button" onClick={() => setRequestedSearchOnlyIds([])}>
+                  요청 목록 비우기
+                </button>
+              </div>
+            )}
+            {apiEnrichmentPlan?.batches[0] && (
+              <div className="enrichment-plan-card">
+                <span
+                  className="tooltip-target"
+                  data-tooltip="추정 후보 중 점수 영향도와 데이터 신뢰도 개선 필요성이 큰 단지를 우선 API 실매칭 대상으로 묶은 목록"
+                  tabIndex={0}
+                >
+                  다음 API 매칭 batch
+                </span>
+                <b>
+                  {apiEnrichmentPlan.batches[0].targets.length}개 단지 · 후보 {apiEnrichmentPlan.totalCandidates}개 중 우선순위
+                </b>
+                <ol>
+                  {apiEnrichmentPlan.batches[0].targets.slice(0, 5).map((target) => (
+                    <li key={target.id}>
+                      <strong>{target.name}</strong>
+                      <small>
+                        {target.district} · 우선순위 {target.priorityScore} · 신뢰도 {target.dataReliability}%
+                      </small>
+                    </li>
+                  ))}
+                </ol>
+                <code>{apiEnrichmentPlan.batches[0].command}</code>
+              </div>
+            )}
             <p>샘플 repository 기반. 다음 단계: K-apt, 실거래가, 정비사업 ETL 결과로 교체</p>
           </div>
         </aside>
@@ -887,220 +1057,6 @@ type FinanceSource = {
   detail?: string
 }
 
-type SearchIndexItem = {
-  id: string
-  name: string
-  aliases: string[]
-  district: string
-  legalDongCode: string
-  status: 'analysis_ready' | 'search_only'
-  source: 'sample_analysis_db' | 'kapt_api'
-}
-
-type SearchIndexPayload = {
-  generatedAt: string
-  items: SearchIndexItem[]
-}
-
-type LiveEtlStatus = {
-  generatedAt: string
-  mode?: 'live_api' | 'fallback_with_skips'
-  targets?: string[]
-  transactionLookbackMonths?: number
-  seoulRenewal?: {
-    rows: number
-    regulationRecords: number
-    error?: string
-  }
-  kaptMatches?: Array<{
-    matched: boolean
-  }>
-  renewalMatches?: Array<{
-    complexId: string
-    complexName: string
-    matched: boolean
-    score: number
-    sourceRecordName?: string
-    reason: string
-  }>
-  transactionDiagnostics?: TransactionDiagnostic[]
-  skippedSources: string[]
-  complexes?: Complex[]
-  stats: {
-    normalizedComplexes: number
-    warningCount: number
-    errorCount: number
-  }
-}
-
-type TransactionDiagnostic = {
-  complexName: string
-  tradeCount: number
-  representativeAreaRange?: string
-  matchStrategy?: string
-  matchConfidence?: number
-  areaPriceStats?: Array<{
-    areaRange: string
-    tradeCount: number
-    medianPrice: number
-    medianPricePerPyeong: number
-  }>
-}
-
-function mergeLiveComplexes(baseComplexes: Complex[], liveComplexes: Complex[]) {
-  if (liveComplexes.length === 0) return baseComplexes
-
-  return baseComplexes.map((complex) => {
-    const liveComplex = liveComplexes.find(
-      (item) =>
-        item.id === complex.id ||
-        item.identifiers.complexId === complex.identifiers.complexId ||
-        (item.legalDongCode === complex.legalDongCode && item.name === complex.name),
-    )
-
-    return liveComplex
-      ? {
-          ...complex,
-          ...liveComplex,
-          aliases: [...new Set([...complex.aliases, ...liveComplex.aliases])],
-          dataProfile: complex.dataProfile,
-          financeOverride: complex.financeOverride,
-          marketOverride: complex.marketOverride,
-          note: complex.note,
-        }
-      : complex
-  })
-}
-
-function findTransactionDiagnostic(diagnostics: TransactionDiagnostic[], complex: Complex) {
-  const normalizedNames = [complex.name, ...complex.aliases].map(normalizeText)
-
-  return diagnostics.find((diagnostic) => normalizedNames.includes(normalizeText(diagnostic.complexName)))
-}
-
-function findRenewalMatch(matches: NonNullable<LiveEtlStatus['renewalMatches']>, complex: Complex) {
-  const normalizedNames = [complex.name, ...complex.aliases].map(normalizeText)
-
-  return matches.find((match) => match.complexId === complex.id || normalizedNames.includes(normalizeText(match.complexName)))
-}
-
-function normalizeText(value: string) {
-  return value
-    .normalize('NFKC')
-    .toLowerCase()
-    .replace(/\s+/g, '')
-    .replace(/아파트|단지/g, '')
-}
-
-function formatMatchStrategy(strategy?: string) {
-  if (strategy === 'name+metadata') return '이름+주소'
-  if (strategy === 'name-only') return '이름 중심'
-  if (strategy === 'fallback-all-district-trades') return '구 전체 fallback'
-
-  return '미상'
-}
-
-function createScoreTooltip(label: string, complex: Complex, diagnosis: ReturnType<typeof calculateDiagnosis>, scenario: Scenario) {
-  const farUpside = complex.allowedFar - complex.currentFar
-  const age = 2026 - complex.builtYear
-  const generalSaleRatio = diagnosis.finance.plan.saleableFloorArea > 0
-    ? (diagnosis.finance.plan.generalSaleArea / diagnosis.finance.plan.saleableFloorArea) * 100
-    : 0
-  const constructionDelta = scenario.constructionCost - baseScenario.constructionCost
-
-  const tooltips: Record<string, string> = {
-    사업성: `판단 기준: 비례율, 대지지분, 용적률 여력, 주변 신축 시세, 공사비 민감도 가중합. 근거: 비례율 ${diagnosis.proRata.toFixed(0)}%, 대지지분 ${complex.landShare.toFixed(1)}평, 용적률 여력 ${farUpside}%p, 일반분양면적 ${generalSaleRatio.toFixed(1)}%`,
-    노후도: `판단 기준: 준공 후 경과연수. 30년 이상이면 재건축 검토 가능 구간으로 가산. 근거: ${complex.builtYear}년 준공, ${age}년 경과`,
-    규제: `판단 기준: 규제 리스크가 낮을수록 고점. 낮음 88점, 중간 66점, 높음 42점. 근거: 현재 ${complex.regulationRisk}, 허용 용적률 ${complex.allowedFar}%`,
-    추진력: `판단 기준: 사업 단계와 주민 추진력 평균. 사업시행인가·관리처분인가에 가까울수록 가산. 근거: 단계 ${complex.stage}, 주민 추진력 ${complex.residentMomentum}`,
-    시장: `판단 기준: 금리와 공사비가 낮을수록 고점. 기준은 금리 ${baseScenario.interestRate}%, 공사비 ${baseScenario.constructionCost}만원/평. 근거: 현재 금리 ${scenario.interestRate}%, 공사비 ${scenario.constructionCost}만원/평, 기준 대비 ${constructionDelta >= 0 ? '+' : ''}${constructionDelta}만원/평`,
-  }
-
-  return tooltips[label] ?? `${label}: 산정 기준 미연결`
-}
-
-function searchIndexByComplexName(searchIndex: SearchIndexItem[], query: string, fallback: RankedComplex[]): SearchIndexItem[] {
-  const normalizedQuery = normalizeNameForSearch(query)
-
-  if (!normalizedQuery) {
-    return fallback.map(({ complex }) => toSearchIndexItem(complex))
-  }
-
-  const source = searchIndex.length > 0 ? searchIndex : fallback.map(({ complex }) => toSearchIndexItem(complex))
-
-  return source.filter((item) => [item.name, ...item.aliases].some((value) => normalizeNameForSearch(value).includes(normalizedQuery)))
-}
-
-function toSearchIndexItem(complex: Complex): SearchIndexItem {
-  return {
-    id: complex.id,
-    name: complex.name,
-    aliases: complex.aliases,
-    district: complex.district,
-    legalDongCode: complex.legalDongCode,
-    status: 'analysis_ready',
-    source: 'sample_analysis_db',
-  }
-}
-
-function normalizeNameForSearch(value: string) {
-  return value.normalize('NFKC').toLowerCase().replace(/\s+/g, '').replace(/아파트|단지/g, '')
-}
-
-type RankListProps = {
-  title: string
-  caption: string
-  items: RankedComplex[]
-  selectedId: string
-  onSelect: (id: string) => void
-  renderValue: (item: RankedComplex) => string
-}
-
-function RankList({ title, caption, items, selectedId, onSelect, renderValue }: RankListProps) {
-  return (
-    <div className="rank-list-block">
-      <div className="rank-list-heading">
-        <strong>{title}</strong>
-        <span>{caption}</span>
-      </div>
-      <div className="complex-list compact">
-        {items.map((item, index) => (
-          <button
-            key={item.complex.id}
-            className={`complex-row ${selectedId === item.complex.id ? 'selected' : ''}`}
-            type="button"
-            onClick={() => onSelect(item.complex.id)}
-          >
-            <div className="rank-badge">{index + 1}</div>
-            <div>
-              <strong>{item.complex.name}</strong>
-              <span>
-                {item.complex.district} · {item.complex.stage}
-              </span>
-            </div>
-            <b>{renderValue(item)}</b>
-          </button>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-type FactRowProps = {
-  label: string
-  value: string
-  tooltip: string
-}
-
-function FactRow({ label, value, tooltip }: FactRowProps) {
-  return (
-    <div className="fact-row tooltip-target" data-tooltip={tooltip} tabIndex={0}>
-      <span>{label}</span>
-      <b>{value}</b>
-    </div>
-  )
-}
-
 function SettlementMethodCard({ title, tooltip, range }: { title: string; tooltip: string; range: ReturnType<typeof getContributionRange> }) {
   return (
     <div className="settlement-method-card tooltip-target" data-tooltip={tooltip} tabIndex={0}>
@@ -1121,12 +1077,6 @@ function SettlementMethodCard({ title, tooltip, range }: { title: string; toolti
       </dl>
     </div>
   )
-}
-
-function formatSettlementCurrency(value: number) {
-  if (value < 0) return `${Math.abs(value).toFixed(1)}억 환급`
-  if (value > 0) return `${value.toFixed(1)}억 부담`
-  return '정산 없음'
 }
 
 function createFinanceSource(sourceType: SourceType, label: string, confidence: number, detail?: string): FinanceSource {
@@ -1183,17 +1133,6 @@ function SignalRow({ signal }: SignalRowProps) {
       <meter min="0" max="100" value={signal.confidence} aria-label={`${signal.label} 신뢰도 ${signal.confidence}%`} />
     </div>
   )
-}
-
-function formatSourceType(sourceType: SourceType) {
-  const labels: Record<SourceType, string> = {
-    official_api: 'API',
-    public_document: '문서',
-    manual_override: '추가',
-    inferred: '추정',
-  }
-
-  return labels[sourceType]
 }
 
 export default App

@@ -20,5 +20,5 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["vite.config.ts", "src/etl/liveEtl.ts", "src/etl/checkPublicApi.ts"]
+  "include": ["vite.config.ts", "src/etl/liveEtl.ts", "src/etl/checkPublicApi.ts", "src/etl/buildSearchIndex.ts", "src/etl/planApiEnrichment.ts"]
 }

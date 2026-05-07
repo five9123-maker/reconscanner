@@ -1,27 +1,7 @@
-import type { Complex, Diagnosis, RiskLevel, Scenario, Stage } from '../types'
+import type { Complex, Diagnosis, Scenario } from '../types'
+import { getReferenceYear } from './date'
 import { calculateProjectFinance } from './projectFinance'
-
-const currentYear = 2026
-
-const stageScore: Record<Stage, number> = {
-  검토: 42,
-  추진위: 58,
-  조합설립: 70,
-  사업시행인가: 82,
-  관리처분인가: 92,
-}
-
-const riskScore: Record<RiskLevel, number> = {
-  낮음: 88,
-  중간: 66,
-  높음: 42,
-}
-
-const momentumScore: Record<RiskLevel, number> = {
-  낮음: 45,
-  중간: 68,
-  높음: 86,
-}
+import { SCORING_CONFIG } from './scoringConfig'
 
 export const baseScenario: Scenario = {
   constructionCost: 930,
@@ -50,7 +30,7 @@ export function getBusinessLabel(score: number) {
   return '사업성 취약'
 }
 
-export function calculateDiagnosis(complex: Complex, scenario: Scenario): Diagnosis {
+export function calculateDiagnosis(complex: Complex, scenario: Scenario, referenceYear = getReferenceYear()): Diagnosis {
   const finance = calculateProjectFinance(complex, scenario)
   const farUpside = Math.max(complex.allowedFar - complex.currentFar, 0)
   const farUpsideScore = clamp((farUpside / 170) * 100)
@@ -61,17 +41,23 @@ export function calculateDiagnosis(complex: Complex, scenario: Scenario): Diagno
   const proRataScore = clamp((proRata - 15) * 1.7)
 
   const businessScore = clamp(
-    proRataScore * 0.35 +
-      landShareScore * 0.2 +
-      farUpsideScore * 0.2 +
-      salesMarginScore * 0.15 +
-      costSensitivityScore * 0.1,
+    proRataScore * SCORING_CONFIG.businessWeights.proRata +
+      landShareScore * SCORING_CONFIG.businessWeights.landShare +
+      farUpsideScore * SCORING_CONFIG.businessWeights.farUpside +
+      salesMarginScore * SCORING_CONFIG.businessWeights.salesMargin +
+      costSensitivityScore * SCORING_CONFIG.businessWeights.costSensitivity,
   )
-  const agingScore = clamp((currentYear - complex.builtYear - 25) * 3.2 + 40)
-  const regulationScore = riskScore[complex.regulationRisk]
-  const residentScore = (stageScore[complex.stage] + momentumScore[complex.residentMomentum]) / 2
+  const agingScore = clamp((referenceYear - complex.builtYear - 25) * 3.2 + 40)
+  const regulationScore = SCORING_CONFIG.riskScore[complex.regulationRisk]
+  const residentScore = (SCORING_CONFIG.stageScore[complex.stage] + SCORING_CONFIG.residentMomentumScore[complex.residentMomentum]) / 2
   const timingScore = clamp(72 - (scenario.interestRate - 4) * 6 - (scenario.constructionCost - 900) * 0.05)
-  const reconScore = clamp(businessScore * 0.38 + agingScore * 0.17 + regulationScore * 0.18 + residentScore * 0.17 + timingScore * 0.1)
+  const reconScore = clamp(
+    businessScore * SCORING_CONFIG.reconWeights.business +
+      agingScore * SCORING_CONFIG.reconWeights.aging +
+      regulationScore * SCORING_CONFIG.reconWeights.regulation +
+      residentScore * SCORING_CONFIG.reconWeights.resident +
+      timingScore * SCORING_CONFIG.reconWeights.timing,
+  )
 
   const contribution = finance.contribution
 
@@ -107,7 +93,11 @@ function calculateSalesPowerScore(complex: Complex, scenario: Scenario) {
   const replacementPremiumScore = clamp(replacementPremium * 8 + 52)
   const scarcityPriceSignal = clamp((complex.recentPrice - 6) * 2.4)
 
-  return clamp(absolutePricePower * 0.5 + replacementPremiumScore * 0.25 + scarcityPriceSignal * 0.25)
+  return clamp(
+    absolutePricePower * SCORING_CONFIG.salesPowerWeights.absolutePricePower +
+      replacementPremiumScore * SCORING_CONFIG.salesPowerWeights.replacementPremium +
+      scarcityPriceSignal * SCORING_CONFIG.salesPowerWeights.scarcityPriceSignal,
+  )
 }
 
 export function getContributionRange(contribution: number) {

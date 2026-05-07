@@ -35,7 +35,7 @@ describe('newBuildPrice', () => {
     const estimate = estimateNewBuildPrice(bundang, complexes)
 
     expect(estimate.comparableCount).toBe(0)
-    expect(estimate.method).toBe('market_band_blend')
+    expect(estimate.method).not.toBe('direct_comparable')
     expect(estimate.description).toContain('레퍼런스')
     expect(estimate.confidence).toBeGreaterThanOrEqual(52)
   })

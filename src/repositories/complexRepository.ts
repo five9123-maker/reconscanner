@@ -3,7 +3,9 @@ import { manualComplexOverrides, type ManualComplexOverride } from '../data/manu
 import { validateComplexDataset, type DataValidationIssue } from '../etl/validate'
 import { applyManualOverrides } from '../lib/complexOverlays'
 import { calculateDiagnosis } from '../lib/diagnosis'
+import { isFreshnessStale } from '../lib/date'
 import { applyNewBuildPriceEstimates } from '../lib/newBuildPrice'
+import { rankComplexNameMatch } from '../lib/search'
 import type { Complex, DataQualitySummary, RankedComplex, Scenario } from '../types'
 
 export type ComplexRepository = ReturnType<typeof createComplexRepository>
@@ -33,13 +35,7 @@ export function createComplexRepository(dataset: Complex[], manualOverrides: Man
     searchComplexes(query: string, scenario: Scenario): RankedComplex[] {
       const normalizedQuery = query.trim().toLowerCase()
 
-      return getRanked(scenario).filter(({ complex }) => {
-        if (!normalizedQuery) return true
-
-        const searchable = [complex.name, ...complex.aliases]
-
-        return searchable.some((value) => value.toLowerCase().includes(normalizedQuery))
-      })
+      return getRanked(scenario).filter(({ complex }) => !normalizedQuery || rankComplexNameMatch(complex, normalizedQuery) > 0)
     },
 
     getRankedComplexes(scenario: Scenario): RankedComplex[] {
@@ -48,15 +44,19 @@ export function createComplexRepository(dataset: Complex[], manualOverrides: Man
 
     getDataQualitySummary(): DataQualitySummary {
       const averageReliability = enrichedDataset.reduce((sum, complex) => sum + complex.dataReliability, 0) / enrichedDataset.length
+      const inferredCandidateCount = enrichedDataset.filter((complex) =>
+        complex.dataProfile?.publicSignals.every((signal) => signal.sourceType === 'inferred'),
+      ).length
       const missingKaptCode = enrichedDataset.filter((complex) => !complex.identifiers.kaptCode).length
       const missingPnu = enrichedDataset.filter((complex) => !complex.identifiers.pnu).length
       const issues = validateComplexDataset(enrichedDataset)
       const staleSources = enrichedDataset
-        .filter((complex) => Object.values(complex.sourceFreshness).some((value) => value < '2026-03'))
+        .filter((complex) => Object.values(complex.sourceFreshness).some((value) => isFreshnessStale(value)))
         .map((complex) => complex.name)
 
       return {
         totalComplexes: enrichedDataset.length,
+        inferredCandidateCount,
         averageReliability,
         missingKaptCode,
         missingPnu,

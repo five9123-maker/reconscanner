@@ -1,4 +1,5 @@
 import type { Complex } from '../types'
+import { isFreshnessStale } from '../lib/date'
 
 export type ValidationSeverity = 'info' | 'warning' | 'error'
 
@@ -29,7 +30,7 @@ export function validateComplex(complex: Complex): DataValidationIssue[] {
 
   for (const [source, freshness] of Object.entries(complex.sourceFreshness)) {
     addIssueIf(issues, freshness === 'unknown', complex, `sourceFreshness.${source}`, 'info', `${source} 원천의 갱신월을 확인할 수 없습니다.`)
-    addIssueIf(issues, freshness !== 'unknown' && freshness < '2026-03', complex, `sourceFreshness.${source}`, 'warning', `${source} 원천이 오래되었습니다.`)
+    addIssueIf(issues, isFreshnessStale(freshness), complex, `sourceFreshness.${source}`, 'warning', `${source} 원천이 오래되었습니다.`)
   }
 
   return issues

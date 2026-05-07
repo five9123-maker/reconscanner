@@ -10,6 +10,7 @@
     "test": "vitest run",
     "etl:sample": "vitest run src/etl/runEtl.test.ts --reporter verbose",
     "etl:live": "tsx --env-file-if-exists=.env src/etl/liveEtl.ts",
+    "etl:plan": "tsx --env-file-if-exists=.env src/etl/planApiEnrichment.ts",
     "etl:search-index": "tsx --env-file-if-exists=.env src/etl/buildSearchIndex.ts",
     "api:check": "tsx --env-file-if-exists=.env src/etl/checkPublicApi.ts",
     "preview": "vite preview"
