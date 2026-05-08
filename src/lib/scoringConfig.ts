@@ -7,6 +7,10 @@ export const SCORING_CONFIG = {
     조합설립: 70,
     사업시행인가: 82,
     관리처분인가: 92,
+    철거신고: 94,
+    착공신고: 96,
+    일반분양승인: 97,
+    준공인가: 99,
   } satisfies Record<Stage, number>,
   riskScore: {
     낮음: 88,

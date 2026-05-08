@@ -1,6 +1,15 @@
 export type RiskLevel = '낮음' | '중간' | '높음'
 
-export type Stage = '검토' | '추진위' | '조합설립' | '사업시행인가' | '관리처분인가'
+export type Stage =
+  | '검토'
+  | '추진위'
+  | '조합설립'
+  | '사업시행인가'
+  | '관리처분인가'
+  | '철거신고'
+  | '착공신고'
+  | '일반분양승인'
+  | '준공인가'
 
 export type Complex = {
   id: string

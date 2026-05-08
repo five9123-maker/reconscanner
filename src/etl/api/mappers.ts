@@ -124,6 +124,10 @@ function pickString(item: Record<string, unknown>, keys: string[]) {
 }
 
 function mapRenewalStage(value: string): RegulationRecord['stage'] {
+  if (value.includes('준공')) return '준공인가'
+  if (value.includes('일반분양') || value.includes('분양승인')) return '일반분양승인'
+  if (value.includes('착공')) return '착공신고'
+  if (value.includes('철거')) return '철거신고'
   if (value.includes('관리처분')) return '관리처분인가'
   if (value.includes('사업시행')) return '사업시행인가'
   if (value.includes('조합')) return '조합설립'

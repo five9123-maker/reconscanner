@@ -1,4 +1,5 @@
 import { baseScenario, calculateDiagnosis } from '../lib/diagnosis'
+import { isEligibleForReconAnalysis } from '../lib/complexEligibility'
 import { validateComplex } from './validate'
 import type { Complex } from '../types'
 
@@ -27,6 +28,7 @@ export type ApiEnrichmentPlan = {
 
 export function buildApiEnrichmentPlan(complexes: Complex[], batchSize = 10, generatedAt = new Date().toISOString()): ApiEnrichmentPlan {
   const targets = complexes
+    .filter((complex) => isEligibleForReconAnalysis(complex))
     .filter(isInferredCandidate)
     .map(toEnrichmentTarget)
     .sort((left, right) => right.priorityScore - left.priorityScore || left.name.localeCompare(right.name, 'ko'))

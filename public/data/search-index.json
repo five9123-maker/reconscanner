@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-05-07T12:49:43.874Z",
+  "generatedAt": "2026-05-08T16:27:57.398Z",
   "counts": {
-    "analysisReady": 100,
+    "analysisReady": 99,
     "analysisCandidate": 56,
     "searchOnly": 990
   },
@@ -562,25 +562,6 @@
       ],
       "district": "성남분당구",
       "legalDongCode": "4113511400",
-      "status": "analysis_ready",
-      "source": "sample_analysis_db"
-    },
-    {
-      "id": "apt-030",
-      "name": "반포주공1단지",
-      "aliases": [
-        "반포주공1",
-        "반포 1단지",
-        "반포1"
-      ],
-      "searchTokens": [
-        "반포주공1",
-        "반포1",
-        "ᄇᄑᄌᄀ1",
-        "ᄇᄑ1"
-      ],
-      "district": "서초구",
-      "legalDongCode": "1165010700",
       "status": "analysis_ready",
       "source": "sample_analysis_db"
     },

@@ -1,12 +1,14 @@
 import { mkdir, writeFile } from 'node:fs/promises'
 import { dirname } from 'node:path'
 import { complexes } from '../data/complexes'
+import { isEligibleForReconAnalysis } from '../lib/complexEligibility'
 import { createSearchTokens, normalizeSearchText } from '../lib/search'
 import { fetchKaptTotalComplexList } from './api/kaptClient'
 
 const outputPath = process.env.RECON_SEARCH_INDEX_OUTPUT ?? 'public/data/search-index.json'
+const eligibleComplexes = complexes.filter((complex) => isEligibleForReconAnalysis(complex))
 
-const analyzed = complexes.map((complex) => ({
+const analyzed = eligibleComplexes.map((complex) => ({
   id: complex.id,
   name: complex.name,
   aliases: complex.aliases,
@@ -59,6 +61,6 @@ function normalizeName(value: string) {
   return normalizeSearchText(value)
 }
 
-function isInferredCandidate(complex: (typeof complexes)[number]) {
+function isInferredCandidate(complex: (typeof eligibleComplexes)[number]) {
   return complex.dataProfile?.publicSignals.every((signal) => signal.sourceType === 'inferred') ?? false
 }

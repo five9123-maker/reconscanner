@@ -1,15 +1,18 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
   Activity,
+  BarChart3,
   Building2,
   Calculator,
   CircleDollarSign,
   Database,
   FileText,
   Clock3,
+  Home,
   MapPin,
   RefreshCw,
   Search,
+  ShieldAlert,
   SlidersHorizontal,
   Star,
   TrendingUp,
@@ -51,7 +54,10 @@ import type { LiveEtlStatus } from './types/liveEtl'
 import type { SearchIndexItem, SearchIndexPayload } from './types/searchIndex'
 import './App.css'
 
+type AppView = 'scanner' | 'national'
+
 function App() {
+  const [activeView, setActiveView] = useState<AppView>('scanner')
   const [selectedId, setSelectedId] = useState(getDefaultComplexId())
   const [query, setQuery] = useState('')
   const [isSearchFocused, setIsSearchFocused] = useState(false)
@@ -89,6 +95,7 @@ function App() {
     () => repository.getRankedComplexes(scenario),
     [repository, scenario],
   )
+  const eligibleAnalysisIds = useMemo(() => new Set(rankedComplexes.map(({ complex }) => complex.id)), [rankedComplexes])
   const businessRankedComplexes = useMemo<RankedComplex[]>(
     () => [...rankedComplexes].sort((left, right) => right.diagnosis.businessScore - left.diagnosis.businessScore),
     [rankedComplexes],
@@ -98,8 +105,8 @@ function App() {
     [businessRankedComplexes, liveEtlStatus],
   )
   const searchSuggestions = useMemo(
-    () => searchIndexByComplexName(searchIndex, query, rankedComplexes).slice(0, 8),
-    [query, rankedComplexes, searchIndex],
+    () => searchIndexByComplexName(searchIndex, query, rankedComplexes, eligibleAnalysisIds).slice(0, 8),
+    [eligibleAnalysisIds, query, rankedComplexes, searchIndex],
   )
   const showSearchDropdown = isSearchFocused && query.trim().length > 0
   const contributionRange = getContributionRange(diagnosis.contribution)
@@ -136,6 +143,7 @@ function App() {
     [recentIds, repository, selected.id],
   )
   const isFavorite = favoriteIds.includes(selected.id)
+  const nationalDashboard = useMemo(() => createNationalDashboard(rankedComplexes), [rankedComplexes])
 
   const selectAnalysisComplex = (id: string) => {
     setSelectedId(id)
@@ -166,6 +174,24 @@ function App() {
             <span>재건축 사업성/리스크 진단 MVP</span>
           </div>
         </div>
+        <nav className="topbar-tabs" aria-label="화면 이동">
+          <button
+            className={activeView === 'scanner' ? 'active' : ''}
+            type="button"
+            onClick={() => setActiveView('scanner')}
+          >
+            <Home size={16} />
+            <span>단지 스캐너</span>
+          </button>
+          <button
+            className={activeView === 'national' ? 'active' : ''}
+            type="button"
+            onClick={() => setActiveView('national')}
+          >
+            <BarChart3 size={16} />
+            <span>전국 대시보드</span>
+          </button>
+        </nav>
         <div className="topbar-actions">
           <button
             className="icon-button"
@@ -182,6 +208,9 @@ function App() {
         </div>
       </header>
 
+      {activeView === 'national' ? (
+        <NationalDashboard stats={nationalDashboard} />
+      ) : (
       <section className="workspace">
         <aside className="left-panel">
           <div className="search-area">
@@ -192,7 +221,7 @@ function App() {
                 onChange={(event) => setQuery(event.target.value)}
                 onFocus={() => setIsSearchFocused(true)}
                 onBlur={() => window.setTimeout(() => setIsSearchFocused(false), 120)}
-                placeholder="단지명 검색"
+                placeholder="단지명 검색 · 철거/착공 이후 또는 준공 15년 이하는 제외"
                 aria-label="단지명 검색"
                 autoComplete="off"
               />
@@ -223,7 +252,7 @@ function App() {
                     </button>
                   ))
                 ) : (
-                  <p>일치하는 단지가 없습니다.</p>
+                  <p>분석 대상 없음 · 철거/착공 이후 또는 준공 15년 이하 단지는 제외됩니다.</p>
                 )}
               </div>
             )}
@@ -971,8 +1000,238 @@ function App() {
           </div>
         </aside>
       </section>
+      )}
     </main>
   )
+}
+
+type RegionalDashboardStat = {
+  region: string
+  complexes: number
+  agedUnits: number
+  viableUnits: number
+  impossibleUnits: number
+  viableRate: number
+  averageBusinessScore: number
+  averageProRata: number
+  averageCurrentPrice: number
+  averageConstructionCost: number
+  riskLabel: string
+}
+
+type NationalDashboardStats = {
+  agedUnits: number
+  maxViableRate: number
+  maxViableUnits: number
+  impossibleRate: number
+  impossibleUnits: number
+  sampleUnits: number
+  sampleViableUnits: number
+  sampleViableRate: number
+  regionalStats: RegionalDashboardStat[]
+}
+
+function NationalDashboard({ stats }: { stats: NationalDashboardStats }) {
+  const topRegions = stats.regionalStats.slice(0, 5)
+  const impossibleRate = Math.round(stats.impossibleRate * 100)
+  const maxViableRate = Math.round(stats.maxViableRate * 100)
+
+  return (
+    <section className="national-dashboard">
+      <div className="national-hero">
+        <div>
+          <span className="eyebrow dark">
+            <BarChart3 size={15} />
+            전국 재건축 가능성 모니터
+          </span>
+          <h1>30년 이상 노후 아파트 251만호 중 사업성 통과 상한은 17%</h1>
+          <p>
+            현재 거래가, 공사비, 분양가 회수력까지 함께 보면 나머지 83%는 동일 조건에서 재건축 사업성 확보가 어렵다는 가정으로 구성한 대시보드입니다.
+          </p>
+        </div>
+        <div className="national-gauge" style={{ '--score': `${maxViableRate * 3.6}deg` } as React.CSSProperties}>
+          <div>
+            <strong>{maxViableRate}%</strong>
+            <span>가능 상한</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="national-kpi-grid">
+        <NationalKpiCard label="준공 30년 이상" value={`${formatHouseholds(stats.agedUnits)}호`} caption="전국 노후 공동주택 추정 모수" />
+        <NationalKpiCard label="재건축 가능 최대" value={`${formatHouseholds(stats.maxViableUnits)}호`} caption={`${maxViableRate}% 상한 적용`} tone="good" />
+        <NationalKpiCard label="사업성 불가" value={`${formatHouseholds(stats.impossibleUnits)}호`} caption={`${impossibleRate}% · 가격/공사비 조건 미달`} tone="risk" />
+        <NationalKpiCard
+          label="앱 표본 가능률"
+          value={`${stats.sampleViableRate.toFixed(1)}%`}
+          caption={`${formatHouseholds(stats.sampleUnits)}호 분석 표본 기준`}
+        />
+      </div>
+
+      <section className="national-grid">
+        <div className="dashboard-panel regional-panel">
+          <div className="section-heading">
+            <div>
+              <span>지역별 사업성 비율</span>
+              <h2>분석 표본 기준 가능 아파트 비율</h2>
+              <p>현재 보유 단지 데이터의 순수 사업성 70점 이상 또는 정비사업식 동일평형 정산금 3억 이하를 가능 후보로 분류했습니다.</p>
+            </div>
+            <MapPin size={18} />
+          </div>
+          <div className="region-list">
+            {stats.regionalStats.map((region) => (
+              <div className="region-row" key={region.region}>
+                <div>
+                  <strong>{region.region}</strong>
+                  <span>
+                    {region.complexes}개 단지 · {formatHouseholds(region.agedUnits)}호
+                  </span>
+                </div>
+                <div className="region-bar" aria-label={`${region.region} 가능률 ${region.viableRate.toFixed(1)}%`}>
+                  <i style={{ width: `${Math.min(region.viableRate, 100)}%` }} />
+                </div>
+                <b>{region.viableRate.toFixed(1)}%</b>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="dashboard-panel constraint-panel">
+          <div className="section-heading">
+            <div>
+              <span>불가 판정의 핵심 변수</span>
+              <h2>가격보다 공사비가 빠르게 압박</h2>
+            </div>
+            <ShieldAlert size={18} />
+          </div>
+          <div className="constraint-stack">
+            <ConstraintCard label="현재 거래가" value="높을수록 종전자산 부담 증가" detail="토지·기존주택 가격이 이미 많이 반영된 지역은 조합원분양가와 권리가액 사이의 여유가 줄어듭니다." />
+            <ConstraintCard label="공사비" value={`${baseScenario.constructionCost.toLocaleString()}만원/평 기준`} detail="평당 공사비가 상승하면 일반분양 수익으로 회수해야 하는 비용이 커져 비례율과 정산금이 동시에 악화됩니다." />
+            <ConstraintCard label="일반분양 여력" value="용적률·대지지분 의존" detail="허용 용적률 대비 현재 용적률이 높거나 대지지분이 작으면 신규 공급으로 비용을 회수할 공간이 제한됩니다." />
+          </div>
+        </div>
+      </section>
+
+      <section className="dashboard-panel">
+        <div className="section-heading">
+          <div>
+            <span>상위 지역</span>
+            <h2>가능 후보 집중 지역</h2>
+          </div>
+          <TrendingUp size={18} />
+        </div>
+        <div className="top-region-grid">
+          {topRegions.map((region) => (
+            <div className="top-region-card" key={region.region}>
+              <span>{region.region}</span>
+              <strong>{region.viableRate.toFixed(1)}%</strong>
+              <p>
+                가능 {formatHouseholds(region.viableUnits)}호 · 불가 {formatHouseholds(region.impossibleUnits)}호
+              </p>
+              <small>
+                평균 사업성 {region.averageBusinessScore.toFixed(0)}점 · 비례율 {region.averageProRata.toFixed(0)}%
+              </small>
+            </div>
+          ))}
+        </div>
+      </section>
+    </section>
+  )
+}
+
+function NationalKpiCard({ label, value, caption, tone = 'neutral' }: { label: string; value: string; caption: string; tone?: 'neutral' | 'good' | 'risk' }) {
+  return (
+    <div className={`national-kpi-card ${tone}`}>
+      <span>{label}</span>
+      <strong>{value}</strong>
+      <small>{caption}</small>
+    </div>
+  )
+}
+
+function ConstraintCard({ label, value, detail }: { label: string; value: string; detail: string }) {
+  return (
+    <div className="constraint-card">
+      <span>{label}</span>
+      <strong>{value}</strong>
+      <p>{detail}</p>
+    </div>
+  )
+}
+
+function createNationalDashboard(rankedComplexes: RankedComplex[]): NationalDashboardStats {
+  const agedUnits = 2_510_000
+  const maxViableRate = 0.17
+  const maxViableUnits = Math.round(agedUnits * maxViableRate)
+  const impossibleUnits = agedUnits - maxViableUnits
+  const regionalStats = createRegionalDashboardStats(rankedComplexes)
+  const sampleUnits = regionalStats.reduce((sum, region) => sum + region.agedUnits, 0)
+  const sampleViableUnits = regionalStats.reduce((sum, region) => sum + region.viableUnits, 0)
+
+  return {
+    agedUnits,
+    maxViableRate,
+    maxViableUnits,
+    impossibleRate: 1 - maxViableRate,
+    impossibleUnits,
+    sampleUnits,
+    sampleViableUnits,
+    sampleViableRate: sampleUnits > 0 ? (sampleViableUnits / sampleUnits) * 100 : 0,
+    regionalStats,
+  }
+}
+
+function createRegionalDashboardStats(rankedComplexes: RankedComplex[]): RegionalDashboardStat[] {
+  const grouped = new Map<string, RankedComplex[]>()
+
+  for (const ranked of rankedComplexes) {
+    const region = getDashboardRegion(ranked.complex)
+    grouped.set(region, [...(grouped.get(region) ?? []), ranked])
+  }
+
+  return [...grouped.entries()]
+    .map(([region, items]) => {
+      const agedUnits = items.reduce((sum, item) => sum + item.complex.units, 0)
+      const viableItems = items.filter(isViableReconstructionCandidate)
+      const viableUnits = viableItems.reduce((sum, item) => sum + item.complex.units, 0)
+      const impossibleUnits = agedUnits - viableUnits
+      const averageBusinessScore = average(items.map((item) => item.diagnosis.businessScore))
+      const averageProRata = average(items.map((item) => item.diagnosis.finance.accountingProRata))
+      const averageCurrentPrice = average(items.map((item) => item.complex.recentPrice))
+
+      return {
+        region,
+        complexes: items.length,
+        agedUnits,
+        viableUnits,
+        impossibleUnits,
+        viableRate: agedUnits > 0 ? (viableUnits / agedUnits) * 100 : 0,
+        averageBusinessScore,
+        averageProRata,
+        averageCurrentPrice,
+        averageConstructionCost: baseScenario.constructionCost,
+        riskLabel: averageBusinessScore >= 70 ? '가능권' : averageBusinessScore >= 58 ? '민감' : '불가권',
+      }
+    })
+    .sort((left, right) => right.viableRate - left.viableRate || right.agedUnits - left.agedUnits)
+}
+
+function isViableReconstructionCandidate({ diagnosis }: RankedComplex) {
+  return diagnosis.businessScore >= 70 || diagnosis.finance.accountingSameSizeSettlement <= 3
+}
+
+function getDashboardRegion(complex: Complex) {
+  const [sido, district] = complex.address.split(' ')
+
+  return sido === '서울' && district ? district : complex.district || sido || '지역 미상'
+}
+
+function average(values: number[]) {
+  return values.length > 0 ? values.reduce((sum, value) => sum + value, 0) / values.length : 0
+}
+
+function formatHouseholds(value: number) {
+  return value.toLocaleString('ko-KR')
 }
 
 type FinanceLineProps = {

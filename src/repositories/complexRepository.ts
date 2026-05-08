@@ -2,6 +2,7 @@ import { complexes } from '../data/complexes'
 import { manualComplexOverrides, type ManualComplexOverride } from '../data/manualOverrides'
 import { validateComplexDataset, type DataValidationIssue } from '../etl/validate'
 import { applyManualOverrides } from '../lib/complexOverlays'
+import { isEligibleForReconAnalysis } from '../lib/complexEligibility'
 import { calculateDiagnosis } from '../lib/diagnosis'
 import { isFreshnessStale } from '../lib/date'
 import { applyNewBuildPriceEstimates } from '../lib/newBuildPrice'
@@ -13,7 +14,7 @@ export type ComplexRepository = ReturnType<typeof createComplexRepository>
 export const sampleComplexRepository = createComplexRepository(complexes)
 
 export function createComplexRepository(dataset: Complex[], manualOverrides: ManualComplexOverride[] = manualComplexOverrides) {
-  const enrichedDataset = applyManualOverrides(applyNewBuildPriceEstimates(dataset), manualOverrides)
+  const enrichedDataset = applyManualOverrides(applyNewBuildPriceEstimates(dataset), manualOverrides).filter((complex) => isEligibleForReconAnalysis(complex))
   const getRanked = (scenario: Scenario): RankedComplex[] =>
     enrichedDataset
       .map((complex) => ({ complex, diagnosis: calculateDiagnosis(complex, scenario) }))

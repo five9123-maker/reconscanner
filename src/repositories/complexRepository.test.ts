@@ -35,6 +35,51 @@ describe('complexRepository', () => {
     expect(ranked[0].diagnosis.reconScore).toBeGreaterThanOrEqual(ranked[1].diagnosis.reconScore)
   })
 
+  it('excludes complexes that are too advanced or too new for scouting analysis', () => {
+    expect(getComplexById('apt-030')).toBeUndefined()
+
+    const youngRepository = createComplexRepository([
+      {
+        id: 'young-001',
+        identifiers: {
+          complexId: 'young-001',
+          legalDongCode: '1168010100',
+          jibunAddress: '서울 강남구 테스트동',
+          lat: 37.5,
+          lng: 127,
+        },
+        name: '신축테스트아파트',
+        aliases: ['신축테스트'],
+        district: '강남구',
+        address: '서울 강남구',
+        legalDongCode: '1168010100',
+        builtYear: 2015,
+        units: 500,
+        currentFar: 200,
+        allowedFar: 300,
+        landShare: 9,
+        previousAssetValue: 10,
+        recentPrice: 10,
+        newBuildPrice: 5000,
+        stage: '검토',
+        regulationRisk: '중간',
+        residentMomentum: '중간',
+        dataReliability: 60,
+        x: 50,
+        y: 50,
+        note: '테스트',
+        sourceFreshness: {
+          physicalInfo: '2026-04',
+          transaction: '2026-04',
+          regulation: '2026-04',
+          costIndex: '2026-04',
+        },
+      },
+    ])
+
+    expect(youngRepository.listComplexes()).toHaveLength(0)
+  })
+
   it('summarizes source quality for data operations', () => {
     const summary = getDataQualitySummary()
 

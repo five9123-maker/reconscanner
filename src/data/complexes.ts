@@ -1161,7 +1161,7 @@ const coreComplexes: Complex[] = [
     previousAssetValue: 28,
     recentPrice: 58,
     newBuildPrice: 8800,
-    stage: '관리처분인가',
+    stage: '착공신고',
     regulationRisk: '중간',
     residentMomentum: '높음',
     dataReliability: 78,

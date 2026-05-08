@@ -3,14 +3,15 @@ import type { SearchIndexItem } from '../types/searchIndex'
 import { isInferredCandidate } from './complexFlags'
 import { createSearchTokens, normalizeSearchText, rankComplexNameMatch } from './search'
 
-export function searchIndexByComplexName(searchIndex: SearchIndexItem[], query: string, fallback: RankedComplex[]): SearchIndexItem[] {
+export function searchIndexByComplexName(searchIndex: SearchIndexItem[], query: string, fallback: RankedComplex[], eligibleAnalysisIds?: Set<string>): SearchIndexItem[] {
   const normalizedQuery = normalizeSearchText(query)
 
   if (!normalizedQuery) {
     return fallback.map(({ complex }) => toSearchIndexItem(complex))
   }
 
-  const source = searchIndex.length > 0 ? searchIndex : fallback.map(({ complex }) => toSearchIndexItem(complex))
+  const source = (searchIndex.length > 0 ? searchIndex : fallback.map(({ complex }) => toSearchIndexItem(complex)))
+    .filter((item) => item.status !== 'analysis_ready' || !eligibleAnalysisIds || eligibleAnalysisIds.has(item.id))
 
   return source
     .map((item) => ({ item, score: rankComplexNameMatch(item, normalizedQuery) }))
