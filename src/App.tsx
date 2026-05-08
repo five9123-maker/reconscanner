@@ -26,7 +26,6 @@ import {
   createScenarioDelta,
   createScoreEvidenceItems,
   createScoreTooltip,
-  getDataEvidenceLabel,
   getStageTooltip,
   getUnitTypeCountLabel,
   getUnitTypeCountTooltip,
@@ -48,7 +47,8 @@ import {
   getDefaultComplexId,
   listComplexes,
 } from './repositories/complexRepository'
-import type { Complex, DataSignal, RankedComplex, Scenario, SourceType } from './types'
+import type { Complex, RankedComplex, Scenario, SourceType } from './types'
+import type { DataValidationIssue } from './etl/validate'
 import type { ApiEnrichmentPlan } from './types/apiEnrichment'
 import type { LiveEtlStatus } from './types/liveEtl'
 import type { SearchIndexItem, SearchIndexPayload } from './types/searchIndex'
@@ -96,6 +96,10 @@ function App() {
     () => [...rankedComplexes].sort((left, right) => right.diagnosis.businessScore - left.diagnosis.businessScore),
     [rankedComplexes],
   )
+  const officialUnmatchedRankedComplexes = useMemo<RankedComplex[]>(
+    () => businessRankedComplexes.filter(({ complex }) => !isOfficialRenewalMatched(liveEtlStatus?.renewalMatches ?? [], complex)),
+    [businessRankedComplexes, liveEtlStatus],
+  )
   const searchSuggestions = useMemo(
     () => searchIndexByComplexName(searchIndex, query, rankedComplexes).slice(0, 8),
     [query, rankedComplexes, searchIndex],
@@ -104,11 +108,27 @@ function App() {
   const contributionRange = getContributionRange(diagnosis.contribution)
   const accountingContributionRange = getContributionRange(diagnosis.finance.accountingSameSizeSettlement)
   const scenarioLabel = getScenarioStressLabel(scenario)
-  const selectedRank = rankedComplexes.findIndex(({ complex }) => complex.id === selected.id) + 1
   const selectedBusinessRank = businessRankedComplexes.findIndex(({ complex }) => complex.id === selected.id) + 1
   const dataProfile = selected.dataProfile
   const scoreEvidenceItems = useMemo(() => createScoreEvidenceItems(selected, diagnosis, scenario), [selected, diagnosis, scenario])
   const renewalMatch = useMemo(() => findRenewalMatch(liveEtlStatus?.renewalMatches ?? [], selected), [liveEtlStatus, selected])
+  const officialStatus = useMemo(() => createOfficialStatus(renewalMatch), [renewalMatch])
+  const selectedValidationIssues = useMemo(
+    () => getIssuesForComplex(repository.getValidationIssues(), selected),
+    [repository, selected],
+  )
+  const selectedQualityIssues = useMemo(
+    () => createQualityIssues(selected, transactionDiagnostic, renewalMatch, selectedValidationIssues),
+    [selected, transactionDiagnostic, renewalMatch, selectedValidationIssues],
+  )
+  const selectedQualityGrade = useMemo(
+    () => createQualityGrade(selected, renewalMatch, selectedQualityIssues),
+    [selected, renewalMatch, selectedQualityIssues],
+  )
+  const evidencePack = useMemo(
+    () => createEvidencePack(selected, diagnosis, scenario, transactionDiagnostic, renewalMatch, selectedQualityGrade),
+    [selected, diagnosis, scenario, transactionDiagnostic, renewalMatch, selectedQualityGrade],
+  )
   const dataQuality = useMemo(() => repository.getDataQualitySummary(), [repository])
   const validationIssues = useMemo(() => repository.getValidationIssues().slice(0, 3), [repository])
   const favoriteComplexes = useMemo(() => favoriteIds.map((id) => repository.getComplexById(id)).filter(Boolean) as Complex[], [favoriteIds, repository])
@@ -268,12 +288,20 @@ function App() {
               renderValue={({ diagnosis: itemDiagnosis }) => `${itemDiagnosis.businessScore.toFixed(0)}점`}
             />
             <RankList
-              title="현재 추진 성공"
+              title="공식화 전 후보"
+              caption="공식 추진 미확인 단지 중 순수 사업성 상위"
+              items={officialUnmatchedRankedComplexes.slice(0, 10)}
+              selectedId={selectedId}
+              onSelect={selectAnalysisComplex}
+              renderValue={({ diagnosis: itemDiagnosis }) => `${itemDiagnosis.businessScore.toFixed(0)}점`}
+            />
+            <RankList
+              title="추진 확실성 참고"
               caption="사업성에 단계·규제·추진력 반영"
               items={rankedComplexes.slice(0, 10)}
               selectedId={selectedId}
               onSelect={selectAnalysisComplex}
-              renderValue={({ diagnosis: itemDiagnosis }) => itemDiagnosis.grade}
+              renderValue={({ diagnosis: itemDiagnosis }) => `${itemDiagnosis.reconScore.toFixed(0)}점`}
             />
           </div>
         </aside>
@@ -298,11 +326,11 @@ function App() {
               </div>
               <p>{selected.note}</p>
             </div>
-            <div className="score-gauge" style={{ '--score': `${diagnosis.reconScore * 3.6}deg` } as React.CSSProperties}>
+            <div className="score-gauge" style={{ '--score': `${diagnosis.businessScore * 3.6}deg` } as React.CSSProperties}>
               <div>
-                <span>{diagnosis.grade}</span>
-                <small>종합 진단</small>
-                <em>추진 {selectedRank}위</em>
+                <span>{diagnosis.businessScore.toFixed(0)}</span>
+                <small>순수 사업성</small>
+                <em>{officialStatus.shortLabel}</em>
               </div>
             </div>
           </div>
@@ -341,14 +369,24 @@ function App() {
               <small>{diagnosis.businessScore.toFixed(0)}점 · 사업성 {selectedBusinessRank}위</small>
             </article>
             <article
+              className={`metric official-status tooltip-target ${officialStatus.tone}`}
+              data-tooltip={officialStatus.detail}
+              tabIndex={0}
+            >
+              <FileText size={19} />
+              <span>공식 추진</span>
+              <strong>{officialStatus.label}</strong>
+              <small>{officialStatus.caption}</small>
+            </article>
+            <article
               className="metric tooltip-target"
               data-tooltip="기준: 공공 API 확보, 수동 보강, 최신성, 검증 이슈 종합 품질 점수"
               tabIndex={0}
             >
               <ShieldAlert size={19} />
-              <span>데이터 신뢰도</span>
-              <strong>{selected.dataReliability}%</strong>
-              <small>{getDataEvidenceLabel(selected)}</small>
+              <span>데이터 품질</span>
+              <strong>{selectedQualityGrade.label}</strong>
+              <small>{selected.dataReliability}% · {selectedQualityIssues.length}개 보완 필요</small>
             </article>
           </div>
 
@@ -357,7 +395,7 @@ function App() {
               <div className="section-heading">
                 <div>
                   <span>핵심 판단</span>
-                  <h2>왜 이 등급인가</h2>
+                  <h2>순수 사업성 판단</h2>
                 </div>
               </div>
               <div className="complex-info-card">
@@ -662,31 +700,31 @@ function App() {
           <section className="analysis-panel data-profile-panel">
             <div className="section-heading">
               <div>
-                <span>데이터 확보 방식</span>
-                <h2>공공 API 추정값과 추가 근거</h2>
+                <span>Evidence Pack</span>
+                <h2>수치별 출처와 산정 방식</h2>
+                <p>툴팁에 숨어 있던 근거를 항목별로 분리해, 공식값과 추정값을 따로 확인할 수 있게 정리했습니다.</p>
               </div>
               <FileText size={18} />
             </div>
-            <div className="data-profile-grid">
-              <div className="source-column">
-                <span>공공 데이터 기반</span>
-                {(dataProfile?.publicSignals ?? []).map((signal) => (
-                  <SignalRow key={`${signal.label}-${signal.sourceName}`} signal={signal} />
-                ))}
-              </div>
-              <div className="source-column">
-                <span>문서·추가 근거</span>
-                {(dataProfile?.manualSignals.length ?? 0) > 0 ? (
-                  dataProfile?.manualSignals.map((signal) => <SignalRow key={`${signal.label}-${signal.sourceName}`} signal={signal} />)
-                ) : (
-                  <div className="empty-source">아직 추가 근거 없음</div>
-                )}
-              </div>
+            <div className="evidence-pack-grid">
+              {evidencePack.map((item) => (
+                <EvidencePackCard key={item.label} item={item} />
+              ))}
+            </div>
+            <div className="data-profile-grid compact">
               <div className="source-column gap-column">
                 <span>추가 확보 필요</span>
                 {(dataProfile?.gaps ?? []).map((gap) => (
                   <p key={gap}>{gap}</p>
                 ))}
+              </div>
+              <div className="source-column quality-column">
+                <span>데이터 보완 필요</span>
+                {selectedQualityIssues.length > 0 ? (
+                  selectedQualityIssues.map((issue) => <QualityIssueRow key={`${issue.type}-${issue.message}`} issue={issue} />)
+                ) : (
+                  <div className="empty-source">현재 단지의 주요 보완 이슈 없음</div>
+                )}
               </div>
             </div>
           </section>
@@ -748,15 +786,17 @@ function App() {
             <section className="analysis-panel renewal-match-panel">
               <div className="section-heading">
                 <div>
-                  <span>정비구역 매칭</span>
-                  <h2>{renewalMatch.matched ? '서울 정비사업 API 매칭' : '직접 매칭 없음'}</h2>
+                  <span>공식 추진 근거</span>
+                  <h2>{officialStatus.label}</h2>
+                  <p>정비사업 공식 매칭은 추진 확실성 근거로만 사용하고, 순수 사업성 점수와 분리해 해석합니다.</p>
                 </div>
                 <FileText size={18} />
               </div>
-              <div className="renewal-match-card tooltip-target" data-tooltip={`출처: 서울 열린데이터광장 도시계획 정비사업 현황. 매칭 사유: ${renewalMatch.reason}. 매칭 점수 ${renewalMatch.score}점`} tabIndex={0}>
+              <div className={`renewal-match-card ${officialStatus.tone}`}>
                 <span>{renewalMatch.matched ? '매칭 원문' : '가장 가까운 후보'}</span>
                 <strong>{renewalMatch.sourceRecordName ?? '후보 없음'}</strong>
-                <small>{renewalMatch.reason} · {renewalMatch.score}점</small>
+                <small>{renewalMatch.reason} · 매칭 점수 {renewalMatch.score}점</small>
+                <p>{officialStatus.detail}</p>
               </div>
             </section>
           )}
@@ -1070,22 +1110,232 @@ function FinanceLine({ label, value, valueText, suffix = '억', source, strong =
   )
 }
 
-type SignalRowProps = {
-  signal: DataSignal
+type RenewalMatch = NonNullable<LiveEtlStatus['renewalMatches']>[number]
+
+type OfficialStatus = {
+  label: string
+  shortLabel: string
+  caption: string
+  detail: string
+  tone: 'confirmed' | 'unconfirmed' | 'unknown'
 }
 
-function SignalRow({ signal }: SignalRowProps) {
-  const tooltip = `${signal.label}: ${signal.method ?? signal.value}. 출처: ${signal.sourceName}. 유형 ${formatSourceType(signal.sourceType)} · 신뢰도 ${signal.confidence}%`
+function createOfficialStatus(match?: RenewalMatch): OfficialStatus {
+  if (!match) {
+    return {
+      label: '공식 데이터 없음',
+      shortLabel: '공식 미확인',
+      caption: '정비사업 API 조회 전',
+      detail: '현재 ETL 결과에서 이 단지의 정비사업 공식 매칭 정보를 찾지 못했습니다. 사업성이 낮다는 뜻은 아니며, 공식 추진 근거만 미확인 상태입니다.',
+      tone: 'unknown',
+    }
+  }
 
+  if (match.matched) {
+    return {
+      label: '공식 추진 확인',
+      shortLabel: '공식 확인',
+      caption: '정비사업 공개자료 매칭',
+      detail: `서울 정비사업 공개자료에서 직접 매칭되었습니다. 매칭 원문은 ${match.sourceRecordName ?? match.complexName}이며, 이 값은 추진 확실성 근거로만 사용합니다.`,
+      tone: 'confirmed',
+    }
+  }
+
+  return {
+    label: '공식 데이터 없음',
+    shortLabel: '공식 미확인',
+    caption: '직접 매칭 없음',
+    detail: `정비사업 공개자료와 직접 매칭되지 않았습니다. 가장 가까운 후보는 ${match.sourceRecordName ?? '없음'}이지만, 사업성 감점이 아니라 공식 추진 근거 미확인으로만 해석합니다.`,
+    tone: 'unconfirmed',
+  }
+}
+
+function isOfficialRenewalMatched(matches: NonNullable<LiveEtlStatus['renewalMatches']>, complex: Complex) {
+  return findRenewalMatch(matches, complex)?.matched ?? false
+}
+
+function getIssuesForComplex(issues: DataValidationIssue[], complex: Complex) {
+  return issues.filter((issue) => issue.complexId === complex.identifiers.complexId || issue.complexId === complex.id || issue.complexName === complex.name)
+}
+
+type QualityIssue = {
+  type: '거래가' | '신축가' | '공식추진' | '토지' | '기본정보' | '신뢰도'
+  severity: 'info' | 'warning' | 'error'
+  message: string
+}
+
+function createQualityIssues(
+  complex: Complex,
+  transactionDiagnostic: ReturnType<typeof findTransactionDiagnostic> | undefined,
+  renewalMatch: RenewalMatch | undefined,
+  validationIssues: DataValidationIssue[],
+): QualityIssue[] {
+  const issues: QualityIssue[] = []
+
+  if (!transactionDiagnostic || transactionDiagnostic.tradeCount < 3) {
+    issues.push({
+      type: '거래가',
+      severity: 'warning',
+      message: transactionDiagnostic
+        ? `최근 거래 ${transactionDiagnostic.tradeCount}건 기준입니다. 대표 시세 변동성이 클 수 있습니다.`
+        : '실거래가 진단 정보가 없어 대표 시세를 후보/기본값으로 해석해야 합니다.',
+    })
+  }
+
+  if (complex.newBuildPrice <= 0 || complex.sourceFreshness.costIndex === 'unknown') {
+    issues.push({
+      type: '신축가',
+      severity: 'warning',
+      message: '주변 신축 비교군 또는 공사비 기준가의 최신성이 부족합니다.',
+    })
+  }
+
+  if (!renewalMatch?.matched) {
+    issues.push({
+      type: '공식추진',
+      severity: 'info',
+      message: '정비몽땅/서울 정비사업 공개자료에서 직접 매칭되지 않았습니다. 순수 사업성 판단과 분리해 보세요.',
+    })
+  }
+
+  for (const issue of validationIssues) {
+    if (issue.field.includes('pnu')) {
+      issues.push({ type: '토지', severity: issue.severity, message: issue.message })
+    } else if (issue.field.includes('kaptCode') || issue.field === 'units' || issue.field === 'currentFar') {
+      issues.push({ type: '기본정보', severity: issue.severity, message: issue.message })
+    } else if (issue.field === 'dataReliability') {
+      issues.push({ type: '신뢰도', severity: issue.severity, message: issue.message })
+    }
+  }
+
+  return dedupeQualityIssues(issues).slice(0, 6)
+}
+
+function dedupeQualityIssues(issues: QualityIssue[]) {
+  const seen = new Set<string>()
+
+  return issues.filter((issue) => {
+    const key = `${issue.type}-${issue.message}`
+    if (seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
+}
+
+function createQualityGrade(complex: Complex, renewalMatch: RenewalMatch | undefined, issues: QualityIssue[]) {
+  const errorCount = issues.filter((issue) => issue.severity === 'error').length
+  const warningCount = issues.filter((issue) => issue.severity === 'warning').length
+  const hasOfficialMatch = renewalMatch?.matched ?? false
+  const hasCoreIds = Boolean(complex.identifiers.kaptCode && complex.identifiers.pnu)
+
+  if (errorCount > 0 || complex.dataReliability < 58) {
+    return { label: '후보추정', description: '핵심 식별자나 가격 근거 보강 필요' }
+  }
+
+  if (complex.dataReliability >= 82 && hasCoreIds && hasOfficialMatch && warningCount <= 1) {
+    return { label: '확정', description: '공식 API와 추진 근거가 함께 확인됨' }
+  }
+
+  return { label: '부분확정', description: hasOfficialMatch ? '공식 추진은 확인, 일부 가격/토지 근거 보강 필요' : '물리·가격 데이터 중심, 공식 추진은 미확인' }
+}
+
+type EvidencePackItem = {
+  label: string
+  value: string
+  sourceType: SourceType
+  sourceName: string
+  confidence: number
+  method: string
+}
+
+function createEvidencePack(
+  complex: Complex,
+  diagnosis: ReturnType<typeof calculateDiagnosis>,
+  scenario: Scenario,
+  transactionDiagnostic: ReturnType<typeof findTransactionDiagnostic> | undefined,
+  renewalMatch: RenewalMatch | undefined,
+  qualityGrade: ReturnType<typeof createQualityGrade>,
+): EvidencePackItem[] {
+  const officialStatus = createOfficialStatus(renewalMatch)
+  const transactionConfidence = Math.round((transactionDiagnostic?.matchConfidence ?? 0.52) * 100)
+
+  return [
+    {
+      label: '기본정보',
+      value: `${complex.builtYear}년 · ${complex.units.toLocaleString()}세대 · 용적률 ${complex.currentFar}%`,
+      sourceType: complex.identifiers.kaptCode ? 'official_api' : 'inferred',
+      sourceName: complex.identifiers.kaptCode ? 'K-apt 공동주택 단지 API' : '후보 레퍼런스/기본값',
+      confidence: complex.identifiers.kaptCode ? 88 : 58,
+      method: '준공연도, 세대수, 현재 용적률을 단지 기본정보로 사용합니다.',
+    },
+    {
+      label: '실거래가',
+      value: `${complex.recentPrice.toFixed(1)}억 · ${estimateCurrentPricePerPyeong(complex).toLocaleString()}만원/평`,
+      sourceType: transactionDiagnostic ? 'official_api' : 'inferred',
+      sourceName: transactionDiagnostic ? '국토교통부 실거래가 API' : '대표 시세 후보값',
+      confidence: transactionDiagnostic ? transactionConfidence : 52,
+      method: transactionDiagnostic
+        ? `최근 거래 ${transactionDiagnostic.tradeCount}건 중 대표 면적대 중앙값을 사용합니다.`
+        : 'API 직접 매칭 전에는 단지 후보값을 사용합니다.',
+    },
+    {
+      label: '정비사업 단계',
+      value: `${complex.stage} · ${officialStatus.label}`,
+      sourceType: renewalMatch?.matched ? 'public_document' : 'inferred',
+      sourceName: renewalMatch?.matched ? '서울 정비사업 공개자료' : '공식 추진 미확인',
+      confidence: renewalMatch?.matched ? Math.min(92, Math.max(74, renewalMatch.score)) : 45,
+      method: renewalMatch?.matched
+        ? `정비구역명 ${renewalMatch.sourceRecordName ?? renewalMatch.complexName}과 매칭했습니다.`
+        : '공식 매칭 없음은 사업성 감점이 아니라 추진 근거 미확인으로만 표시합니다.',
+    },
+    {
+      label: '신축 비교가',
+      value: `${estimateExpectedSalePricePerPyeong(complex, scenario).toLocaleString()}만원/평`,
+      sourceType: 'inferred',
+      sourceName: '국토부 실거래가 기반 신축 비교 모델',
+      confidence: complex.newBuildPrice > 0 ? 66 : 48,
+      method: describeExpectedSalePricePerPyeong(complex, scenario),
+    },
+    {
+      label: '분담금/비례율',
+      value: `${formatSettlementCurrency(diagnosis.finance.accountingSameSizeSettlement)} · 비례율 ${diagnosis.finance.accountingProRata.toFixed(0)}%`,
+      sourceType: 'inferred',
+      sourceName: '정비사업식 산식 추정',
+      confidence: 58,
+      method: '조합원분양가 - 종전자산×정비사업식 비례율로 동일평형 정산금을 추정합니다.',
+    },
+    {
+      label: '품질 등급',
+      value: qualityGrade.label,
+      sourceType: qualityGrade.label === '확정' ? 'official_api' : qualityGrade.label === '부분확정' ? 'public_document' : 'inferred',
+      sourceName: 'Recon Scanner 데이터 품질 규칙',
+      confidence: complex.dataReliability,
+      method: qualityGrade.description,
+    },
+  ]
+}
+
+function EvidencePackCard({ item }: { item: EvidencePackItem }) {
   return (
-    <div className="signal-row tooltip-target" data-tooltip={tooltip} tabIndex={0}>
+    <div className="evidence-pack-card">
       <div>
-        <b>{signal.label}</b>
-        <p>{signal.value}</p>
-        <small>{signal.sourceName}</small>
+        <span>{item.label}</span>
+        <i className={`source-chip ${item.sourceType}`}>{formatSourceType(item.sourceType)}</i>
       </div>
-      <span className={`source-chip ${signal.sourceType}`}>{formatSourceType(signal.sourceType)}</span>
-      <meter min="0" max="100" value={signal.confidence} aria-label={`${signal.label} 신뢰도 ${signal.confidence}%`} />
+      <strong>{item.value}</strong>
+      <p>{item.method}</p>
+      <small>
+        {item.sourceName} · 신뢰도 {item.confidence}%
+      </small>
+    </div>
+  )
+}
+
+function QualityIssueRow({ issue }: { issue: QualityIssue }) {
+  return (
+    <div className={`quality-issue-row ${issue.severity}`}>
+      <span>{issue.type}</span>
+      <p>{issue.message}</p>
     </div>
   )
 }

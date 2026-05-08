@@ -609,7 +609,7 @@ button {
 
 .metric-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 12px;
 }
 
@@ -650,6 +650,26 @@ button {
 .metric small {
   color: var(--muted);
   font-size: 12px;
+}
+
+.metric.official-status.confirmed {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+}
+
+.metric.official-status.unconfirmed,
+.metric.official-status.unknown {
+  border-color: #fde68a;
+  background: #fffbeb;
+}
+
+.metric.official-status.confirmed strong {
+  color: #0f766e;
+}
+
+.metric.official-status.unconfirmed strong,
+.metric.official-status.unknown strong {
+  color: #92400e;
 }
 
 .tooltip-target {
@@ -1132,6 +1152,56 @@ button {
   gap: 12px;
 }
 
+.data-profile-grid.compact {
+  grid-template-columns: 1fr 1fr;
+  margin-top: 12px;
+}
+
+.evidence-pack-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.evidence-pack-card {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  padding: 13px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.evidence-pack-card > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.evidence-pack-card span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.evidence-pack-card strong {
+  font-size: 17px;
+}
+
+.evidence-pack-card p,
+.evidence-pack-card small {
+  margin: 0;
+  color: #475569;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.evidence-pack-card small {
+  color: var(--muted);
+}
+
 .source-column {
   display: grid;
   align-content: start;
@@ -1148,42 +1218,46 @@ button {
   font-weight: 800;
 }
 
-.signal-row {
+.quality-column {
+  grid-template-columns: 1fr;
+}
+
+.quality-issue-row {
   display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 8px 10px;
+  grid-template-columns: 58px 1fr;
+  gap: 8px;
+  align-items: start;
   padding: 10px;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   background: #ffffff;
 }
 
-.signal-row b,
-.signal-row p,
-.signal-row small {
-  display: block;
-}
-
-.signal-row b {
-  font-size: 13px;
-}
-
-.signal-row p {
-  margin: 3px 0;
-  color: #334155;
-  font-size: 12px;
-  line-height: 1.35;
-}
-
-.signal-row small {
-  color: var(--muted);
+.quality-issue-row span {
+  padding: 3px 6px;
+  border-radius: 6px;
+  background: #e0f2fe;
+  color: #075985;
   font-size: 11px;
+  font-weight: 900;
+  text-align: center;
 }
 
-.signal-row meter {
-  grid-column: 1 / -1;
-  width: 100%;
-  height: 7px;
+.quality-issue-row.warning span {
+  color: #92400e;
+  background: #fef3c7;
+}
+
+.quality-issue-row.error span {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+.quality-issue-row p {
+  margin: 0;
+  color: #475569;
+  font-size: 12px;
+  line-height: 1.4;
 }
 
 .source-chip {
@@ -1315,6 +1389,18 @@ button {
   padding: 13px;
   border-radius: 8px;
   background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.renewal-match-card.confirmed {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+}
+
+.renewal-match-card.unconfirmed,
+.renewal-match-card.unknown {
+  border-color: #fde68a;
+  background: #fffbeb;
 }
 
 .renewal-match-card span,
@@ -1325,6 +1411,13 @@ button {
 
 .renewal-match-card strong {
   font-size: 16px;
+}
+
+.renewal-match-card p {
+  margin: 4px 0 0;
+  color: #475569;
+  font-size: 12px;
+  line-height: 1.45;
 }
 
 .right-panel {
@@ -1777,6 +1870,11 @@ button {
   }
 
   .data-profile-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .data-profile-grid.compact,
+  .evidence-pack-grid {
     grid-template-columns: 1fr;
   }
 
