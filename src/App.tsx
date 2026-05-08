@@ -6,12 +6,10 @@ import {
   CircleDollarSign,
   Database,
   FileText,
-  Gauge,
   Clock3,
   MapPin,
   RefreshCw,
   Search,
-  ShieldAlert,
   SlidersHorizontal,
   Star,
   TrendingUp,
@@ -24,7 +22,6 @@ import { useJsonResource } from './hooks/useJsonResource'
 import { useLocalStorageState } from './hooks/useLocalStorageState'
 import {
   createScenarioDelta,
-  createScoreEvidenceItems,
   createScoreTooltip,
   getStageTooltip,
   getUnitTypeCountLabel,
@@ -108,9 +105,7 @@ function App() {
   const contributionRange = getContributionRange(diagnosis.contribution)
   const accountingContributionRange = getContributionRange(diagnosis.finance.accountingSameSizeSettlement)
   const scenarioLabel = getScenarioStressLabel(scenario)
-  const selectedBusinessRank = businessRankedComplexes.findIndex(({ complex }) => complex.id === selected.id) + 1
   const dataProfile = selected.dataProfile
-  const scoreEvidenceItems = useMemo(() => createScoreEvidenceItems(selected, diagnosis, scenario), [selected, diagnosis, scenario])
   const renewalMatch = useMemo(() => findRenewalMatch(liveEtlStatus?.renewalMatches ?? [], selected), [liveEtlStatus, selected])
   const officialStatus = useMemo(() => createOfficialStatus(renewalMatch), [renewalMatch])
   const selectedValidationIssues = useMemo(
@@ -333,23 +328,8 @@ function App() {
                 <em>{officialStatus.shortLabel}</em>
               </div>
             </div>
-          </div>
-
-          <div className="metric-grid">
-            <article
-              className="metric primary tooltip-target"
-              data-tooltip={`정비사업식: ${diagnosis.finance.accountingSettlementSource}. 시장가치식: ${diagnosis.finance.sameSizeSettlementSource}. 같은 평형을 받는다는 가정에서 부담 또는 환급 방향을 먼저 확인`}
-              tabIndex={0}
-            >
-              <CircleDollarSign size={19} />
-              <span>핵심 결론 · 동일평형 정산</span>
-              <strong className={diagnosis.finance.accountingSameSizeSettlement < 0 ? 'refund' : 'burden'}>
-                {formatSettlementCurrency(diagnosis.finance.accountingSameSizeSettlement)}
-              </strong>
-              <small>시장가치식 {formatSettlementCurrency(diagnosis.finance.sameSizeSettlement)}</small>
-            </article>
-            <article
-              className="metric tooltip-target"
+            <div
+              className="summary-ratio-card tooltip-target"
               data-tooltip="정비사업식: (총수익-공사비-사업비)/종전자산. 시장가치식: 현재 구축 시세/동일평형 신축 원가. 두 값을 함께 봐야 실제 분담금과 시장 체감 차이를 구분할 수 있음"
               tabIndex={0}
             >
@@ -357,37 +337,7 @@ function App() {
               <span>비례율 비교</span>
               <strong>{diagnosis.finance.accountingProRata.toFixed(0)}% / {diagnosis.finance.marketProRata.toFixed(0)}%</strong>
               <small>정비사업식 추정 / 시장가치식</small>
-            </article>
-            <article
-              className="metric tooltip-target"
-              data-tooltip={`산식: 비례율·대지지분·용적률 여력·신축 분양가 체급·공사비 민감도 가중합. 순수 사업성 ${selectedBusinessRank}위`}
-              tabIndex={0}
-            >
-              <Gauge size={19} />
-              <span>사업성</span>
-              <strong>{diagnosis.businessLabel}</strong>
-              <small>{diagnosis.businessScore.toFixed(0)}점 · 사업성 {selectedBusinessRank}위</small>
-            </article>
-            <article
-              className={`metric official-status tooltip-target ${officialStatus.tone}`}
-              data-tooltip={officialStatus.detail}
-              tabIndex={0}
-            >
-              <FileText size={19} />
-              <span>공식 추진</span>
-              <strong>{officialStatus.label}</strong>
-              <small>{officialStatus.caption}</small>
-            </article>
-            <article
-              className="metric tooltip-target"
-              data-tooltip="기준: 공공 API 확보, 수동 보강, 최신성, 검증 이슈 종합 품질 점수"
-              tabIndex={0}
-            >
-              <ShieldAlert size={19} />
-              <span>데이터 품질</span>
-              <strong>{selectedQualityGrade.label}</strong>
-              <small>{selected.dataReliability}% · {selectedQualityIssues.length}개 보완 필요</small>
-            </article>
+            </div>
           </div>
 
           <section className="insight-grid">
@@ -449,16 +399,6 @@ function App() {
                       <i style={{ width: `${value}%` }} />
                     </div>
                     <b>{value.toFixed(0)}</b>
-                  </div>
-                ))}
-              </div>
-              <div className="evidence-panel">
-                <span>산정 근거 요약</span>
-                {scoreEvidenceItems.map((item) => (
-                  <div key={item.label}>
-                    <b>{item.label}</b>
-                    <p>{item.evidence}</p>
-                    <small>{item.method}</small>
                   </div>
                 ))}
               </div>

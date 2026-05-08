@@ -41,8 +41,12 @@ export function estimateNewBuildPrice(complex: Complex, peers: Complex[] = []): 
     }
   })
   const totalWeight = weighted.reduce((sum, item) => sum + item.weight, 0)
-  const pricePerPyeong = Math.round(weighted.reduce((sum, item) => sum + item.price * item.weight, 0) / totalWeight / 10) * 10
+  const comparablePrice = weighted.reduce((sum, item) => sum + item.price * item.weight, 0) / totalWeight
+  const context = createComparableContextPrice(complex, peers, comparablePrice)
+  const adjustedPrice = Math.max(context.blendedPrice, context.floorPrice ?? 0)
+  const pricePerPyeong = Math.round(adjustedPrice / 10) * 10
   const averageSimilarity = candidates.reduce((sum, item) => sum + item.similarity, 0) / candidates.length
+  const contextDescription = context.description ? `, ${context.description} 반영` : ''
 
   return {
     pricePerPyeong,
@@ -51,7 +55,7 @@ export function estimateNewBuildPrice(complex: Complex, peers: Complex[] = []): 
     comparableNames: candidates.map((item) => item.name),
     method: 'direct_comparable',
     confidence: candidates.length >= 3 && averageSimilarity >= 0.75 ? 82 : 72,
-    description: `${candidates.map((item) => item.name).slice(0, 3).join(', ')} ${candidates.length}개 단지의 거리·유사도 가중 평균`,
+    description: `${candidates.map((item) => item.name).slice(0, 3).join(', ')} ${candidates.length}개 단지의 거리·유사도 가중 평균${contextDescription}`,
   }
 }
 
@@ -147,6 +151,43 @@ function getCurrentPricePerPyeong(complex: Complex) {
   const supplyPyeong = complex.representativeSupplyPyeong ?? complex.landShare * (complex.currentFar / 100)
 
   return supplyPyeong > 0 ? (complex.recentPrice * 10000) / supplyPyeong : 0
+}
+
+function createComparableContextPrice(complex: Complex, peers: Complex[], comparablePrice: number) {
+  const currentPricePerPyeong = getCurrentPricePerPyeong(complex)
+  const marketReference = findNewBuildMarketReference(currentPricePerPyeong)
+  const sameDistrictMedian = median(peerPrices(peers, complex, (peer) => peer.district === complex.district))
+  const sameRegionMedian = median(peerPrices(peers, complex, (peer) => getRegionKey(peer) === getRegionKey(complex)))
+  const blendedPrice = weightedAnchor([
+    { price: comparablePrice, weight: 0.58 },
+    { price: marketReference?.referencePricePerPyeong, weight: 0.24 },
+    { price: sameDistrictMedian, weight: 0.12 },
+    { price: sameRegionMedian, weight: 0.06 },
+  ]) ?? comparablePrice
+  const floorPrice = getCurrentPriceFloor(currentPricePerPyeong, marketReference?.referencePricePerPyeong)
+  const contextLabels = []
+
+  if (marketReference) contextLabels.push(`${marketReference.label} 레퍼런스`)
+  if (sameDistrictMedian) contextLabels.push('같은 구 중앙값')
+  if (sameRegionMedian && sameRegionMedian !== sameDistrictMedian) contextLabels.push('같은 권역 중앙값')
+  if (floorPrice && floorPrice > comparablePrice) contextLabels.push('현재 구축 평당가 기반 하방선')
+
+  return {
+    blendedPrice,
+    floorPrice,
+    description: contextLabels.join('·'),
+  }
+}
+
+function getCurrentPriceFloor(currentPricePerPyeong: number, referencePricePerPyeong?: number) {
+  const cap = referencePricePerPyeong ? referencePricePerPyeong * 1.25 : Number.POSITIVE_INFINITY
+
+  if (currentPricePerPyeong >= 8200) return Math.min(currentPricePerPyeong * 0.78, cap)
+  if (currentPricePerPyeong >= 6200) return Math.min(currentPricePerPyeong * 0.74, cap)
+  if (currentPricePerPyeong >= 4700) return Math.min(currentPricePerPyeong * 0.68, cap)
+  if (currentPricePerPyeong >= 3400) return Math.min(currentPricePerPyeong * 0.62, cap)
+
+  return undefined
 }
 
 function getRegionKey(complex: Complex) {

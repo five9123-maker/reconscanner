@@ -7,9 +7,9 @@ describe('newBuildPrice', () => {
     const jamsil = complexes.find((complex) => complex.id === 'apt-002')!
     const estimate = estimateNewBuildPrice(jamsil)
 
-    expect(estimate.pricePerPyeong).toBeGreaterThan(5900)
-    expect(estimate.pricePerPyeong).toBeLessThan(6200)
+    expect(estimate.pricePerPyeong).toBeGreaterThanOrEqual(9000)
     expect(estimate.comparableCount).toBeGreaterThanOrEqual(3)
+    expect(estimate.description).toContain('하방선')
   })
 
   it('applies comparable estimates without changing complex identity', () => {
