@@ -20,7 +20,6 @@ import {
 import { Control } from './components/Control'
 import { FactRow } from './components/FactRow'
 import { QuickAccessGroup } from './components/QuickAccessGroup'
-import { RankList } from './components/RankList'
 import { useJsonResource } from './hooks/useJsonResource'
 import { useLocalStorageState } from './hooks/useLocalStorageState'
 import {
@@ -55,10 +54,10 @@ import type { LiveEtlStatus } from './types/liveEtl'
 import type { SearchIndexItem, SearchIndexPayload } from './types/searchIndex'
 import './App.css'
 
-type AppView = 'scanner' | 'national'
+type AppView = 'national' | 'scanner' | 'renewalProducts'
 
 function App() {
-  const [activeView, setActiveView] = useState<AppView>('scanner')
+  const [activeView, setActiveView] = useState<AppView>('national')
   const [selectedId, setSelectedId] = useState(getDefaultComplexId())
   const [query, setQuery] = useState('')
   const [isSearchFocused, setIsSearchFocused] = useState(false)
@@ -101,14 +100,6 @@ function App() {
     [repository, scenario],
   )
   const eligibleAnalysisIds = useMemo(() => new Set(rankedComplexes.map(({ complex }) => complex.id)), [rankedComplexes])
-  const businessRankedComplexes = useMemo<RankedComplex[]>(
-    () => [...rankedComplexes].sort((left, right) => right.diagnosis.businessScore - left.diagnosis.businessScore),
-    [rankedComplexes],
-  )
-  const officialUnmatchedRankedComplexes = useMemo<RankedComplex[]>(
-    () => businessRankedComplexes.filter(({ complex }) => !isOfficialRenewalMatched(liveEtlStatus?.renewalMatches ?? [], complex)),
-    [businessRankedComplexes, liveEtlStatus],
-  )
   const searchSuggestions = useMemo(
     () => searchIndexByComplexName(searchIndex, query, rankedComplexes, eligibleAnalysisIds).slice(0, 8),
     [eligibleAnalysisIds, query, rankedComplexes, searchIndex],
@@ -181,6 +172,14 @@ function App() {
         </div>
         <nav className="topbar-tabs" aria-label="화면 이동">
           <button
+            className={activeView === 'national' ? 'active' : ''}
+            type="button"
+            onClick={() => setActiveView('national')}
+          >
+            <BarChart3 size={16} />
+            <span>전국 대시보드</span>
+          </button>
+          <button
             className={activeView === 'scanner' ? 'active' : ''}
             type="button"
             onClick={() => setActiveView('scanner')}
@@ -189,12 +188,12 @@ function App() {
             <span>단지 스캐너</span>
           </button>
           <button
-            className={activeView === 'national' ? 'active' : ''}
+            className={activeView === 'renewalProducts' ? 'active' : ''}
             type="button"
-            onClick={() => setActiveView('national')}
+            onClick={() => setActiveView('renewalProducts')}
           >
-            <BarChart3 size={16} />
-            <span>전국 대시보드</span>
+            <Building2 size={16} />
+            <span>리뉴얼(수선) 상품</span>
           </button>
         </nav>
         <div className="topbar-actions">
@@ -215,6 +214,8 @@ function App() {
 
       {activeView === 'national' ? (
         <NationalDashboard stats={nationalDashboard} />
+      ) : activeView === 'renewalProducts' ? (
+        <RenewalProducts />
       ) : (
       <section className="workspace">
         <aside className="left-panel">
@@ -303,36 +304,6 @@ function App() {
             </div>
           )}
 
-          <div className="list-panel">
-            <div className="section-title">
-              <Building2 size={18} />
-              <span>전체 리스트 Top 10</span>
-            </div>
-            <RankList
-              title="순수 사업성"
-              caption="대지지분·용적률·분양가 체급 중심"
-              items={businessRankedComplexes.slice(0, 10)}
-              selectedId={selectedId}
-              onSelect={selectAnalysisComplex}
-              renderValue={({ diagnosis: itemDiagnosis }) => `${itemDiagnosis.businessScore.toFixed(0)}점`}
-            />
-            <RankList
-              title="공식화 전 후보"
-              caption="공식 추진 미확인 단지 중 순수 사업성 상위"
-              items={officialUnmatchedRankedComplexes.slice(0, 10)}
-              selectedId={selectedId}
-              onSelect={selectAnalysisComplex}
-              renderValue={({ diagnosis: itemDiagnosis }) => `${itemDiagnosis.businessScore.toFixed(0)}점`}
-            />
-            <RankList
-              title="추진 확실성 참고"
-              caption="사업성에 단계·규제·추진력 반영"
-              items={rankedComplexes.slice(0, 10)}
-              selectedId={selectedId}
-              onSelect={selectAnalysisComplex}
-              renderValue={({ diagnosis: itemDiagnosis }) => `${itemDiagnosis.reconScore.toFixed(0)}점`}
-            />
-          </div>
         </aside>
 
         <section className="detail-panel">
@@ -421,13 +392,13 @@ function App() {
               </div>
               <div className="score-bars">
                 {[
-                  { label: '사업성', value: diagnosis.businessScore },
-                  { label: '노후도', value: diagnosis.agingScore },
-                  { label: '규제', value: diagnosis.regulationScore },
-                  { label: '추진력', value: diagnosis.momentumScore },
-                  { label: '시장', value: diagnosis.timingScore },
-                ].map(({ label, value }) => (
-                  <div className="score-bar tooltip-target" key={label} data-tooltip={createScoreTooltip(label, selected, diagnosis, scenario)} tabIndex={0}>
+                  { label: '사업성', tooltipLabel: '사업성', value: diagnosis.businessScore },
+                  { label: '노후도', tooltipLabel: '노후도', value: diagnosis.agingScore },
+                  { label: '규제', tooltipLabel: '규제', value: diagnosis.regulationScore },
+                  { label: '추진력', tooltipLabel: '추진력', value: diagnosis.momentumScore },
+                  { label: '시장 상황', tooltipLabel: '시장', value: diagnosis.timingScore },
+                ].map(({ label, tooltipLabel, value }) => (
+                  <div className="score-bar tooltip-target" key={label} data-tooltip={createScoreTooltip(tooltipLabel, selected, diagnosis, scenario)} tabIndex={0}>
                     <span>{label}</span>
                     <div>
                       <i style={{ width: `${value}%` }} />
@@ -1024,6 +995,18 @@ type RegionalDashboardStat = {
   riskLabel: string
 }
 
+type RegionalBenchmark = {
+  region: string
+  viableRate: number
+  agedUnits: number
+  currentFar: number
+  afterFar: number
+  landShare: number
+  constructionCost: number
+  salePrice: number
+  rentalRate: number
+}
+
 type NationalDashboardStats = {
   agedUnits: number
   maxViableRate: number
@@ -1034,66 +1017,239 @@ type NationalDashboardStats = {
   sampleViableUnits: number
   sampleViableRate: number
   regionalStats: RegionalDashboardStat[]
+  benchmarks: RegionalBenchmark[]
 }
 
+type DashboardCalculatorInput = Pick<RegionalBenchmark, 'currentFar' | 'afterFar' | 'landShare' | 'constructionCost' | 'salePrice' | 'rentalRate'>
+
+type RenewalProduct = {
+  company: string
+  product: string
+  track: string
+  target: string
+  scope: string
+  cost: string
+  timeline: string
+  cases: string
+  note: string
+  tone: 'primary' | 'secondary' | 'limited'
+}
+
+const REGIONAL_RECONSTRUCTION_BENCHMARKS: RegionalBenchmark[] = [
+  { region: '서울', viableRate: 30.1, agedUnits: 478_000, currentFar: 220, afterFar: 300, landShare: 12, constructionCost: 1000, salePrice: 7000, rentalRate: 50 },
+  { region: '부산', viableRate: 24.4, agedUnits: 180_000, currentFar: 200, afterFar: 280, landShare: 13, constructionCost: 720, salePrice: 3200, rentalRate: 30 },
+  { region: '울산', viableRate: 22.9, agedUnits: 45_000, currentFar: 190, afterFar: 280, landShare: 14, constructionCost: 700, salePrice: 2800, rentalRate: 30 },
+  { region: '대구', viableRate: 20.2, agedUnits: 80_000, currentFar: 210, afterFar: 280, landShare: 13, constructionCost: 720, salePrice: 2700, rentalRate: 30 },
+  { region: '광주', viableRate: 17.6, agedUnits: 50_000, currentFar: 200, afterFar: 280, landShare: 13, constructionCost: 700, salePrice: 2400, rentalRate: 30 },
+  { region: '경기', viableRate: 16.7, agedUnits: 600_000, currentFar: 230, afterFar: 300, landShare: 11, constructionCost: 750, salePrice: 3500, rentalRate: 30 },
+  { region: '경남', viableRate: 13.2, agedUnits: 90_000, currentFar: 200, afterFar: 280, landShare: 13, constructionCost: 680, salePrice: 2300, rentalRate: 30 },
+  { region: '대전', viableRate: 10.6, agedUnits: 50_000, currentFar: 220, afterFar: 280, landShare: 12, constructionCost: 720, salePrice: 2400, rentalRate: 30 },
+  { region: '인천', viableRate: 9.2, agedUnits: 130_000, currentFar: 220, afterFar: 280, landShare: 11, constructionCost: 730, salePrice: 2500, rentalRate: 30 },
+  { region: '세종', viableRate: 9, agedUnits: 3_000, currentFar: 240, afterFar: 300, landShare: 10, constructionCost: 720, salePrice: 2400, rentalRate: 30 },
+  { region: '충북', viableRate: 8.8, agedUnits: 40_000, currentFar: 200, afterFar: 280, landShare: 13, constructionCost: 670, salePrice: 1800, rentalRate: 30 },
+  { region: '전북', viableRate: 8.1, agedUnits: 40_000, currentFar: 190, afterFar: 280, landShare: 14, constructionCost: 660, salePrice: 1700, rentalRate: 30 },
+  { region: '강원', viableRate: 7, agedUnits: 40_000, currentFar: 200, afterFar: 280, landShare: 13, constructionCost: 660, salePrice: 1800, rentalRate: 30 },
+  { region: '경북', viableRate: 6.9, agedUnits: 50_000, currentFar: 190, afterFar: 280, landShare: 14, constructionCost: 660, salePrice: 1700, rentalRate: 30 },
+  { region: '전남', viableRate: 6.3, agedUnits: 30_000, currentFar: 190, afterFar: 280, landShare: 14, constructionCost: 660, salePrice: 1700, rentalRate: 30 },
+  { region: '충남', viableRate: 4.9, agedUnits: 50_000, currentFar: 200, afterFar: 280, landShare: 13, constructionCost: 660, salePrice: 1800, rentalRate: 30 },
+  { region: '제주', viableRate: 4.3, agedUnits: 10_000, currentFar: 180, afterFar: 260, landShare: 14, constructionCost: 700, salePrice: 2000, rentalRate: 30 },
+]
+
+const RENEWAL_PRODUCTS: RenewalProduct[] = [
+  {
+    company: '현대건설',
+    product: '더 뉴 하우스(THE NEW HOUSE)',
+    track: '비증축·대수선형',
+    target: '재건축 연한·용적률 제약이 큰 1990년대 말~2000년대 준공 단지',
+    scope: '외벽, 주동 입구, 조경, 커뮤니티, 선택형 세대 인테리어, 층간소음 저감, 창호, Hi-oT, 에너지 설비',
+    cost: '가구당 수천만~1억 원 미만 제시',
+    timeline: '이주 없이 약 2년 이내',
+    cases: '삼성동 힐스테이트 2단지, 수원 신명동보아파트 전환 협의',
+    note: '공동주택관리법 트랙이면 입주자대표회의 과반과 장기수선충당금 활용 가능성이 있으나, 용적률 변경 시 주택법 트랙으로 무거워질 수 있습니다.',
+    tone: 'primary',
+  },
+  {
+    company: '삼성물산',
+    product: '넥스트 리뉴얼(Next Renewal)',
+    track: '비증축·프리미엄 수선형',
+    target: '2000년 이후 준공, 내진설계·3/4베이·연결형 지하주차장을 이미 갖춘 입지 프리미엄 단지',
+    scope: '기존 지하·지상 구조체 유지, 마감·설비·스마트시스템 홈닉/넥스트홈·외관·커뮤니티 래미안급 교체',
+    cost: '공식 비용 미공개, 유사 구조상 1억 원 안팎 추정',
+    timeline: '공사기간 2년 이내 목표',
+    cases: '반포푸르지오 우선협상대상자, 역삼금호어울림, 압구정대원칸타빌, 서초래미안 등 12개 파트너십 단지',
+    note: '사업 완료 후 준공 연도 갱신을 자산가치 회복 포인트로 제시하지만, 법적 트랙별 등기·사용승인 효과 확인이 필요합니다.',
+    tone: 'primary',
+  },
+  {
+    company: 'GS건설',
+    product: '하임랩(HEIMLAB)',
+    track: '세대 단위 진단·인테리어',
+    target: '단지 전체 사업보다 개별 세대의 누수·단열·공기질·욕실 개선 수요',
+    scope: '주거환경 진단, 욕실·세대 인테리어, 단열·누수·공기질 개선, 사후관리',
+    cost: '세대별 진단·시공 범위에 따라 산정',
+    timeline: '개별 세대 시공 중심',
+    cases: '2025년 서울 25개구 확대',
+    note: '단지 단위 저비용 리뉴얼이라기보다 세대 단위 개선 솔루션에 가깝습니다.',
+    tone: 'secondary',
+  },
+  {
+    company: 'DL이앤씨',
+    product: '디 셀렉션(D Selection)',
+    track: '신축 입주 전 옵션형',
+    target: '아크로·e편한세상 입주 예정자',
+    scope: '빅데이터 기반 맞춤형 인테리어 패키지와 입주 전 옵션',
+    cost: '상품 패키지별 산정',
+    timeline: '신축 입주 전 선택',
+    cases: '2025년 3월 공개',
+    note: '노후단지 수선 상품보다는 준공 직전 인테리어 옵션에 가까워 비교군으로만 봐야 합니다.',
+    tone: 'limited',
+  },
+  {
+    company: '포스코이앤씨',
+    product: '증축형 리뉴얼 기술·수주 중심',
+    track: '수직·수평·별동 증축형',
+    target: '일반분양 15% 확보 가능성이 있는 1990년대 단지와 1기 신도시 후보',
+    scope: '수직증축 구조시스템, 전이층 합성보, 기존 리뉴얼 수주 역량',
+    cost: '증축형 사업비 기준, 가구당 2억~5억 원대 사례와 비교 필요',
+    timeline: '이주 포함 3~5년 이상',
+    cases: '분당 느티마을3·4단지, 창원 성원토월 등',
+    note: '2026년 4월 기준 대수선형 전용 신상품은 공식 공개가 확인되지 않았습니다.',
+    tone: 'secondary',
+  },
+  {
+    company: '대우건설',
+    product: '정통 정비사업·써밋 브랜드 중심',
+    track: '재건축·리뉴얼 일반 수주',
+    target: '브랜드 정비사업 후보지',
+    scope: '기존 정비사업 수주와 하이엔드 브랜드 적용',
+    cost: '사업지별 산정',
+    timeline: '정비사업 인허가 일정 종속',
+    cases: '송파 거여5단지 등 정비사업 중심',
+    note: '저비용 리뉴얼 전용 상품은 아직 뚜렷하게 공개되지 않았습니다.',
+    tone: 'limited',
+  },
+]
+
 function NationalDashboard({ stats }: { stats: NationalDashboardStats }) {
-  const topRegions = stats.regionalStats.slice(0, 5)
-  const impossibleRate = Math.round(stats.impossibleRate * 100)
-  const maxViableRate = Math.round(stats.maxViableRate * 100)
+  const [calculatorInput, setCalculatorInput] = useState<DashboardCalculatorInput>(stats.benchmarks[0])
+  const simulation = useMemo(() => calculateDashboardSimulation(calculatorInput), [calculatorInput])
+
+  const updateCalculatorInput = (key: keyof DashboardCalculatorInput, value: number) => {
+    setCalculatorInput((current) => ({ ...current, [key]: value }))
+  }
 
   return (
     <section className="national-dashboard">
-      <div className="national-hero">
-        <div>
-          <span className="eyebrow dark">
-            <BarChart3 size={15} />
-            전국 재건축 가능성 모니터
-          </span>
-          <h1>30년 이상 노후 아파트 251만호 중 사업성 통과 상한은 17%</h1>
-          <p>
-            현재 거래가, 공사비, 분양가 회수력까지 함께 보면 나머지 83%는 동일 조건에서 재건축 사업성 확보가 어렵다는 가정으로 구성한 대시보드입니다.
-          </p>
-        </div>
-        <div className="national-gauge" style={{ '--score': `${maxViableRate * 3.6}deg` } as React.CSSProperties}>
+      <section className="dashboard-panel funnel-panel">
+        <div className="section-heading">
           <div>
-            <strong>{maxViableRate}%</strong>
-            <span>가능 상한</span>
+            <span>분석 프레임</span>
+            <h2>전국 노후 아파트 중 재건축 사업성이 있는 곳은 얼마나 될까?</h2>
           </div>
+          <FileText size={18} />
         </div>
-      </div>
-
-      <div className="national-kpi-grid">
-        <NationalKpiCard label="준공 30년 이상" value={`${formatHouseholds(stats.agedUnits)}호`} caption="전국 노후 공동주택 추정 모수" />
-        <NationalKpiCard label="재건축 가능 최대" value={`${formatHouseholds(stats.maxViableUnits)}호`} caption={`${maxViableRate}% 상한 적용`} tone="good" />
-        <NationalKpiCard label="사업성 불가" value={`${formatHouseholds(stats.impossibleUnits)}호`} caption={`${impossibleRate}% · 가격/공사비 조건 미달`} tone="risk" />
-        <NationalKpiCard
-          label="앱 표본 가능률"
-          value={`${stats.sampleViableRate.toFixed(1)}%`}
-          caption={`${formatHouseholds(stats.sampleUnits)}호 분석 표본 기준`}
-        />
-      </div>
+        <div className="funnel-flow">
+          <FunnelStep label="전체 주택" value="1,987만호" caption="2024 인구주택총조사" />
+          <FunnelStep label="아파트" value="1,297만호" caption="전체 주택의 65%" />
+          <FunnelStep label="30년 이상 아파트" value="251만호" caption="노후 아파트 모집단" />
+          <FunnelStep label="사업성 있음" value="42.7만호" caption="최대 17%" tone="good" />
+          <FunnelStep label="사업성 부족" value="208.3만호" caption="83%" tone="risk" />
+        </div>
+      </section>
 
       <section className="national-grid">
+        <div className="dashboard-panel formula-panel">
+          <div className="section-heading">
+            <div>
+              <span>판단 기준</span>
+              <h2>비례율 100%를 넘는 단지만 사업성 있음으로 분류</h2>
+              <p>총 분양수입, 총사업비, 종전자산 평가액의 균형으로 비례율과 조합원 추가분담금 압력을 판단합니다.</p>
+            </div>
+            <Calculator size={18} />
+          </div>
+          <div
+            className="formula-card tooltip-target"
+            data-tooltip="비례율은 총 분양수입에서 총 사업비를 차감한 뒤 종전자산 대비 사업수지를 판단하는 핵심 지표입니다. 100% 미만이면 조합원 추가분담금 압력이 커집니다."
+            tabIndex={0}
+          >
+            <span>비례율 산식</span>
+            <strong>(총 분양수입 - 총 사업비) / 종전자산 평가액 × 100</strong>
+            <p>정식 표현으로는 “총 분양수입 - 총 사업비”를 종전자산 평가액으로 나눈 값입니다.</p>
+          </div>
+          <div className="threshold-grid">
+            <ConstraintCard
+              label="일반분양 여력"
+              value="낮은 현황 용적률·높은 대지지분"
+              detail="현황 용적률이 낮고 평균 대지지분이 클수록 일반분양 가능 면적이 커집니다."
+              tooltip="현황 용적률은 대지면적 대비 기존 연면적 비율입니다. 허용 용적률과의 차이가 일반분양 여력을 좌우합니다."
+            />
+            <ConstraintCard
+              label="분양가 회수력"
+              value="인근 신축 분양가"
+              detail="주변 신축 평당가와 일반분양가 상단이 높을수록 사업비 회수력이 커집니다."
+              tooltip="일반분양가는 외부 분양 물량의 평당 매출 단가이며, 비례율과 손익분기 분양가에 직접 반영됩니다."
+            />
+            <ConstraintCard
+              label="공사비 단가"
+              value="공사비 + 부대비"
+              detail="평당 공사비가 상승하면 총사업비와 손익분기 분양가가 동시에 올라갑니다."
+              tooltip="공사비는 건물을 짓는 비용입니다. 여기에 설계비, 금융비, 운영비 같은 부대비가 더 붙습니다."
+            />
+          </div>
+        </div>
+
+        <div className="dashboard-panel constraint-panel">
+          <div className="section-heading">
+            <div>
+              <span>해석 주의</span>
+              <h2>17%는 실제 완주율이 아니라 이론적 상한</h2>
+            </div>
+            <ShieldAlert size={18} />
+          </div>
+          <div className="constraint-stack">
+            <ConstraintCard
+              label="공사비 민감도"
+              value="5% 상승에도 하향 압력"
+              detail="비례율 100%를 간신히 넘는 단지는 공사비가 조금만 올라가도 바로 취약해질 수 있습니다."
+              tooltip="공사비 민감도는 평당 공사비 변화가 비례율과 동일평형 정산금에 미치는 영향도입니다."
+            />
+            <ConstraintCard
+              label="고밀 단지 한계"
+              value="용적률 200%+"
+              detail="현황 용적률이 높은 고밀 단지는 일반분양 여력으로 총사업비를 회수하기 어렵습니다."
+              tooltip="용적률 200% 이상은 땅에 비해 이미 건물이 많이 올라간 상태라는 뜻입니다."
+            />
+            <ConstraintCard
+              label="남은 83%"
+              value="재건축·리뉴얼 사이 정책 공백"
+              detail="재건축 사업성이 낮은 단지는 비증축 리뉴얼, 그린리뉴얼, 장기수선 전략을 별도로 검토해야 합니다."
+              tooltip="벽식 구조는 벽이 건물을 받치는 방식입니다. 내부 구조를 크게 바꾸거나 고치기 어려운 경우가 많습니다."
+            />
+          </div>
+        </div>
+      </section>
+
+      <section className="national-grid wide-left">
         <div className="dashboard-panel regional-panel">
           <div className="section-heading">
             <div>
-              <span>지역별 사업성 비율</span>
-              <h2>분석 표본 기준 가능 아파트 비율</h2>
-              <p>현재 보유 단지 데이터의 순수 사업성 70점 이상 또는 정비사업식 동일평형 정산금 3억 이하를 가능 후보로 분류했습니다.</p>
+              <span>지역별 비교</span>
+              <h2>17개 시도 재건축 가능 비율</h2>
+              <p>방송 인포그래픽의 지역별 비율을 기준으로 보여줍니다. 현재 앱의 단지 표본과는 별도 지표입니다.</p>
             </div>
             <MapPin size={18} />
           </div>
           <div className="region-list">
-            {stats.regionalStats.map((region) => (
-              <div className="region-row" key={region.region}>
+            {stats.benchmarks.map((region) => (
+              <div className="region-row benchmark" key={region.region}>
                 <div>
                   <strong>{region.region}</strong>
                   <span>
-                    {region.complexes}개 단지 · {formatHouseholds(region.agedUnits)}호
+                    30년+ {formatHouseholds(region.agedUnits)}호 · 공사비 {region.constructionCost.toLocaleString()}만원/평
                   </span>
                 </div>
-                <div className="region-bar" aria-label={`${region.region} 가능률 ${region.viableRate.toFixed(1)}%`}>
-                  <i style={{ width: `${Math.min(region.viableRate, 100)}%` }} />
+                <div className="region-bar" aria-label={`${region.region} 가능률 ${region.viableRate}%`}>
+                  <i style={{ width: `${Math.min(region.viableRate / 32 * 100, 100)}%` }} />
                 </div>
                 <b>{region.viableRate.toFixed(1)}%</b>
               </div>
@@ -1101,46 +1257,235 @@ function NationalDashboard({ stats }: { stats: NationalDashboardStats }) {
           </div>
         </div>
 
-        <div className="dashboard-panel constraint-panel">
+        <div className="dashboard-panel calculator-simulator-panel">
           <div className="section-heading">
             <div>
-              <span>불가 판정의 핵심 변수</span>
-              <h2>가격보다 공사비가 빠르게 압박</h2>
+              <span>시뮬레이션</span>
+              <h2>지역 프리셋으로 비례율 감각 보기</h2>
+              <p>정밀 감정평가가 아니라 주요 변수 변화가 비례율과 추가분담금 압력에 미치는 방향성을 보는 민감도 모델입니다.</p>
             </div>
-            <ShieldAlert size={18} />
+            <Calculator size={18} />
           </div>
-          <div className="constraint-stack">
-            <ConstraintCard label="현재 거래가" value="높을수록 종전자산 부담 증가" detail="토지·기존주택 가격이 이미 많이 반영된 지역은 조합원분양가와 권리가액 사이의 여유가 줄어듭니다." />
-            <ConstraintCard label="공사비" value={`${baseScenario.constructionCost.toLocaleString()}만원/평 기준`} detail="평당 공사비가 상승하면 일반분양 수익으로 회수해야 하는 비용이 커져 비례율과 정산금이 동시에 악화됩니다." />
-            <ConstraintCard label="일반분양 여력" value="용적률·대지지분 의존" detail="허용 용적률 대비 현재 용적률이 높거나 대지지분이 작으면 신규 공급으로 비용을 회수할 공간이 제한됩니다." />
+          <div className="preset-row">
+            {stats.benchmarks.slice(0, 8).map((benchmark) => (
+              <button key={benchmark.region} type="button" onClick={() => setCalculatorInput(benchmark)}>
+                {benchmark.region}
+              </button>
+            ))}
+          </div>
+          <div className="calculator-layout">
+            <div className="calculator-controls">
+              <DashboardRange label="현황 용적률" value={calculatorInput.currentFar} min={100} max={300} suffix="%" tooltip="현황 용적률은 대지면적 대비 기존 연면적 비율입니다." onChange={(value) => updateCalculatorInput('currentFar', value)} />
+              <DashboardRange label="재건축 후 용적률" value={calculatorInput.afterFar} min={200} max={500} suffix="%" tooltip="재건축 후 적용된다고 가정한 허용 용적률입니다." onChange={(value) => updateCalculatorInput('afterFar', value)} />
+              <DashboardRange label="평균 대지지분" value={calculatorInput.landShare} min={8} max={25} suffix="평" tooltip="대지면적을 세대수로 나눈 평균 토지지분입니다. 일반분양 여력과 종전자산 추정에 반영됩니다." onChange={(value) => updateCalculatorInput('landShare', value)} />
+              <DashboardRange label="평당 공사비" value={calculatorInput.constructionCost} min={600} max={1200} step={10} suffix="만원" tooltip="평당 공사비 가정입니다. 실제 사업비에는 설계비, 금융비, 기반시설비, 세금 등이 추가됩니다." onChange={(value) => updateCalculatorInput('constructionCost', value)} />
+              <DashboardRange label="일반분양가" value={calculatorInput.salePrice} min={1500} max={10000} step={100} suffix="만원/평" tooltip="일반분양 물량의 평당 매출 단가입니다. 높을수록 총수익과 비례율이 개선됩니다." onChange={(value) => updateCalculatorInput('salePrice', value)} />
+              <DashboardRange label="임대·공공기여 비율" value={calculatorInput.rentalRate} min={0} max={50} suffix="%" tooltip="임대주택, 기부채납, 기반시설 등 공공기여로 차감되는 비율입니다. 높을수록 일반분양 가능 면적이 감소합니다." onChange={(value) => updateCalculatorInput('rentalRate', value)} />
+            </div>
+            <div className={`calculator-result-card ${simulation.proRata >= 100 ? 'good' : 'risk'}`}>
+              <span>{simulation.proRata >= 100 ? '사업성 있음' : '사업성 부족'}</span>
+              <strong>{simulation.proRata.toFixed(0)}%</strong>
+              <p className="tooltip-target" data-tooltip="민감도 모델의 추정값입니다. 100% 이상이면 동일 조건에서 조합원 추가분담금 압력이 낮아집니다." tabIndex={0}>민감도 추정 비례율</p>
+              <dl>
+                <div>
+                  <dt className="tooltip-target" data-tooltip="일반분양 가능 면적이 총 사업비 회수에 기여하는 정도를 단순화한 지표입니다." tabIndex={0}>일반분양 수익률</dt>
+                  <dd>{simulation.generalSalePower.toFixed(1)}%</dd>
+                </div>
+                <div>
+                  <dt className="tooltip-target" data-tooltip="비례율 100%에 근접하기 위해 필요한 일반분양 평당가 기준입니다." tabIndex={0}>임계 분양가</dt>
+                  <dd>{simulation.thresholdSalePrice.toLocaleString()}만원/평</dd>
+                </div>
+                <div>
+                  <dt className="tooltip-target" data-tooltip="비례율 100% 미만 구간에서 조합원 추가분담금 부담을 단순 환산한 값입니다." tabIndex={0}>추가분담금 압력</dt>
+                  <dd>{simulation.contributionPressure.toFixed(1)}억</dd>
+                </div>
+              </dl>
+            </div>
           </div>
         </div>
+      </section>
+
+      <section>
+        <div className="dashboard-panel sample-panel">
+          <div className="section-heading">
+            <div>
+              <span>현재 앱 표본</span>
+              <h2>현재 연결된 단지 데이터</h2>
+              <p>전국 모집단과는 별도로 현재 앱에 연결된 분석 표본의 커버리지와 가능률을 표시합니다.</p>
+            </div>
+            <Database size={18} />
+          </div>
+          <div className="sample-summary-grid">
+            <NationalKpiCard label="분석 표본" value={`${formatHouseholds(stats.sampleUnits)}호`} caption={`${stats.regionalStats.length}개 지역`} />
+            <NationalKpiCard label="표본 내 가능률" value={`${stats.sampleViableRate.toFixed(1)}%`} caption={`${formatHouseholds(stats.sampleViableUnits)}호 후보`} tone="good" />
+          </div>
+          <div className="sample-region-list">
+            {stats.regionalStats.slice(0, 5).map((region) => (
+              <div key={region.region}>
+                <span>{region.region}</span>
+                <b>{region.viableRate.toFixed(1)}%</b>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="dashboard-panel next-data-panel">
+        <div className="section-heading">
+          <div>
+            <span>데이터 확보 계획</span>
+            <h2>전국 단위 데이터 제품으로 확장하려면</h2>
+          </div>
+          <Database size={18} />
+        </div>
+        <div className="data-roadmap-grid">
+          <ConstraintCard label="1. 노후 아파트 모집단" value="K-apt + 건축물대장" detail="단지명, 주소, 세대수, 사용승인일을 연결해 지역별 30년 이상 공동주택 모수를 산정합니다." tooltip="K-apt는 공동주택 관리 정보를 모아둔 공공 데이터입니다. 건축물대장은 건물의 공식 기록입니다." />
+          <ConstraintCard label="2. 사업성 변수" value="용적률·대지지분·신축가" detail="단지별 일반분양 여력, 토지 조건, 인근 신축 가격을 연결합니다." tooltip="이 변수들이 있어야 총수익, 총사업비, 종전자산 대비 비례율을 계산할 수 있습니다." />
+          <ConstraintCard label="3. 가능/불가 판정" value="비례율 100% 기준" detail="비례율과 동일평형 정산금을 기준으로 사업성 가능 후보를 분류합니다." tooltip="비례율 100%는 종전자산 대비 사업수지가 균형에 도달하는 기준선입니다." />
+          <ConstraintCard label="4. 총량 검증" value="KOSIS·민간 통계 비교" detail="251만호 및 지역별 총량과 맞는지 확인하고 결측 지역을 보정합니다." tooltip="KOSIS는 국가 통계 사이트입니다. 전체 숫자가 맞는지 검산할 때 씁니다." />
+        </div>
+      </section>
+    </section>
+  )
+}
+
+function RenewalProducts() {
+  const primaryProducts = RENEWAL_PRODUCTS.filter((product) => product.tone === 'primary')
+  const supportingProducts = RENEWAL_PRODUCTS.filter((product) => product.tone !== 'primary')
+
+  return (
+    <section className="renewal-products">
+      <section className="renewal-hero dashboard-panel">
+        <div className="section-heading">
+          <div>
+            <span>리뉴얼(수선) 상품</span>
+            <h2>재건축과 증축 리뉴얼 사이의 저비용 선택지</h2>
+            <p>첨부 자료 기준으로 주요 건설사의 비증축·대수선형 상품과 인접 상품을 구분했습니다.</p>
+          </div>
+          <Building2 size={18} />
+        </div>
+        <div className="renewal-kpi-grid">
+          <NationalKpiCard label="핵심 모델" value="비증축" caption="골조·층수 유지, 외관·공용부 개선" />
+          <NationalKpiCard label="대표 비용" value="~1억" caption="현대건설 제시 기준, 단지별 변동" tone="good" />
+          <NationalKpiCard label="대표 기간" value="2년" caption="이주 없는 대수선형 목표" />
+          <NationalKpiCard label="검증 상태" value="초기" caption="1호 사업지 실증 전 단계" tone="risk" />
+        </div>
+      </section>
+
+      <section className="renewal-grid primary-products">
+        {primaryProducts.map((product) => (
+          <RenewalProductCard key={product.product} product={product} />
+        ))}
       </section>
 
       <section className="dashboard-panel">
         <div className="section-heading">
           <div>
-            <span>상위 지역</span>
-            <h2>가능 후보 집중 지역</h2>
+            <span>인접 상품·수주 역량</span>
+            <h2>단지 단위 저비용 수선과는 결이 다른 상품들</h2>
           </div>
-          <TrendingUp size={18} />
+          <FileText size={18} />
         </div>
-        <div className="top-region-grid">
-          {topRegions.map((region) => (
-            <div className="top-region-card" key={region.region}>
-              <span>{region.region}</span>
-              <strong>{region.viableRate.toFixed(1)}%</strong>
-              <p>
-                가능 {formatHouseholds(region.viableUnits)}호 · 불가 {formatHouseholds(region.impossibleUnits)}호
-              </p>
-              <small>
-                평균 사업성 {region.averageBusinessScore.toFixed(0)}점 · 비례율 {region.averageProRata.toFixed(0)}%
-              </small>
-            </div>
+        <div className="renewal-table">
+          {supportingProducts.map((product) => (
+            <RenewalProductRow key={product.product} product={product} />
           ))}
         </div>
       </section>
+
+      <section className="national-grid renewal-decision-grid">
+        <div className="dashboard-panel">
+          <div className="section-heading">
+            <div>
+              <span>적합 단지</span>
+              <h2>저비용 수선형이 맞는 조건</h2>
+            </div>
+            <TrendingUp size={18} />
+          </div>
+          <div className="constraint-stack">
+            <ConstraintCard label="준공 시기" value="1990년대 말~2000년대" detail="재건축 연한은 애매하고, 증축 리뉴얼은 공사비 부담이 큰 구간입니다." />
+            <ConstraintCard label="입지 조건" value="신축 가격 격차가 큰 곳" detail="외관·공용부 개선 비용을 시세 방어 또는 회복으로 설명할 수 있어야 합니다." />
+            <ConstraintCard label="구조 조건" value="골조 유지가 합리적인 단지" detail="내진설계, 지하주차장, 커뮤니티 확장 여지가 이미 있는 단지가 유리합니다." />
+          </div>
+        </div>
+        <div className="dashboard-panel">
+          <div className="section-heading">
+            <div>
+              <span>주의점</span>
+              <h2>분담금은 낮아도 일반분양 수익은 없습니다</h2>
+            </div>
+            <ShieldAlert size={18} />
+          </div>
+          <div className="constraint-stack">
+            <ConstraintCard label="비용 구조" value="분담금=공사비" detail="증축이 없으면 일반분양 수익도 없어 입주민 자비 사업에 가깝습니다." />
+            <ConstraintCard label="법적 효과" value="준공연도 갱신 확인 필요" detail="공동주택관리법 대수선 트랙과 주택법 리뉴얼 트랙의 자산가치 효과가 다를 수 있습니다." />
+            <ConstraintCard label="시장 검증" value="실거래 사례 0건" detail="2026년 5월 기준 양대 신상품 모두 실제 입주 후 가격 변화 데이터는 아직 없습니다." />
+          </div>
+        </div>
+      </section>
     </section>
+  )
+}
+
+function RenewalProductCard({ product }: { product: RenewalProduct }) {
+  return (
+    <article className={`renewal-product-card ${product.tone}`}>
+      <div className="product-card-head">
+        <div>
+          <span>{product.company}</span>
+          <h3>{product.product}</h3>
+        </div>
+        <b>{product.track}</b>
+      </div>
+      <dl className="product-facts">
+        <div>
+          <dt>대상</dt>
+          <dd>{product.target}</dd>
+        </div>
+        <div>
+          <dt>범위</dt>
+          <dd>{product.scope}</dd>
+        </div>
+        <div>
+          <dt>비용</dt>
+          <dd>{product.cost}</dd>
+        </div>
+        <div>
+          <dt>기간</dt>
+          <dd>{product.timeline}</dd>
+        </div>
+        <div>
+          <dt>사례</dt>
+          <dd>{product.cases}</dd>
+        </div>
+      </dl>
+      <p>{product.note}</p>
+    </article>
+  )
+}
+
+function RenewalProductRow({ product }: { product: RenewalProduct }) {
+  return (
+    <article className={`renewal-product-row ${product.tone}`}>
+      <div>
+        <span>{product.company}</span>
+        <strong>{product.product}</strong>
+        <small>{product.track}</small>
+      </div>
+      <p>{product.target}</p>
+      <p>{product.scope}</p>
+      <b>{product.note}</b>
+    </article>
+  )
+}
+
+function FunnelStep({ label, value, caption, tone = 'neutral' }: { label: string; value: string; caption: string; tone?: 'neutral' | 'good' | 'risk' }) {
+  return (
+    <div className={`funnel-step ${tone}`}>
+      <span>{label}</span>
+      <strong>{value}</strong>
+      <small>{caption}</small>
+    </div>
   )
 }
 
@@ -1154,13 +1499,46 @@ function NationalKpiCard({ label, value, caption, tone = 'neutral' }: { label: s
   )
 }
 
-function ConstraintCard({ label, value, detail }: { label: string; value: string; detail: string }) {
+function ConstraintCard({ label, value, detail, tooltip }: { label: string; value: string; detail: string; tooltip?: string }) {
   return (
-    <div className="constraint-card">
+    <div className={`constraint-card ${tooltip ? 'tooltip-target' : ''}`} data-tooltip={tooltip} tabIndex={tooltip ? 0 : undefined}>
       <span>{label}</span>
       <strong>{value}</strong>
       <p>{detail}</p>
     </div>
+  )
+}
+
+function DashboardRange({
+  label,
+  value,
+  min,
+  max,
+  step = 1,
+  suffix,
+  tooltip,
+  onChange,
+}: {
+  label: string
+  value: number
+  min: number
+  max: number
+  step?: number
+  suffix: string
+  tooltip?: string
+  onChange: (value: number) => void
+}) {
+  return (
+    <label className={`dashboard-range ${tooltip ? 'tooltip-target' : ''}`} data-tooltip={tooltip}>
+      <span>
+        {label}
+        <b>
+          {value.toLocaleString()}
+          {suffix}
+        </b>
+      </span>
+      <input type="range" value={value} min={min} max={max} step={step} onChange={(event) => onChange(Number(event.target.value))} />
+    </label>
   )
 }
 
@@ -1183,6 +1561,7 @@ function createNationalDashboard(rankedComplexes: RankedComplex[]): NationalDash
     sampleViableUnits,
     sampleViableRate: sampleUnits > 0 ? (sampleViableUnits / sampleUnits) * 100 : 0,
     regionalStats,
+    benchmarks: REGIONAL_RECONSTRUCTION_BENCHMARKS,
   }
 }
 
@@ -1233,6 +1612,24 @@ function getDashboardRegion(complex: Complex) {
 
 function average(values: number[]) {
   return values.length > 0 ? values.reduce((sum, value) => sum + value, 0) / values.length : 0
+}
+
+function calculateDashboardSimulation(input: DashboardCalculatorInput) {
+  const farIncreaseRate = Math.max(input.afterFar / input.currentFar - 1, 0)
+  const rentalDrag = farIncreaseRate * (input.rentalRate / 100)
+  const generalSalePower = Math.max(farIncreaseRate - rentalDrag, 0) * 100
+  const densityPenalty = Math.max(input.currentFar - 180, 0) * 7
+  const landShareCredit = Math.max(input.landShare - 11, 0) * 130
+  const thresholdSalePrice = Math.round(input.constructionCost * 1.35 + densityPenalty + 1100 - landShareCredit)
+  const proRata = Math.max(35, Math.min(145, (input.salePrice / Math.max(thresholdSalePrice, 1)) * 100 + generalSalePower * 0.28))
+  const contributionPressure = Math.max(0, (100 - proRata) * 0.14)
+
+  return {
+    generalSalePower,
+    thresholdSalePrice,
+    proRata,
+    contributionPressure,
+  }
 }
 
 function formatHouseholds(value: number) {
@@ -1352,10 +1749,6 @@ function createOfficialStatus(match?: RenewalMatch): OfficialStatus {
     detail: `정비사업 공개자료와 직접 매칭되지 않았습니다. 가장 가까운 후보는 ${match.sourceRecordName ?? '없음'}이지만, 사업성 감점이 아니라 공식 추진 근거 미확인으로만 해석합니다.`,
     tone: 'unconfirmed',
   }
-}
-
-function isOfficialRenewalMatched(matches: NonNullable<LiveEtlStatus['renewalMatches']>, complex: Complex) {
-  return findRenewalMatch(matches, complex)?.matched ?? false
 }
 
 function getIssuesForComplex(issues: DataValidationIssue[], complex: Complex) {
