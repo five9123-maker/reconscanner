@@ -5,7 +5,6 @@ import {
   Calculator,
   CircleDollarSign,
   Database,
-  Download,
   FileText,
   Gauge,
   Clock3,
@@ -17,12 +16,10 @@ import {
   Star,
   TrendingUp,
 } from 'lucide-react'
-import { ComparisonTable } from './components/ComparisonTable'
 import { Control } from './components/Control'
 import { FactRow } from './components/FactRow'
 import { QuickAccessGroup } from './components/QuickAccessGroup'
 import { RankList } from './components/RankList'
-import { ReportPreview } from './components/ReportPreview'
 import { useJsonResource } from './hooks/useJsonResource'
 import { useLocalStorageState } from './hooks/useLocalStorageState'
 import {
@@ -43,7 +40,6 @@ import {
   estimateCurrentPricePerPyeong,
   estimateExpectedSalePricePerPyeong,
 } from './lib/marketPrice'
-import { buildReportPayload } from './lib/report'
 import { validateApiEnrichmentPlan, validateLiveEtlStatus, validateSearchIndexPayload } from './lib/payloadValidation'
 import { getScenarioStressLabel, isBaseScenario, sanitizeScenario } from './lib/scenario'
 import { getSearchItemLabel, searchIndexByComplexName } from './lib/searchIndex'
@@ -62,9 +58,7 @@ function App() {
   const [selectedId, setSelectedId] = useState(getDefaultComplexId())
   const [query, setQuery] = useState('')
   const [isSearchFocused, setIsSearchFocused] = useState(false)
-  const [showReport, setShowReport] = useState(false)
   const [scenario, setScenario] = useState<Scenario>(baseScenario)
-  const [comparisonMode, setComparisonMode] = useState<'business' | 'success'>('business')
   const [liveEtlRefreshKey, setLiveEtlRefreshKey] = useState(0)
   const [pendingSearchOnlyItem, setPendingSearchOnlyItem] = useState<SearchIndexItem | null>(null)
   const [areaRangeOverrides, setAreaRangeOverrides] = useState<Record<string, string>>({})
@@ -109,7 +103,6 @@ function App() {
   const showSearchDropdown = isSearchFocused && query.trim().length > 0
   const contributionRange = getContributionRange(diagnosis.contribution)
   const accountingContributionRange = getContributionRange(diagnosis.finance.accountingSameSizeSettlement)
-  const reportPayload = useMemo(() => buildReportPayload(selected, diagnosis, scenario), [selected, diagnosis, scenario])
   const scenarioLabel = getScenarioStressLabel(scenario)
   const selectedRank = rankedComplexes.findIndex(({ complex }) => complex.id === selected.id) + 1
   const selectedBusinessRank = businessRankedComplexes.findIndex(({ complex }) => complex.id === selected.id) + 1
@@ -170,10 +163,6 @@ function App() {
           </button>
           <button className="icon-button" type="button" aria-label="데이터 상태">
             <Database size={18} />
-          </button>
-          <button className="primary-action" type="button" onClick={() => setShowReport((current) => !current)}>
-            <Download size={17} />
-            리포트
           </button>
         </div>
       </header>
@@ -407,14 +396,6 @@ function App() {
                     tooltip={getStageTooltip(selected)}
                   />
                 </div>
-              </div>
-              <div className="reason-list">
-                {diagnosis.riskSummary.map((risk) => (
-                  <div key={risk} className="reason-item">
-                    <span />
-                    <p>{risk}</p>
-                  </div>
-                ))}
               </div>
               <div className="score-bars">
                 {[
@@ -780,32 +761,6 @@ function App() {
             </section>
           )}
 
-          <div className="comparison-tabs">
-            <button className={comparisonMode === 'business' ? 'active' : ''} type="button" onClick={() => setComparisonMode('business')}>
-              순수 사업성
-            </button>
-            <button className={comparisonMode === 'success' ? 'active' : ''} type="button" onClick={() => setComparisonMode('success')}>
-              추진 성공 가능성
-            </button>
-          </div>
-          <ComparisonTable
-            rankedComplexes={comparisonMode === 'business' ? businessRankedComplexes : rankedComplexes}
-            selectedId={selectedId}
-            onSelect={selectAnalysisComplex}
-            title={comparisonMode === 'business' ? '순수 사업성 비교' : '현재 추진 성공 가능성'}
-            caption={comparisonMode === 'business' ? '단계와 규제를 빼고 경제성 신호를 우선 비교' : '사업성에 인허가 단계·규제·주민 추진력을 반영'}
-            mode={comparisonMode}
-          />
-
-          {showReport && (
-            <ReportPreview
-              rank={selectedRank}
-              scenario={scenario}
-              selectedName={selected.name}
-              reportTitle={reportPayload.title}
-              diagnosis={diagnosis}
-            />
-          )}
         </section>
 
         <aside className="right-panel">
