@@ -42,6 +42,7 @@ import {
 import { validateApiEnrichmentPlan, validateLiveEtlStatus, validateSearchIndexPayload } from './lib/payloadValidation'
 import { getScenarioStressLabel, isBaseScenario, sanitizeScenario } from './lib/scenario'
 import { getSearchItemLabel, searchIndexByComplexName } from './lib/searchIndex'
+import { createSearchOnlyAnalysisCandidates } from './lib/searchOnlyCandidateFactory'
 import {
   createComplexRepository,
   getDefaultComplexId,
@@ -72,8 +73,12 @@ function App() {
   const searchIndexPayload = useJsonResource<SearchIndexPayload | null>('/data/search-index.json', validateSearchIndexPayload, null)
   const apiEnrichmentPlan = useJsonResource<ApiEnrichmentPlan | null>('/data/api-enrichment-plan.json', validateApiEnrichmentPlan, null)
   const searchIndex = useMemo(() => searchIndexPayload?.items ?? [], [searchIndexPayload])
+  const searchOnlyAnalysisCandidates = useMemo(() => createSearchOnlyAnalysisCandidates(searchIndex), [searchIndex])
 
-  const repository = useMemo(() => createComplexRepository(mergeLiveComplexes(listComplexes(), liveEtlStatus?.complexes ?? []), []), [liveEtlStatus])
+  const repository = useMemo(
+    () => createComplexRepository(mergeLiveComplexes([...listComplexes(), ...searchOnlyAnalysisCandidates], liveEtlStatus?.complexes ?? []), []),
+    [liveEtlStatus, searchOnlyAnalysisCandidates],
+  )
   const baseSelected = repository.getComplexById(selectedId) ?? repository.getComplexById(repository.getDefaultComplexId())!
   const transactionDiagnostic = useMemo(
     () => findTransactionDiagnostic(liveEtlStatus?.transactionDiagnostics ?? [], baseSelected),

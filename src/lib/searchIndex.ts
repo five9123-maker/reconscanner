@@ -10,7 +10,7 @@ export function searchIndexByComplexName(searchIndex: SearchIndexItem[], query: 
     return fallback.map(({ complex }) => toSearchIndexItem(complex))
   }
 
-  const source = (searchIndex.length > 0 ? searchIndex : fallback.map(({ complex }) => toSearchIndexItem(complex)))
+  const source = mergeSearchSources(searchIndex, fallback.map(({ complex }) => toSearchIndexItem(complex)))
     .filter((item) => item.status !== 'analysis_ready' || !eligibleAnalysisIds || eligibleAnalysisIds.has(item.id))
 
   return source
@@ -60,4 +60,13 @@ function sortConfirmedAnalysisFirst(left: SearchIndexItem, right: SearchIndexIte
   }
 
   return sourceOrder[left.source] - sourceOrder[right.source]
+}
+
+function mergeSearchSources(searchIndex: SearchIndexItem[], fallback: SearchIndexItem[]) {
+  if (searchIndex.length === 0) return fallback
+
+  const fallbackNames = new Set(fallback.flatMap((item) => [item.name, ...item.aliases].map(normalizeSearchText)))
+  const remainingSearchItems = searchIndex.filter((item) => !fallbackNames.has(normalizeSearchText(item.name)))
+
+  return [...fallback, ...remainingSearchItems]
 }
