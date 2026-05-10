@@ -4,6 +4,7 @@ import {
   BarChart3,
   Building2,
   Calculator,
+  CircleHelp,
   CircleDollarSign,
   Database,
   FileText,
@@ -16,6 +17,7 @@ import {
   SlidersHorizontal,
   Star,
   TrendingUp,
+  Wrench,
 } from 'lucide-react'
 import { Control } from './components/Control'
 import { FactRow } from './components/FactRow'
@@ -39,6 +41,7 @@ import {
   estimateExpectedSalePricePerPyeong,
 } from './lib/marketPrice'
 import { validateApiEnrichmentPlan, validateLiveEtlStatus, validateSearchIndexPayload } from './lib/payloadValidation'
+import { calculateProjectFinance } from './lib/projectFinance'
 import { getScenarioStressLabel, isBaseScenario, sanitizeScenario } from './lib/scenario'
 import { getSearchItemLabel, searchIndexByComplexName } from './lib/searchIndex'
 import { createSearchOnlyAnalysisCandidates } from './lib/searchOnlyCandidateFactory'
@@ -47,14 +50,14 @@ import {
   getDefaultComplexId,
   listComplexes,
 } from './repositories/complexRepository'
-import type { Complex, RankedComplex, Scenario, SourceType } from './types'
+import type { Complex, Diagnosis, RankedComplex, Scenario, SourceType } from './types'
 import type { DataValidationIssue } from './etl/validate'
 import type { ApiEnrichmentPlan } from './types/apiEnrichment'
 import type { LiveEtlStatus } from './types/liveEtl'
 import type { SearchIndexItem, SearchIndexPayload } from './types/searchIndex'
 import './App.css'
 
-type AppView = 'national' | 'scanner' | 'renewalProducts'
+type AppView = 'national' | 'scanner' | 'remodeling' | 'renewalProducts'
 
 function App() {
   const [activeView, setActiveView] = useState<AppView>('national')
@@ -123,9 +126,11 @@ function App() {
     () => createQualityGrade(selected, renewalMatch, selectedQualityIssues),
     [selected, renewalMatch, selectedQualityIssues],
   )
+  const proRataDiagnostics = useMemo(() => createProRataDiagnostics(selected, diagnosis, scenario), [selected, diagnosis, scenario])
+  const proRataComparison = useMemo(() => createProRataComparison(selected, diagnosis), [selected, diagnosis])
   const evidencePack = useMemo(
-    () => createEvidencePack(selected, diagnosis, scenario, transactionDiagnostic, renewalMatch, selectedQualityGrade),
-    [selected, diagnosis, scenario, transactionDiagnostic, renewalMatch, selectedQualityGrade],
+    () => createEvidencePack(selected, diagnosis, scenario, transactionDiagnostic, renewalMatch, selectedQualityGrade, proRataComparison),
+    [selected, diagnosis, scenario, transactionDiagnostic, renewalMatch, selectedQualityGrade, proRataComparison],
   )
   const dataQuality = useMemo(() => repository.getDataQualitySummary(), [repository])
   const validationIssues = useMemo(() => repository.getValidationIssues().slice(0, 3), [repository])
@@ -188,12 +193,20 @@ function App() {
             <span>단지 스캐너</span>
           </button>
           <button
+            className={activeView === 'remodeling' ? 'active' : ''}
+            type="button"
+            onClick={() => setActiveView('remodeling')}
+          >
+            <Wrench size={16} />
+            <span>리모델링</span>
+          </button>
+          <button
             className={activeView === 'renewalProducts' ? 'active' : ''}
             type="button"
             onClick={() => setActiveView('renewalProducts')}
           >
             <Building2 size={16} />
-            <span>리뉴얼(수선) 상품</span>
+            <span>리뉴얼(수선)</span>
           </button>
         </nav>
         <div className="topbar-actions">
@@ -214,6 +227,8 @@ function App() {
 
       {activeView === 'national' ? (
         <NationalDashboard stats={nationalDashboard} />
+      ) : activeView === 'remodeling' ? (
+        <RemodelingOverview />
       ) : activeView === 'renewalProducts' ? (
         <RenewalProducts />
       ) : (
@@ -428,6 +443,21 @@ function App() {
                   tooltip="현재 구축 시세를 토지가치로 보고 신축 동일평형 원가와 비교하는 간이 방식. 시장 체감에는 유용하지만 실제 고지 분담금과 다를 수 있음"
                   range={contributionRange}
                 />
+              </div>
+              <div className="ratio-diagnostic-card">
+                <div>
+                  <span>비례율 진단</span>
+                  <strong>{proRataComparison.title}</strong>
+                  <p>{proRataComparison.detail}</p>
+                </div>
+                <ul>
+                  {proRataDiagnostics.map((item) => (
+                    <li className={item.tone} key={item.label}>
+                      <b>{item.label}</b>
+                      <span>{item.detail}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
               <div className="settlement-list">
                 {diagnosis.finance.accountingSettlementScenarios.slice(0, 3).map((accountingItem, index) => {
@@ -1013,14 +1043,11 @@ type NationalDashboardStats = {
   maxViableUnits: number
   impossibleRate: number
   impossibleUnits: number
-  sampleUnits: number
-  sampleViableUnits: number
-  sampleViableRate: number
   regionalStats: RegionalDashboardStat[]
   benchmarks: RegionalBenchmark[]
 }
 
-type DashboardCalculatorInput = Pick<RegionalBenchmark, 'currentFar' | 'afterFar' | 'landShare' | 'constructionCost' | 'salePrice' | 'rentalRate'>
+type DashboardCalculatorInput = Pick<RegionalBenchmark, 'region' | 'currentFar' | 'afterFar' | 'landShare' | 'constructionCost' | 'salePrice' | 'rentalRate'>
 
 type RenewalProduct = {
   company: string
@@ -1033,6 +1060,27 @@ type RenewalProduct = {
   cases: string
   note: string
   tone: 'primary' | 'secondary' | 'limited'
+}
+
+type RemodelingPath = {
+  label: string
+  value: string
+  detail: string
+  tone: 'primary' | 'secondary' | 'limited'
+}
+
+type RemodelingComparison = {
+  label: string
+  remodeling: string
+  reconstruction: string
+}
+
+type RemodelingCostBand = {
+  label: string
+  remodeling: string
+  reconstruction: string
+  meaning: string
+  tone: 'good' | 'neutral' | 'risk'
 }
 
 const REGIONAL_RECONSTRUCTION_BENCHMARKS: RegionalBenchmark[] = [
@@ -1130,6 +1178,81 @@ const RENEWAL_PRODUCTS: RenewalProduct[] = [
   },
 ]
 
+const REMODELING_PATHS: RemodelingPath[] = [
+  {
+    label: '대수선·비증축형',
+    value: '골조 유지 + 성능 개선',
+    detail: '외관, 설비, 창호, 공용부, 커뮤니티를 고쳐 주거 품질과 관리 효율을 올리는 방식입니다. 일반분양 수익은 거의 없어 입주민 분담금과 장기수선 재원 설계가 핵심입니다.',
+    tone: 'primary',
+  },
+  {
+    label: '수평·별동 증축형',
+    value: '면적 확장 + 일부 세대 증가',
+    detail: '기존 동을 옆으로 늘리거나 별동을 붙여 전용면적과 세대수를 늘립니다. 주차장, 동간거리, 대지 여유, 권리변동계획을 함께 봐야 합니다.',
+    tone: 'secondary',
+  },
+  {
+    label: '수직증축형',
+    value: '최대 2~3개층 증축',
+    detail: '15층 이상은 최대 3개층, 14층 이하는 최대 2개층 범위에서 검토됩니다. 구조도 보유, 안전진단, 안전성 검토가 사업의 가장 큰 관문입니다.',
+    tone: 'limited',
+  },
+]
+
+const REMODELING_COMPARISON: RemodelingComparison[] = [
+  {
+    label: '사업 성격',
+    remodeling: '기존 골조와 소유권 틀을 유지하면서 기능·면적·성능을 개선',
+    reconstruction: '기존 건물을 철거하고 새 공동주택으로 다시 공급',
+  },
+  {
+    label: '가능 연한',
+    remodeling: '사용검사 또는 사용승인 후 15년 경과부터 증축형 검토 가능',
+    reconstruction: '통상 30년 이상 노후 단지가 안전진단·정비계획 절차로 진입',
+  },
+  {
+    label: '수익 구조',
+    remodeling: '세대수 증가분은 기존 세대수의 15% 이내라 일반분양 수익이 제한적',
+    reconstruction: '용적률 상향과 일반분양 물량이 사업성의 핵심',
+  },
+  {
+    label: '핵심 리스크',
+    remodeling: '구조 안전성, 주차·동선 제약, 조합원 분담금 설득',
+    reconstruction: '공사비, 분양가, 임대·공공기여, 긴 인허가 기간',
+  },
+]
+
+const REMODELING_COST_BANDS: RemodelingCostBand[] = [
+  {
+    label: '비증축·대수선형',
+    remodeling: '평당 150~300만원',
+    reconstruction: '비교 대상 아님',
+    meaning: '세대 내부 올수리와 공용부·외관 개선 중심입니다. 구조체를 새로 짓지 않아 단가는 낮지만 일반분양 수익도 거의 없습니다.',
+    tone: 'good',
+  },
+  {
+    label: '단지 리뉴얼 상품',
+    remodeling: '가구당 수천만~1억원 미만',
+    reconstruction: '가구당 2억~5억원+',
+    meaning: '현대건설·삼성물산식 저비용 상품의 포지션입니다. 평당 공사비보다 “가구당 분담금 상한”으로 설득하는 영역입니다.',
+    tone: 'good',
+  },
+  {
+    label: '증축형 리모델링',
+    remodeling: '평당 700~1,000만원대',
+    reconstruction: '평당 900~1,200만원대',
+    meaning: '골조 보강, 주차장, 설비 교체, 이주비가 붙으면 재건축 공사비와 격차가 크게 줄어듭니다. 단순히 싸다고 보기 어렵습니다.',
+    tone: 'neutral',
+  },
+  {
+    label: '사업비 회수력',
+    remodeling: '일반분양 15% 이내',
+    reconstruction: '용적률 여력만큼 일반분양',
+    meaning: '리모델링은 공사비가 조금 낮아도 팔 수 있는 새 물량이 적습니다. 조합원 체감 분담금은 재건축보다 불리해질 수 있습니다.',
+    tone: 'risk',
+  },
+]
+
 function NationalDashboard({ stats }: { stats: NationalDashboardStats }) {
   const [calculatorInput, setCalculatorInput] = useState<DashboardCalculatorInput>(stats.benchmarks[0])
   const simulation = useMemo(() => calculateDashboardSimulation(calculatorInput), [calculatorInput])
@@ -1151,9 +1274,9 @@ function NationalDashboard({ stats }: { stats: NationalDashboardStats }) {
         <div className="funnel-flow">
           <FunnelStep label="전체 주택" value="1,987만호" caption="2024 인구주택총조사" />
           <FunnelStep label="아파트" value="1,297만호" caption="전체 주택의 65%" />
-          <FunnelStep label="30년 이상 아파트" value="251만호" caption="노후 아파트 모집단" />
+          <FunnelStep label="30년 이상 아파트" value="251만호" caption="전체 아파트의 19.4%" />
           <FunnelStep label="사업성 있음" value="42.7만호" caption="최대 17%" tone="good" />
-          <FunnelStep label="사업성 부족" value="208.3만호" caption="83%" tone="risk" />
+          <FunnelStep label="사업성 부족" value="208.3만호" caption="83%는 재건축 불가 확률 높음" tone="risk" />
         </div>
       </section>
 
@@ -1202,7 +1325,7 @@ function NationalDashboard({ stats }: { stats: NationalDashboardStats }) {
           <div className="section-heading">
             <div>
               <span>해석 주의</span>
-              <h2>17%는 실제 완주율이 아니라 이론적 상한</h2>
+              <h2>사업성 확보 17%도 어디까지나 이상적 수치</h2>
             </div>
             <ShieldAlert size={18} />
           </div>
@@ -1262,41 +1385,57 @@ function NationalDashboard({ stats }: { stats: NationalDashboardStats }) {
             <div>
               <span>시뮬레이션</span>
               <h2>지역 프리셋으로 비례율 감각 보기</h2>
-              <p>정밀 감정평가가 아니라 주요 변수 변화가 비례율과 추가분담금 압력에 미치는 방향성을 보는 민감도 모델입니다.</p>
+              <p>상세 화면의 정비사업식 산식을 같은 방식으로 적용해 변수 변화가 비례율과 분담금 압력에 미치는 방향을 봅니다.</p>
             </div>
-            <Calculator size={18} />
+            <div className="section-heading-actions">
+              <button
+                className="info-help-button tooltip-target"
+                type="button"
+                aria-label="지역 프리셋 설명"
+                data-tooltip="계산식: 공급가능면적=대지지분×세대수×재건축 후 용적률. 기존 평균평형=대지지분×현황 용적률. 일반분양면적=공급가능면적-조합원분양-임대/공공기여-상가. 비례율=(총수익-공사비-사업비)/종전자산. 현재 구축 시세는 신축 동일평형가의 56~59%로 보수 추정합니다."
+              >
+                <CircleHelp size={17} />
+              </button>
+              <Calculator size={18} />
+            </div>
           </div>
           <div className="preset-row">
             {stats.benchmarks.slice(0, 8).map((benchmark) => (
-              <button key={benchmark.region} type="button" onClick={() => setCalculatorInput(benchmark)}>
+              <button
+                className="tooltip-target"
+                key={benchmark.region}
+                type="button"
+                data-tooltip={`${benchmark.region} 프리셋은 실제 평균 통계가 아니라 대표 가정값입니다. 현황 용적률 ${benchmark.currentFar}%, 재건축 후 용적률 ${benchmark.afterFar}%, 평균 대지지분 ${benchmark.landShare}평, 평당 공사비 ${benchmark.constructionCost.toLocaleString()}만원, 일반분양가 ${benchmark.salePrice.toLocaleString()}만원/평을 적용합니다.`}
+                onClick={() => setCalculatorInput(benchmark)}
+              >
                 {benchmark.region}
               </button>
             ))}
           </div>
           <div className="calculator-layout">
             <div className="calculator-controls">
-              <DashboardRange label="현황 용적률" value={calculatorInput.currentFar} min={100} max={300} suffix="%" tooltip="현황 용적률은 대지면적 대비 기존 연면적 비율입니다." onChange={(value) => updateCalculatorInput('currentFar', value)} />
-              <DashboardRange label="재건축 후 용적률" value={calculatorInput.afterFar} min={200} max={500} suffix="%" tooltip="재건축 후 적용된다고 가정한 허용 용적률입니다." onChange={(value) => updateCalculatorInput('afterFar', value)} />
-              <DashboardRange label="평균 대지지분" value={calculatorInput.landShare} min={8} max={25} suffix="평" tooltip="대지면적을 세대수로 나눈 평균 토지지분입니다. 일반분양 여력과 종전자산 추정에 반영됩니다." onChange={(value) => updateCalculatorInput('landShare', value)} />
-              <DashboardRange label="평당 공사비" value={calculatorInput.constructionCost} min={600} max={1200} step={10} suffix="만원" tooltip="평당 공사비 가정입니다. 실제 사업비에는 설계비, 금융비, 기반시설비, 세금 등이 추가됩니다." onChange={(value) => updateCalculatorInput('constructionCost', value)} />
-              <DashboardRange label="일반분양가" value={calculatorInput.salePrice} min={1500} max={10000} step={100} suffix="만원/평" tooltip="일반분양 물량의 평당 매출 단가입니다. 높을수록 총수익과 비례율이 개선됩니다." onChange={(value) => updateCalculatorInput('salePrice', value)} />
-              <DashboardRange label="임대·공공기여 비율" value={calculatorInput.rentalRate} min={0} max={50} suffix="%" tooltip="임대주택, 기부채납, 기반시설 등 공공기여로 차감되는 비율입니다. 높을수록 일반분양 가능 면적이 감소합니다." onChange={(value) => updateCalculatorInput('rentalRate', value)} />
+              <DashboardRange label="현황 용적률" value={calculatorInput.currentFar} min={100} max={300} suffix="%" tooltip="기존 평균평형 추정에 사용합니다. 산식: 기존 평균평형=평균 대지지분×현황 용적률, 하한 22평. 현황 용적률이 낮을수록 조합원 기존 배정 부담이 줄고 일반분양 여력이 커집니다." onChange={(value) => updateCalculatorInput('currentFar', value)} />
+              <DashboardRange label="재건축 후 용적률" value={calculatorInput.afterFar} min={200} max={500} suffix="%" tooltip="총 공급가능면적을 계산합니다. 산식: 공급가능면적=평균 대지지분×세대수×재건축 후 용적률. 높을수록 일반분양 여력이 커지지만 임대·공공기여도 일부 가산됩니다." onChange={(value) => updateCalculatorInput('afterFar', value)} />
+              <DashboardRange label="평균 대지지분" value={calculatorInput.landShare} min={8} max={25} suffix="평" tooltip="토지면적과 기존 평균평형의 핵심 변수입니다. 산식: 대지면적=평균 대지지분×세대수. 대지지분이 클수록 공급가능면적과 토지가치가 함께 커집니다." onChange={(value) => updateCalculatorInput('landShare', value)} />
+              <DashboardRange label="평당 공사비" value={calculatorInput.constructionCost} min={600} max={1200} step={10} suffix="만원" tooltip="공사비와 사업비에 반영합니다. 산식: 공사비=평당 공사비×공급면적×1.72. 사업비는 보상비, 금융비, 기반시설비, 세금, 단계 버퍼를 추가 추정합니다." onChange={(value) => updateCalculatorInput('constructionCost', value)} />
+              <DashboardRange label="일반분양가" value={calculatorInput.salePrice} min={1500} max={10000} step={100} suffix="만원/평" tooltip="총수익과 현재 구축 시세 추정에 함께 반영합니다. 일반분양수익=일반분양면적×평당 분양가. 현재 구축 시세는 신축 동일평형가의 56~59%로 보수 추정합니다." onChange={(value) => updateCalculatorInput('salePrice', value)} />
+              <DashboardRange label="임대·공공기여 비율" value={calculatorInput.rentalRate} min={0} max={50} suffix="%" tooltip="임대주택·기부채납·기반시설 부담을 면적 차감과 사업비에 반영합니다. 산식: 임대/공공기여 면적 비율=기본 4%+용적률 인센티브+공공기여 보정, 상한 16%." onChange={(value) => updateCalculatorInput('rentalRate', value)} />
             </div>
             <div className={`calculator-result-card ${simulation.proRata >= 100 ? 'good' : 'risk'}`}>
               <span>{simulation.proRata >= 100 ? '사업성 있음' : '사업성 부족'}</span>
               <strong>{simulation.proRata.toFixed(0)}%</strong>
-              <p className="tooltip-target" data-tooltip="민감도 모델의 추정값입니다. 100% 이상이면 동일 조건에서 조합원 추가분담금 압력이 낮아집니다." tabIndex={0}>민감도 추정 비례율</p>
+              <p className="tooltip-target" data-tooltip="산식: 정비사업식 비례율=(총수익-공사비-사업비)/종전자산×100. 총수익은 조합원분양, 일반분양, 임대주택, 상가 수익 합계입니다. 100% 이상이면 사업수지가 종전자산을 방어하는 구조입니다." tabIndex={0}>정비사업식 추정 비례율</p>
               <dl>
                 <div>
-                  <dt className="tooltip-target" data-tooltip="일반분양 가능 면적이 총 사업비 회수에 기여하는 정도를 단순화한 지표입니다." tabIndex={0}>일반분양 수익률</dt>
+                  <dt className="tooltip-target" data-tooltip="전체 공급 가능 면적 중 일반분양으로 남는 비율입니다. 현재 용적률이 높거나 조합원 배정·공공기여가 크면 낮아집니다." tabIndex={0}>일반분양 수익률</dt>
                   <dd>{simulation.generalSalePower.toFixed(1)}%</dd>
                 </div>
                 <div>
-                  <dt className="tooltip-target" data-tooltip="비례율 100%에 근접하기 위해 필요한 일반분양 평당가 기준입니다." tabIndex={0}>임계 분양가</dt>
+                  <dt className="tooltip-target" data-tooltip="다른 조건을 고정했을 때 정비사업식 비례율 100%에 도달하는 데 필요한 일반분양 평당가입니다." tabIndex={0}>임계 분양가</dt>
                   <dd>{simulation.thresholdSalePrice.toLocaleString()}만원/평</dd>
                 </div>
                 <div>
-                  <dt className="tooltip-target" data-tooltip="비례율 100% 미만 구간에서 조합원 추가분담금 부담을 단순 환산한 값입니다." tabIndex={0}>추가분담금 압력</dt>
+                  <dt className="tooltip-target" data-tooltip="동일 평형을 받는다고 가정했을 때 정비사업식 권리가액 기준으로 발생하는 분담금 추정치입니다." tabIndex={0}>추가분담금 압력</dt>
                   <dd>{simulation.contributionPressure.toFixed(1)}억</dd>
                 </div>
               </dl>
@@ -1305,44 +1444,135 @@ function NationalDashboard({ stats }: { stats: NationalDashboardStats }) {
         </div>
       </section>
 
-      <section>
-        <div className="dashboard-panel sample-panel">
+    </section>
+  )
+}
+
+function RemodelingOverview() {
+  return (
+    <section className="remodeling-overview">
+      <section className="remodeling-hero dashboard-panel">
+        <div className="section-heading">
+          <div>
+            <span>아파트 리모델링 개요</span>
+            <h2>철거 대신 기존 골조를 살려 노후 주거 성능을 끌어올리는 선택지</h2>
+            <p>재건축 사업성이 낮거나 연한이 이른 단지에서 검토하는 중간 해법입니다. 다만 증축 여부에 따라 법적 절차와 분담금 구조가 크게 갈립니다.</p>
+          </div>
+          <Wrench size={18} />
+        </div>
+        <div className="renewal-kpi-grid remodeling-kpi-grid">
+          <NationalKpiCard label="진입 연한" value="15년+" caption="증축형 공동주택 리모델링 기준" />
+          <NationalKpiCard label="전용면적 증축" value="30~40%" caption="85㎡ 미만은 40% 이내" tone="good" />
+          <NationalKpiCard label="세대수 증가" value="15% 이내" caption="기존 세대수 기준 상한" />
+          <NationalKpiCard label="핵심 관문" value="안전성" caption="안전진단·구조 검토" tone="risk" />
+        </div>
+      </section>
+
+      <section className="dashboard-panel remodeling-visual-panel">
+        <div className="remodeling-visual-frame">
+          <img
+            src="/images/remodeling-vs-reconstruction.png"
+            alt="리모델링은 기존 골조를 유지하며 설비와 외관을 개선하고, 재건축은 철거 후 신축해 일반분양 수익을 만드는 구조를 비교한 인포그래픽"
+          />
+        </div>
+        <div className="remodeling-visual-notes">
+          <ConstraintCard label="물리적 차이" value="고쳐 쓰기 vs 새로 짓기" detail="리모델링은 기존 구조체를 보강·개선하고, 재건축은 철거 후 새 건물로 대체합니다." />
+          <ConstraintCard label="돈의 차이" value="분담금 중심 vs 분양수익 중심" detail="리모델링은 공사비를 낮춰도 팔 수 있는 새 물량이 작아 조합원 직접 부담 비중이 큽니다." />
+          <ConstraintCard label="판단 기준" value="구조 안전성 vs 사업성" detail="리모델링은 구조 검토가 관문이고, 재건축은 용적률·분양가·공사비가 사업성을 좌우합니다." />
+        </div>
+      </section>
+
+      <section className="dashboard-panel remodeling-cost-panel">
+        <div className="section-heading">
+          <div>
+            <span>비용 감각</span>
+            <h2>평당 단가는 낮아도 분담금이 항상 낮지는 않습니다</h2>
+            <p>리모델링은 철거·신축 범위를 줄여 공사비를 낮출 수 있지만, 일반분양 수익이 작아 비용을 조합원이 직접 부담하는 비중이 커집니다.</p>
+          </div>
+          <CircleDollarSign size={18} />
+        </div>
+        <div className="remodeling-cost-grid">
+          {REMODELING_COST_BANDS.map((item) => (
+            <article className={`remodeling-cost-card ${item.tone}`} key={item.label}>
+              <span>{item.label}</span>
+              <div>
+                <p>
+                  <small>리모델링</small>
+                  <strong>{item.remodeling}</strong>
+                </p>
+                <p>
+                  <small>재건축</small>
+                  <strong>{item.reconstruction}</strong>
+                </p>
+              </div>
+              <b>{item.meaning}</b>
+            </article>
+          ))}
+        </div>
+        <p className="remodeling-cost-note">
+          평당 단가는 계약면적·공급면적·전용면적 중 어떤 기준을 쓰는지에 따라 달라집니다. 이 화면의 숫자는 단지별 견적 전 단계에서 재건축 대비 비용 구조를 비교하기 위한 범위값입니다.
+        </p>
+      </section>
+
+      <section className="national-grid remodeling-intro-grid">
+        <div className="dashboard-panel">
           <div className="section-heading">
             <div>
-              <span>현재 앱 표본</span>
-              <h2>현재 연결된 단지 데이터</h2>
-              <p>전국 모집단과는 별도로 현재 앱에 연결된 분석 표본의 커버리지와 가능률을 표시합니다.</p>
+              <span>검토 순서</span>
+              <h2>조건, 방식, 주민 부담 순서로 좁혀 봅니다</h2>
+              <p>법정 정의를 다시 설명하기보다 실제 단지 검토에서 확인해야 할 질문을 앞에서부터 배열했습니다.</p>
             </div>
-            <Database size={18} />
+            <FileText size={18} />
           </div>
-          <div className="sample-summary-grid">
-            <NationalKpiCard label="분석 표본" value={`${formatHouseholds(stats.sampleUnits)}호`} caption={`${stats.regionalStats.length}개 지역`} />
-            <NationalKpiCard label="표본 내 가능률" value={`${stats.sampleViableRate.toFixed(1)}%`} caption={`${formatHouseholds(stats.sampleViableUnits)}호 후보`} tone="good" />
+          <div className="remodeling-flow">
+            <ConstraintCard label="1. 현재 조건" value="연한·구조·대지 여유" detail="15년 이상인지, 벽식 구조와 지하주차장 조건이 증축을 버틸 수 있는지 먼저 봅니다." />
+            <ConstraintCard label="2. 사업 방식" value="대수선 / 수평 / 수직" detail="일반분양 수익을 만들지, 분담금을 낮게 억제할지에 따라 방식이 갈립니다." />
+            <ConstraintCard label="3. 주민 의사결정" value="동의율·분담금" detail="실제 추진력은 예상 분담금, 이주 부담, 완료 후 가격 회복 기대가 좌우합니다." />
           </div>
-          <div className="sample-region-list">
-            {stats.regionalStats.slice(0, 5).map((region) => (
-              <div key={region.region}>
-                <span>{region.region}</span>
-                <b>{region.viableRate.toFixed(1)}%</b>
-              </div>
-            ))}
+        </div>
+
+        <div className="dashboard-panel">
+          <div className="section-heading">
+            <div>
+              <span>앱에서 보는 관점</span>
+              <h2>재건축 불가 단지의 다음 질문</h2>
+            </div>
+            <ShieldAlert size={18} />
+          </div>
+          <div className="constraint-stack">
+            <ConstraintCard label="사업성" value="일반분양 수익 제한" detail="세대수 증가 상한이 작아 재건축처럼 일반분양으로 공사비를 크게 회수하기 어렵습니다." />
+            <ConstraintCard label="상품성" value="신축 대비 격차 축소" detail="외관, 설비, 커뮤니티, 주차, 에너지 성능 개선이 가격 방어 논리의 중심입니다." />
+            <ConstraintCard label="정책성" value="철거보다 낮은 자원 낭비" detail="기존 구조체를 활용하므로 전면 철거보다 공사 범위와 폐기물 부담을 줄일 여지가 있습니다." />
           </div>
         </div>
       </section>
 
-      <section className="dashboard-panel next-data-panel">
+      <section className="renewal-grid remodeling-path-grid">
+        {REMODELING_PATHS.map((path) => (
+          <article className={`remodeling-path-card ${path.tone}`} key={path.label}>
+            <span>{path.label}</span>
+            <strong>{path.value}</strong>
+            <p>{path.detail}</p>
+          </article>
+        ))}
+      </section>
+
+      <section className="dashboard-panel">
         <div className="section-heading">
           <div>
-            <span>데이터 확보 계획</span>
-            <h2>전국 단위 데이터 제품으로 확장하려면</h2>
+            <span>재건축과 비교</span>
+            <h2>리모델링은 빠른 재건축이 아니라 다른 사업 구조</h2>
           </div>
-          <Database size={18} />
+          <Building2 size={18} />
         </div>
-        <div className="data-roadmap-grid">
-          <ConstraintCard label="1. 노후 아파트 모집단" value="K-apt + 건축물대장" detail="단지명, 주소, 세대수, 사용승인일을 연결해 지역별 30년 이상 공동주택 모수를 산정합니다." tooltip="K-apt는 공동주택 관리 정보를 모아둔 공공 데이터입니다. 건축물대장은 건물의 공식 기록입니다." />
-          <ConstraintCard label="2. 사업성 변수" value="용적률·대지지분·신축가" detail="단지별 일반분양 여력, 토지 조건, 인근 신축 가격을 연결합니다." tooltip="이 변수들이 있어야 총수익, 총사업비, 종전자산 대비 비례율을 계산할 수 있습니다." />
-          <ConstraintCard label="3. 가능/불가 판정" value="비례율 100% 기준" detail="비례율과 동일평형 정산금을 기준으로 사업성 가능 후보를 분류합니다." tooltip="비례율 100%는 종전자산 대비 사업수지가 균형에 도달하는 기준선입니다." />
-          <ConstraintCard label="4. 총량 검증" value="KOSIS·민간 통계 비교" detail="251만호 및 지역별 총량과 맞는지 확인하고 결측 지역을 보정합니다." tooltip="KOSIS는 국가 통계 사이트입니다. 전체 숫자가 맞는지 검산할 때 씁니다." />
+        <div className="remodeling-comparison-table">
+          {REMODELING_COMPARISON.map((item) => (
+            <article key={item.label}>
+              <strong>{item.label}</strong>
+              <p><span>리모델링</span>{item.remodeling}</p>
+              <p><span>재건축</span>{item.reconstruction}</p>
+            </article>
+          ))}
         </div>
       </section>
     </section>
@@ -1358,7 +1588,7 @@ function RenewalProducts() {
       <section className="renewal-hero dashboard-panel">
         <div className="section-heading">
           <div>
-            <span>리뉴얼(수선) 상품</span>
+            <span>리뉴얼(수선)</span>
             <h2>재건축과 증축 리뉴얼 사이의 저비용 선택지</h2>
             <p>첨부 자료 기준으로 주요 건설사의 비증축·대수선형 상품과 인접 상품을 구분했습니다.</p>
           </div>
@@ -1548,8 +1778,6 @@ function createNationalDashboard(rankedComplexes: RankedComplex[]): NationalDash
   const maxViableUnits = Math.round(agedUnits * maxViableRate)
   const impossibleUnits = agedUnits - maxViableUnits
   const regionalStats = createRegionalDashboardStats(rankedComplexes)
-  const sampleUnits = regionalStats.reduce((sum, region) => sum + region.agedUnits, 0)
-  const sampleViableUnits = regionalStats.reduce((sum, region) => sum + region.viableUnits, 0)
 
   return {
     agedUnits,
@@ -1557,9 +1785,6 @@ function createNationalDashboard(rankedComplexes: RankedComplex[]): NationalDash
     maxViableUnits,
     impossibleRate: 1 - maxViableRate,
     impossibleUnits,
-    sampleUnits,
-    sampleViableUnits,
-    sampleViableRate: sampleUnits > 0 ? (sampleViableUnits / sampleUnits) * 100 : 0,
     regionalStats,
     benchmarks: REGIONAL_RECONSTRUCTION_BENCHMARKS,
   }
@@ -1615,21 +1840,99 @@ function average(values: number[]) {
 }
 
 function calculateDashboardSimulation(input: DashboardCalculatorInput) {
-  const farIncreaseRate = Math.max(input.afterFar / input.currentFar - 1, 0)
-  const rentalDrag = farIncreaseRate * (input.rentalRate / 100)
-  const generalSalePower = Math.max(farIncreaseRate - rentalDrag, 0) * 100
-  const densityPenalty = Math.max(input.currentFar - 180, 0) * 7
-  const landShareCredit = Math.max(input.landShare - 11, 0) * 130
-  const thresholdSalePrice = Math.round(input.constructionCost * 1.35 + densityPenalty + 1100 - landShareCredit)
-  const proRata = Math.max(35, Math.min(145, (input.salePrice / Math.max(thresholdSalePrice, 1)) * 100 + generalSalePower * 0.28))
-  const contributionPressure = Math.max(0, (100 - proRata) * 0.14)
+  const simulationComplex = createDashboardSimulationComplex(input)
+  const simulationScenario: Scenario = {
+    ...baseScenario,
+    constructionCost: input.constructionCost,
+    salePrice: 100,
+    publicContribution: input.rentalRate,
+  }
+  const finance = calculateProjectFinance(simulationComplex, simulationScenario)
+  const generalSalePower = finance.plan.saleableFloorArea > 0
+    ? (finance.plan.generalSaleArea / finance.plan.saleableFloorArea) * 100
+    : 0
+  const thresholdSalePrice = estimateDashboardThresholdSalePrice(simulationComplex, simulationScenario)
+  const contributionPressure = Math.max(0, finance.accountingSameSizeSettlement)
 
   return {
     generalSalePower,
     thresholdSalePrice,
-    proRata,
+    proRata: finance.accountingProRata,
     contributionPressure,
   }
+}
+
+function createDashboardSimulationComplex(input: DashboardCalculatorInput): Complex {
+  const representativeSupplyPyeong = estimateDashboardExistingSupplyPyeong(input)
+  const recentPrice = estimateDashboardRecentPrice(input, representativeSupplyPyeong)
+
+  return {
+    id: `dashboard-${input.region}`,
+    identifiers: {
+      complexId: `dashboard-${input.region}`,
+      legalDongCode: '',
+      jibunAddress: input.region,
+      lat: 0,
+      lng: 0,
+    },
+    name: `${input.region} 프리셋`,
+    aliases: [],
+    district: input.region,
+    address: input.region,
+    legalDongCode: '',
+    builtYear: 1986,
+    units: 1000,
+    currentFar: input.currentFar,
+    allowedFar: input.afterFar,
+    landShare: input.landShare,
+    representativeSupplyPyeong,
+    previousAssetValue: recentPrice,
+    recentPrice,
+    newBuildPrice: input.salePrice,
+    stage: '검토',
+    regulationRisk: '중간',
+    residentMomentum: '중간',
+    dataReliability: 60,
+    x: 0,
+    y: 0,
+    note: '지역 프리셋 계산용 가상 단지',
+    sourceFreshness: {
+      physicalInfo: '프리셋',
+      transaction: '프리셋',
+      regulation: '프리셋',
+      costIndex: '프리셋',
+    },
+  }
+}
+
+function estimateDashboardExistingSupplyPyeong(input: DashboardCalculatorInput) {
+  const impliedSupplyPyeong = input.landShare * (input.currentFar / 100)
+
+  return Math.round(Math.min(45, Math.max(22, impliedSupplyPyeong)))
+}
+
+function estimateDashboardRecentPrice(input: DashboardCalculatorInput, representativeSupplyPyeong: number) {
+  const oldBuildDiscount = input.currentFar >= 210 ? 0.56 : input.currentFar >= 180 ? 0.58 : 0.59
+  const estimatedNewBuildSameSizePrice = (input.salePrice * representativeSupplyPyeong) / 10000
+
+  return estimatedNewBuildSameSizePrice * oldBuildDiscount
+}
+
+function estimateDashboardThresholdSalePrice(baseComplex: Complex, scenario: Scenario) {
+  let low = 1000
+  let high = 15000
+
+  for (let index = 0; index < 28; index += 1) {
+    const middle = (low + high) / 2
+    const finance = calculateProjectFinance({ ...baseComplex, newBuildPrice: middle }, scenario)
+
+    if (finance.accountingProRata >= 100) high = middle
+    else low = middle
+  }
+
+  if (high >= 14999) return 15000
+
+  return Math.round(high / 10) * 10
 }
 
 function formatHouseholds(value: number) {
@@ -1836,6 +2139,125 @@ function createQualityGrade(complex: Complex, renewalMatch: RenewalMatch | undef
   return { label: '부분확정', description: hasOfficialMatch ? '공식 추진은 확인, 일부 가격/토지 근거 보강 필요' : '물리·가격 데이터 중심, 공식 추진은 미확인' }
 }
 
+type ProRataDiagnosticItem = {
+  label: string
+  detail: string
+  tone: 'good' | 'risk' | 'neutral'
+}
+
+type ProRataComparison = {
+  title: string
+  detail: string
+}
+
+function createProRataDiagnostics(complex: Complex, diagnosis: Diagnosis, scenario: Scenario): ProRataDiagnosticItem[] {
+  const finance = diagnosis.finance
+  const saleableArea = finance.plan.saleableFloorArea
+  const generalSaleRate = saleableArea > 0 ? (finance.plan.generalSaleArea / saleableArea) * 100 : 0
+  const rentalRate = saleableArea > 0 ? (finance.plan.rentalHousingArea / saleableArea) * 100 : 0
+  const farUpside = Math.max(complex.allowedFar - complex.currentFar, 0)
+  const expectedSalePrice = estimateExpectedSalePricePerPyeong(complex, scenario)
+  const breakEvenPrice = Math.max(finance.breakEvenGeneralSalePrice, 0)
+  const items: ProRataDiagnosticItem[] = []
+
+  if (finance.accountingProRata >= 100) {
+    items.push({
+      label: '100% 초과 요인',
+      detail: `일반분양 ${generalSaleRate.toFixed(1)}%, 용적률 여력 ${farUpside}%p, 대지지분 ${complex.landShare.toFixed(1)}평`,
+      tone: 'good',
+    })
+  } else {
+    items.push({
+      label: '100% 미달 요인',
+      detail: `일반분양 ${generalSaleRate.toFixed(1)}%, 임대·공공기여 ${rentalRate.toFixed(1)}%, 용적률 여력 ${farUpside}%p`,
+      tone: 'risk',
+    })
+  }
+
+  if (generalSaleRate < 8) {
+    items.push({
+      label: '일반분양 부족',
+      detail: '팔 수 있는 새 물량이 작아 조합원분양 수익과 종전자산에 의존하는 구조',
+      tone: 'risk',
+    })
+  } else if (generalSaleRate >= 18) {
+    items.push({
+      label: '일반분양 여력',
+      detail: '기존 용적률 대비 재건축 후 공급 가능 면적이 충분해 총수익 개선 여지 큼',
+      tone: 'good',
+    })
+  } else {
+    items.push({
+      label: '일반분양 중간',
+      detail: '일반분양은 생기지만 공사비·분양가 변화에 비례율이 민감한 구간',
+      tone: 'neutral',
+    })
+  }
+
+  if (breakEvenPrice > 0 && breakEvenPrice > expectedSalePrice * 1.05) {
+    items.push({
+      label: '분양가 갭',
+      detail: `손익분기 ${breakEvenPrice.toLocaleString()}만원/평 > 추정 분양가 ${expectedSalePrice.toLocaleString()}만원/평`,
+      tone: 'risk',
+    })
+  } else if (breakEvenPrice > 0) {
+    items.push({
+      label: '분양가 여력',
+      detail: `추정 분양가 ${expectedSalePrice.toLocaleString()}만원/평이 손익분기 ${breakEvenPrice.toLocaleString()}만원/평에 근접 또는 상회`,
+      tone: 'good',
+    })
+  }
+
+  if (scenario.constructionCost >= baseScenario.constructionCost + 80) {
+    items.push({
+      label: '공사비 부담',
+      detail: `현재 가정 ${scenario.constructionCost.toLocaleString()}만원/평, 기준 대비 +${(scenario.constructionCost - baseScenario.constructionCost).toLocaleString()}만원/평`,
+      tone: 'risk',
+    })
+  }
+
+  if (finance.accountingSameSizeSettlement <= 0) {
+    items.push({
+      label: '동일평형 정산',
+      detail: `${formatSettlementCurrency(finance.accountingSameSizeSettlement)} 구조라 권리가액이 조합원분양가를 방어`,
+      tone: 'good',
+    })
+  } else {
+    items.push({
+      label: '동일평형 정산',
+      detail: `${formatSettlementCurrency(finance.accountingSameSizeSettlement)} 예상, 비례율 100% 미만이면 부담 확대`,
+      tone: 'risk',
+    })
+  }
+
+  return items.slice(0, 4)
+}
+
+function createProRataComparison(complex: Complex, diagnosis: Diagnosis): ProRataComparison {
+  const accounting = diagnosis.finance.accountingProRata
+  const market = diagnosis.finance.marketProRata
+  const gap = accounting - market
+
+  if (Math.abs(gap) < 12) {
+    return {
+      title: '두 방식이 비슷한 방향',
+      detail: `정비사업식 ${accounting.toFixed(0)}%, 시장가치식 ${market.toFixed(0)}%. 사업수지와 시장 체감이 크게 어긋나지 않는 구간입니다.`,
+    }
+  }
+
+  if (gap > 0) {
+    return {
+      title: '사업수지는 더 좋고 시장 체감은 보수적',
+      detail: `정비사업식이 ${gap.toFixed(0)}%p 높습니다. 일반분양 수익은 잡히지만 현재 시세 대비 동일평형 체감 정산은 보수적으로 나오는 구조입니다.`,
+    }
+  }
+
+  return {
+    title: '시장 체감이 사업수지보다 우호적',
+    detail: `${complex.name}은 시장가치식이 ${Math.abs(gap).toFixed(0)}%p 높습니다. 현재 구축 시세나 주변 신축가 기대가 사업수지식보다 먼저 반영된 구간일 수 있습니다.`,
+  }
+}
+
 type EvidencePackItem = {
   label: string
   value: string
@@ -1852,6 +2274,7 @@ function createEvidencePack(
   transactionDiagnostic: ReturnType<typeof findTransactionDiagnostic> | undefined,
   renewalMatch: RenewalMatch | undefined,
   qualityGrade: ReturnType<typeof createQualityGrade>,
+  proRataComparison: ProRataComparison,
 ): EvidencePackItem[] {
   const officialStatus = createOfficialStatus(renewalMatch)
   const transactionConfidence = Math.round((transactionDiagnostic?.matchConfidence ?? 0.52) * 100)
@@ -1900,6 +2323,14 @@ function createEvidencePack(
       sourceName: '정비사업식 산식 추정',
       confidence: 58,
       method: '조합원분양가 - 종전자산×정비사업식 비례율로 동일평형 정산금을 추정합니다.',
+    },
+    {
+      label: '비례율 차이',
+      value: `${diagnosis.finance.accountingProRata.toFixed(0)}% / ${diagnosis.finance.marketProRata.toFixed(0)}%`,
+      sourceType: 'inferred',
+      sourceName: '정비사업식·시장가치식 병렬 산식',
+      confidence: 58,
+      method: proRataComparison.detail,
     },
     {
       label: '품질 등급',

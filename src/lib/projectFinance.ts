@@ -9,6 +9,8 @@ const COMMERCIAL_PRICE_RATIO = 0.72
 const DEFAULT_PROJECT_FAR = 330
 const UNDERGROUND_3F_TOTAL_AREA_RATIO = 5.6
 const OTHER_PROJECT_COST_MULTIPLIER = 1.4
+const MEMBER_UPSIZE_SHARE = 0.22
+const MEMBER_DOWNSIZE_SHARE = 0.1
 
 export function calculateProjectFinance(complex: Complex, scenario: Scenario): ProjectFinance {
   const siteArea = complex.landShare * complex.units
@@ -17,11 +19,11 @@ export function calculateProjectFinance(complex: Complex, scenario: Scenario): P
   const rentalHousingArea = complex.financeOverride?.rentalHousingArea ?? saleableFloorArea * getRentalAreaRatio(complex, scenario)
   const commercialArea = complex.financeOverride?.commercialArea ?? saleableFloorArea * COMMERCIAL_AREA_RATIO
   const housingAndCommercialArea = rentalHousingArea + commercialArea
-  const generalSaleFloor = saleableFloorArea * 0.04
+  const requiredMemberArea = estimateRequiredMemberSaleArea(complex)
   const requestedGeneralSaleArea = complex.financeOverride?.generalSaleArea
   const memberSaleArea = Math.min(
-    complex.financeOverride?.memberSaleArea ?? complex.units * PYEONG_PER_UNIT_EQUIVALENT * getMemberUpsizeRatio(complex),
-    Math.max(saleableFloorArea - housingAndCommercialArea - (requestedGeneralSaleArea ?? generalSaleFloor), 0),
+    complex.financeOverride?.memberSaleArea ?? requiredMemberArea,
+    Math.max(saleableFloorArea - housingAndCommercialArea - (requestedGeneralSaleArea ?? 0), 0),
   )
   const generalSaleArea = requestedGeneralSaleArea ?? Math.max(saleableFloorArea - memberSaleArea - housingAndCommercialArea, 0)
 
@@ -105,16 +107,30 @@ export function calculateProjectFinance(complex: Complex, scenario: Scenario): P
 
 function getRentalAreaRatio(complex: Complex, scenario: Scenario) {
   const farGap = Math.max(complex.allowedFar - complex.currentFar, 0)
-  const incentiveRental = farGap > 40 ? Math.min(farGap / 1000, 0.07) : 0
-  const publicContributionPenalty = scenario.publicContribution / 1000
+  const incentiveRental = farGap > 40 ? Math.min(farGap / 2200, 0.035) : 0
+  const publicContributionPenalty = scenario.publicContribution / 1400
 
-  return Math.min(0.18, 0.08 + incentiveRental + publicContributionPenalty)
+  return Math.min(0.16, 0.04 + incentiveRental + publicContributionPenalty)
 }
 
-function getMemberUpsizeRatio(complex: Complex) {
-  if (complex.landShare >= 16) return 1.28
-  if (complex.landShare >= 12) return 1.15
-  return 1.02
+function estimateRequiredMemberSaleArea(complex: Complex) {
+  const currentOwnedPyeong = estimateAverageMemberSupplyPyeong(complex)
+  const upsizePyeong = estimateTargetSupplyPyeong(complex)
+  const downsizePyeong = Math.max(24, currentOwnedPyeong - 4)
+  const stableShare = Math.max(0, 1 - MEMBER_UPSIZE_SHARE - MEMBER_DOWNSIZE_SHARE)
+  const blendedPyeong =
+    currentOwnedPyeong * stableShare +
+    upsizePyeong * MEMBER_UPSIZE_SHARE +
+    downsizePyeong * MEMBER_DOWNSIZE_SHARE
+
+  return complex.units * blendedPyeong
+}
+
+function estimateAverageMemberSupplyPyeong(complex: Complex) {
+  const representativePyeong = estimateCurrentOwnedPyeong(complex)
+  const farImpliedAverage = complex.landShare * (complex.currentFar / 100) * 1.45 + 2
+
+  return Math.max(22, Math.min(representativePyeong, farImpliedAverage))
 }
 
 function calculateBusinessCost(complex: Complex, constructionCost: number, previousAssetValue: number, scenario: Scenario) {

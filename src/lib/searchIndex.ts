@@ -28,7 +28,7 @@ export function searchIndexByComplexName(searchIndex: SearchIndexItem[], query: 
 
 export function getSearchItemLabel(item: SearchIndexItem) {
   if (item.status === 'search_only') return '준비중'
-  if (item.source === 'analysis_candidate') return '후보'
+  if (item.source === 'analysis_candidate') return '분석 전'
 
   return '분석'
 }
