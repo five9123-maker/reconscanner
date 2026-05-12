@@ -1,22 +1,36 @@
-import { useEffect, useMemo, useState } from 'react'
+import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import {
   Activity,
+  AlertTriangle,
+  ArrowRightLeft,
   BarChart3,
+  BadgeDollarSign,
   Building2,
   Calculator,
+  CheckCircle2,
   CircleHelp,
   CircleDollarSign,
+  ClipboardList,
+  Coins,
   Database,
+  Expand,
   FileText,
   Clock3,
   Home,
+  Hammer,
+  Layers,
   MapPin,
+  MoveVertical,
+  Recycle,
   RefreshCw,
+  Route,
+  Ruler,
   Search,
   ShieldAlert,
   SlidersHorizontal,
   Star,
   TrendingUp,
+  Users,
   Wrench,
 } from 'lucide-react'
 import { Control } from './components/Control'
@@ -132,6 +146,13 @@ function App() {
     () => createEvidencePack(selected, diagnosis, scenario, transactionDiagnostic, renewalMatch, selectedQualityGrade, proRataComparison),
     [selected, diagnosis, scenario, transactionDiagnostic, renewalMatch, selectedQualityGrade, proRataComparison],
   )
+  const analysisAxes = useMemo(() => createAnalysisAxes(selected, diagnosis, renewalMatch, selectedQualityIssues), [selected, diagnosis, renewalMatch, selectedQualityIssues])
+  const crossValidationItems = useMemo(
+    () => createCrossValidationItems(selected, transactionDiagnostic, renewalMatch, selectedQualityIssues, proRataComparison),
+    [selected, transactionDiagnostic, renewalMatch, selectedQualityIssues, proRataComparison],
+  )
+  const riskMatrixItems = useMemo(() => createRiskMatrixItems(selected, diagnosis, scenario, selectedQualityIssues), [selected, diagnosis, scenario, selectedQualityIssues])
+  const monitoringItems = useMemo(() => createMonitoringItems(selected, renewalMatch, selectedQualityIssues), [selected, renewalMatch, selectedQualityIssues])
   const dataQuality = useMemo(() => repository.getDataQualitySummary(), [repository])
   const validationIssues = useMemo(() => repository.getValidationIssues().slice(0, 3), [repository])
   const favoriteComplexes = useMemo(() => favoriteIds.map((id) => repository.getComplexById(id)).filter(Boolean) as Complex[], [favoriteIds, repository])
@@ -701,6 +722,27 @@ function App() {
                   <div className="empty-source">현재 단지의 주요 보완 이슈 없음</div>
                 )}
               </div>
+            </div>
+          </section>
+
+          <section className="analysis-panel report-insight-panel">
+            <div className="section-heading">
+              <div>
+                <span>Report Check</span>
+                <h2>교차검증과 다음 확인 포인트</h2>
+                <p>단일 점수보다 물리·경제·시장·공식근거·품질 축을 나눠 보고, 어떤 이벤트가 판단을 바꾸는지 정리합니다.</p>
+              </div>
+              <ShieldAlert size={18} />
+            </div>
+            <div className="analysis-axis-grid">
+              {analysisAxes.map((axis) => (
+                <AnalysisAxisCard key={axis.code} axis={axis} />
+              ))}
+            </div>
+            <div className="report-check-grid">
+              <ReportCheckColumn title="교차검증" items={crossValidationItems} />
+              <RiskMatrix items={riskMatrixItems} />
+              <ReportCheckColumn title="다음 확인 이벤트" items={monitoringItems} />
             </div>
           </section>
 
@@ -1461,10 +1503,10 @@ function RemodelingOverview() {
           <Wrench size={18} />
         </div>
         <div className="renewal-kpi-grid remodeling-kpi-grid">
-          <NationalKpiCard label="진입 연한" value="15년+" caption="증축형 공동주택 리모델링 기준" />
-          <NationalKpiCard label="전용면적 증축" value="30~40%" caption="85㎡ 미만은 40% 이내" tone="good" />
-          <NationalKpiCard label="세대수 증가" value="15% 이내" caption="기존 세대수 기준 상한" />
-          <NationalKpiCard label="핵심 관문" value="안전성" caption="안전진단·구조 검토" tone="risk" />
+          <NationalKpiCard icon={<Clock3 size={18} />} label="진입 연한" value="15년+" caption="증축형 공동주택 리모델링 기준" />
+          <NationalKpiCard icon={<Expand size={18} />} label="전용면적 증축" value="30~40%" caption="85㎡ 미만은 40% 이내" tone="good" />
+          <NationalKpiCard icon={<Users size={18} />} label="세대수 증가" value="15% 이내" caption="기존 세대수 기준 상한" />
+          <NationalKpiCard icon={<ShieldAlert size={18} />} label="핵심 관문" value="안전성" caption="안전진단·구조 검토" tone="risk" />
         </div>
       </section>
 
@@ -1476,9 +1518,9 @@ function RemodelingOverview() {
           />
         </div>
         <div className="remodeling-visual-notes">
-          <ConstraintCard label="물리적 차이" value="고쳐 쓰기 vs 새로 짓기" detail="리모델링은 기존 구조체를 보강·개선하고, 재건축은 철거 후 새 건물로 대체합니다." />
-          <ConstraintCard label="돈의 차이" value="분담금 중심 vs 분양수익 중심" detail="리모델링은 공사비를 낮춰도 팔 수 있는 새 물량이 작아 조합원 직접 부담 비중이 큽니다." />
-          <ConstraintCard label="판단 기준" value="구조 안전성 vs 사업성" detail="리모델링은 구조 검토가 관문이고, 재건축은 용적률·분양가·공사비가 사업성을 좌우합니다." />
+          <ConstraintCard icon={<Building2 size={19} />} label="물리적 차이" value="고쳐 쓰기 vs 새로 짓기" detail="리모델링은 기존 구조체를 보강·개선하고, 재건축은 철거 후 새 건물로 대체합니다." />
+          <ConstraintCard icon={<Coins size={19} />} label="돈의 차이" value="분담금 중심 vs 분양수익 중심" detail="리모델링은 공사비를 낮춰도 팔 수 있는 새 물량이 작아 조합원 직접 부담 비중이 큽니다." />
+          <ConstraintCard icon={<Ruler size={19} />} label="판단 기준" value="구조 안전성 vs 사업성" detail="리모델링은 구조 검토가 관문이고, 재건축은 용적률·분양가·공사비가 사업성을 좌우합니다." />
         </div>
       </section>
 
@@ -1494,7 +1536,13 @@ function RemodelingOverview() {
         <div className="remodeling-cost-grid">
           {REMODELING_COST_BANDS.map((item) => (
             <article className={`remodeling-cost-card ${item.tone}`} key={item.label}>
-              <span>{item.label}</span>
+              <div className="remodeling-card-head">
+                <div>
+                  <CardPictogram tone={item.tone === 'risk' ? 'risk' : item.tone === 'good' ? 'good' : 'neutral'}>{getRemodelingCostIcon(item.label)}</CardPictogram>
+                  <span>{item.label}</span>
+                </div>
+                <CardHelp tooltip={`${item.label}: ${item.meaning} 리모델링 기준 ${item.remodeling}, 재건축 비교 기준 ${item.reconstruction}`} />
+              </div>
               <div>
                 <p>
                   <small>리모델링</small>
@@ -1525,9 +1573,9 @@ function RemodelingOverview() {
             <FileText size={18} />
           </div>
           <div className="remodeling-flow">
-            <ConstraintCard label="1. 현재 조건" value="연한·구조·대지 여유" detail="15년 이상인지, 벽식 구조와 지하주차장 조건이 증축을 버틸 수 있는지 먼저 봅니다." />
-            <ConstraintCard label="2. 사업 방식" value="대수선 / 수평 / 수직" detail="일반분양 수익을 만들지, 분담금을 낮게 억제할지에 따라 방식이 갈립니다." />
-            <ConstraintCard label="3. 주민 의사결정" value="동의율·분담금" detail="실제 추진력은 예상 분담금, 이주 부담, 완료 후 가격 회복 기대가 좌우합니다." />
+            <ConstraintCard icon={<ClipboardList size={19} />} label="1. 현재 조건" value="연한·구조·대지 여유" detail="15년 이상인지, 벽식 구조와 지하주차장 조건이 증축을 버틸 수 있는지 먼저 봅니다." />
+            <ConstraintCard icon={<Route size={19} />} label="2. 사업 방식" value="대수선 / 수평 / 수직" detail="일반분양 수익을 만들지, 분담금을 낮게 억제할지에 따라 방식이 갈립니다." />
+            <ConstraintCard icon={<Users size={19} />} label="3. 주민 의사결정" value="동의율·분담금" detail="실제 추진력은 예상 분담금, 이주 부담, 완료 후 가격 회복 기대가 좌우합니다." />
           </div>
         </div>
 
@@ -1540,9 +1588,9 @@ function RemodelingOverview() {
             <ShieldAlert size={18} />
           </div>
           <div className="constraint-stack">
-            <ConstraintCard label="사업성" value="일반분양 수익 제한" detail="세대수 증가 상한이 작아 재건축처럼 일반분양으로 공사비를 크게 회수하기 어렵습니다." />
-            <ConstraintCard label="상품성" value="신축 대비 격차 축소" detail="외관, 설비, 커뮤니티, 주차, 에너지 성능 개선이 가격 방어 논리의 중심입니다." />
-            <ConstraintCard label="정책성" value="철거보다 낮은 자원 낭비" detail="기존 구조체를 활용하므로 전면 철거보다 공사 범위와 폐기물 부담을 줄일 여지가 있습니다." />
+            <ConstraintCard icon={<BadgeDollarSign size={19} />} label="사업성" value="일반분양 수익 제한" detail="세대수 증가 상한이 작아 재건축처럼 일반분양으로 공사비를 크게 회수하기 어렵습니다." />
+            <ConstraintCard icon={<Wrench size={19} />} label="상품성" value="신축 대비 격차 축소" detail="외관, 설비, 커뮤니티, 주차, 에너지 성능 개선이 가격 방어 논리의 중심입니다." />
+            <ConstraintCard icon={<Recycle size={19} />} label="정책성" value="철거보다 낮은 자원 낭비" detail="기존 구조체를 활용하므로 전면 철거보다 공사 범위와 폐기물 부담을 줄일 여지가 있습니다." />
           </div>
         </div>
       </section>
@@ -1550,7 +1598,13 @@ function RemodelingOverview() {
       <section className="renewal-grid remodeling-path-grid">
         {REMODELING_PATHS.map((path) => (
           <article className={`remodeling-path-card ${path.tone}`} key={path.label}>
-            <span>{path.label}</span>
+            <div className="remodeling-card-head">
+              <div>
+                <CardPictogram tone={path.tone === 'primary' ? 'good' : path.tone === 'limited' ? 'risk' : 'neutral'}>{getRemodelingPathIcon(path.label)}</CardPictogram>
+                <span>{path.label}</span>
+              </div>
+              <CardHelp tooltip={`${path.label}: ${path.value}. ${path.detail}`} />
+            </div>
             <strong>{path.value}</strong>
             <p>{path.detail}</p>
           </article>
@@ -1568,7 +1622,13 @@ function RemodelingOverview() {
         <div className="remodeling-comparison-table">
           {REMODELING_COMPARISON.map((item) => (
             <article key={item.label}>
-              <strong>{item.label}</strong>
+              <div className="comparison-label">
+                <div>
+                  <CardPictogram tone={item.label === '핵심 리스크' ? 'risk' : 'neutral'}>{getRemodelingComparisonIcon(item.label)}</CardPictogram>
+                  <strong>{item.label}</strong>
+                </div>
+                <CardHelp tooltip={`${item.label}: 리모델링은 ${item.remodeling} 재건축은 ${item.reconstruction}`} />
+              </div>
               <p><span>리모델링</span>{item.remodeling}</p>
               <p><span>재건축</span>{item.reconstruction}</p>
             </article>
@@ -1719,9 +1779,39 @@ function FunnelStep({ label, value, caption, tone = 'neutral' }: { label: string
   )
 }
 
-function NationalKpiCard({ label, value, caption, tone = 'neutral' }: { label: string; value: string; caption: string; tone?: 'neutral' | 'good' | 'risk' }) {
+function CardPictogram({ children, tone = 'neutral' }: { children: ReactNode; tone?: 'neutral' | 'good' | 'risk' }) {
+  return <div className={`card-pictogram ${tone}`}>{children}</div>
+}
+
+function CardHelp({ tooltip }: { tooltip: string }) {
+  return (
+    <button className="card-help-button tooltip-target" type="button" aria-label="카드 설명" data-tooltip={tooltip}>
+      <CircleHelp size={15} />
+    </button>
+  )
+}
+
+function NationalKpiCard({
+  label,
+  value,
+  caption,
+  tone = 'neutral',
+  icon,
+}: {
+  label: string
+  value: string
+  caption: string
+  tone?: 'neutral' | 'good' | 'risk'
+  icon?: ReactNode
+}) {
+  const tooltip = `${label}: ${value}. ${caption}`
+
   return (
     <div className={`national-kpi-card ${tone}`}>
+      <div className="national-kpi-card-head">
+        {icon && <CardPictogram tone={tone}>{icon}</CardPictogram>}
+        <CardHelp tooltip={tooltip} />
+      </div>
       <span>{label}</span>
       <strong>{value}</strong>
       <small>{caption}</small>
@@ -1729,14 +1819,42 @@ function NationalKpiCard({ label, value, caption, tone = 'neutral' }: { label: s
   )
 }
 
-function ConstraintCard({ label, value, detail, tooltip }: { label: string; value: string; detail: string; tooltip?: string }) {
+function ConstraintCard({ label, value, detail, tooltip, icon }: { label: string; value: string; detail: string; tooltip?: string; icon?: ReactNode }) {
+  const helpTooltip = tooltip ?? `${label}: ${value}. ${detail}`
+
   return (
-    <div className={`constraint-card ${tooltip ? 'tooltip-target' : ''}`} data-tooltip={tooltip} tabIndex={tooltip ? 0 : undefined}>
-      <span>{label}</span>
+    <div className="constraint-card">
+      <div className="constraint-card-head">
+        <div>
+          {icon && <CardPictogram>{icon}</CardPictogram>}
+          <span>{label}</span>
+        </div>
+        <CardHelp tooltip={helpTooltip} />
+      </div>
       <strong>{value}</strong>
       <p>{detail}</p>
     </div>
   )
+}
+
+function getRemodelingPathIcon(label: string) {
+  if (label.includes('수직')) return <MoveVertical size={19} />
+  if (label.includes('수평')) return <ArrowRightLeft size={19} />
+  return <Hammer size={19} />
+}
+
+function getRemodelingCostIcon(label: string) {
+  if (label.includes('사업비')) return <AlertTriangle size={19} />
+  if (label.includes('단지')) return <CheckCircle2 size={19} />
+  if (label.includes('증축')) return <Layers size={19} />
+  return <Wrench size={19} />
+}
+
+function getRemodelingComparisonIcon(label: string) {
+  if (label.includes('연한')) return <Clock3 size={18} />
+  if (label.includes('수익')) return <Coins size={18} />
+  if (label.includes('리스크')) return <ShieldAlert size={18} />
+  return <Building2 size={18} />
 }
 
 function DashboardRange({
@@ -2150,6 +2268,28 @@ type ProRataComparison = {
   detail: string
 }
 
+type AnalysisAxis = {
+  code: 'P' | 'E' | 'M' | 'R' | 'Q'
+  label: string
+  value: string
+  detail: string
+  tone: 'good' | 'neutral' | 'risk'
+}
+
+type ReportCheckItem = {
+  label: string
+  value: string
+  detail: string
+  tone: 'good' | 'neutral' | 'risk'
+}
+
+type RiskMatrixItem = {
+  label: string
+  probability: '낮음' | '중간' | '높음'
+  impact: '낮음' | '중간' | '높음'
+  detail: string
+}
+
 function createProRataDiagnostics(complex: Complex, diagnosis: Diagnosis, scenario: Scenario): ProRataDiagnosticItem[] {
   const finance = diagnosis.finance
   const saleableArea = finance.plan.saleableFloorArea
@@ -2256,6 +2396,202 @@ function createProRataComparison(complex: Complex, diagnosis: Diagnosis): ProRat
     title: '시장 체감이 사업수지보다 우호적',
     detail: `${complex.name}은 시장가치식이 ${Math.abs(gap).toFixed(0)}%p 높습니다. 현재 구축 시세나 주변 신축가 기대가 사업수지식보다 먼저 반영된 구간일 수 있습니다.`,
   }
+}
+
+function createAnalysisAxes(
+  complex: Complex,
+  diagnosis: Diagnosis,
+  renewalMatch: RenewalMatch | undefined,
+  issues: QualityIssue[],
+): AnalysisAxis[] {
+  const finance = diagnosis.finance
+  const saleableArea = finance.plan.saleableFloorArea
+  const generalSaleRate = saleableArea > 0 ? (finance.plan.generalSaleArea / saleableArea) * 100 : 0
+  const officialValue = renewalMatch?.matched ? '공식 추진 확인' : '공식 추진 미확인'
+  const dataRiskCount = issues.filter((issue) => issue.severity !== 'info').length
+
+  return [
+    {
+      code: 'P',
+      label: '물리',
+      value: `${complex.landShare.toFixed(1)}평 · ${complex.currentFar}%`,
+      detail: `대지지분과 현황 용적률 기준. 일반분양 여력 ${generalSaleRate.toFixed(1)}%`,
+      tone: complex.landShare >= 15 && complex.currentFar <= 170 ? 'good' : complex.landShare < 11 || complex.currentFar >= 220 ? 'risk' : 'neutral',
+    },
+    {
+      code: 'E',
+      label: '경제',
+      value: `${diagnosis.finance.accountingProRata.toFixed(0)}%`,
+      detail: `정비사업식 비례율. 동일평형 ${formatSettlementCurrency(finance.accountingSameSizeSettlement)}`,
+      tone: finance.accountingProRata >= 100 ? 'good' : finance.accountingProRata >= 80 ? 'neutral' : 'risk',
+    },
+    {
+      code: 'M',
+      label: '시장',
+      value: `${diagnosis.finance.marketProRata.toFixed(0)}%`,
+      detail: `시장가치식 비례율. 주변 신축 기준가 ${complex.newBuildPrice.toLocaleString()}만원/평`,
+      tone: finance.marketProRata >= 110 ? 'good' : finance.marketProRata >= 90 ? 'neutral' : 'risk',
+    },
+    {
+      code: 'R',
+      label: '공식근거',
+      value: officialValue,
+      detail: renewalMatch?.matched ? `정비사업 공개자료 매칭 점수 ${renewalMatch.score}점` : '공식화 전 후보 여부를 별도로 해석',
+      tone: renewalMatch?.matched ? 'good' : 'neutral',
+    },
+    {
+      code: 'Q',
+      label: '품질',
+      value: `${complex.dataReliability}%`,
+      detail: dataRiskCount > 0 ? `보완 필요 ${dataRiskCount}건` : '핵심 보완 이슈 없음',
+      tone: complex.dataReliability >= 82 && dataRiskCount === 0 ? 'good' : complex.dataReliability < 62 || dataRiskCount >= 3 ? 'risk' : 'neutral',
+    },
+  ]
+}
+
+function createCrossValidationItems(
+  complex: Complex,
+  transactionDiagnostic: ReturnType<typeof findTransactionDiagnostic> | undefined,
+  renewalMatch: RenewalMatch | undefined,
+  issues: QualityIssue[],
+  proRataComparison: ProRataComparison,
+): ReportCheckItem[] {
+  const transactionConfidence = Math.round((transactionDiagnostic?.matchConfidence ?? 0) * 100)
+  const hasPriceWarning = issues.some((issue) => issue.type === '거래가' || issue.type === '신축가')
+  const hasLandWarning = issues.some((issue) => issue.type === '토지' || issue.type === '기본정보')
+
+  return [
+    {
+      label: '가격 검증',
+      value: transactionDiagnostic ? `${transactionDiagnostic.tradeCount}건 · ${transactionConfidence}%` : 'API 미매칭',
+      detail: transactionDiagnostic
+        ? `대표 면적대 ${transactionDiagnostic.representativeAreaRange ?? '전체'} 기준`
+        : '실거래가 직접 매칭 전까지 후보 시세로 해석',
+      tone: transactionDiagnostic && transactionDiagnostic.tradeCount >= 6 && transactionConfidence >= 72 ? 'good' : hasPriceWarning ? 'risk' : 'neutral',
+    },
+    {
+      label: '공식 단계',
+      value: renewalMatch?.matched ? complex.stage : '미확인',
+      detail: renewalMatch?.matched ? `정비사업 공개자료 ${renewalMatch.sourceRecordName ?? complex.name}` : '미확인은 감점이 아니라 공식 추진 근거 없음',
+      tone: renewalMatch?.matched ? 'good' : 'neutral',
+    },
+    {
+      label: '산식 일관성',
+      value: proRataComparison.title,
+      detail: proRataComparison.detail,
+      tone: Math.abs(complex.currentFar - complex.allowedFar) < 60 || hasLandWarning ? 'neutral' : 'good',
+    },
+  ]
+}
+
+function createRiskMatrixItems(
+  complex: Complex,
+  diagnosis: Diagnosis,
+  scenario: Scenario,
+  issues: QualityIssue[],
+): RiskMatrixItem[] {
+  const finance = diagnosis.finance
+  const saleableArea = finance.plan.saleableFloorArea
+  const generalSaleRate = saleableArea > 0 ? (finance.plan.generalSaleArea / saleableArea) * 100 : 0
+  const priceIssue = issues.some((issue) => issue.type === '거래가' || issue.type === '신축가')
+  const idIssue = issues.some((issue) => issue.type === '토지' || issue.type === '기본정보')
+
+  return [
+    {
+      label: '공사비 상승',
+      probability: scenario.constructionCost >= 980 ? '높음' : '중간',
+      impact: finance.accountingProRata < 95 ? '높음' : '중간',
+      detail: `현재 ${scenario.constructionCost.toLocaleString()}만원/평 가정`,
+    },
+    {
+      label: '분양가 하락',
+      probability: complex.newBuildPrice >= 7000 ? '중간' : '높음',
+      impact: generalSaleRate >= 12 ? '높음' : '중간',
+      detail: `일반분양 비중 ${generalSaleRate.toFixed(1)}%`,
+    },
+    {
+      label: '데이터 오차',
+      probability: priceIssue || idIssue ? '높음' : '중간',
+      impact: complex.dataReliability < 70 ? '높음' : '중간',
+      detail: priceIssue || idIssue ? '가격·토지 근거 보완 필요' : '핵심 식별자와 가격 근거 양호',
+    },
+  ]
+}
+
+function createMonitoringItems(
+  complex: Complex,
+  renewalMatch: RenewalMatch | undefined,
+  issues: QualityIssue[],
+): ReportCheckItem[] {
+  const needsOfficialCheck = !renewalMatch?.matched
+  const needsPriceCheck = issues.some((issue) => issue.type === '거래가' || issue.type === '신축가')
+
+  return [
+    {
+      label: '공식 공고',
+      value: needsOfficialCheck ? '신규 매칭 대기' : '매칭 유지 확인',
+      detail: needsOfficialCheck ? '정비몽땅·온누리·지자체 고시에서 단지명/구역명 신규 진입 확인' : `${complex.stage} 이후 단계 변경 확인`,
+      tone: needsOfficialCheck ? 'neutral' : 'good',
+    },
+    {
+      label: '가격 업데이트',
+      value: needsPriceCheck ? '우선 갱신' : '월간 갱신',
+      detail: '최근 실거래와 주변 신축 비교군이 바뀌면 비례율과 정산금이 가장 크게 움직임',
+      tone: needsPriceCheck ? 'risk' : 'neutral',
+    },
+    {
+      label: '비용 업데이트',
+      value: '공사비·금리',
+      detail: '건설공사비지수, 시공사 입찰가, 금융비가 바뀌면 정비사업식 비례율 재계산',
+      tone: 'neutral',
+    },
+  ]
+}
+
+function AnalysisAxisCard({ axis }: { axis: AnalysisAxis }) {
+  return (
+    <div className={`analysis-axis-card ${axis.tone}`}>
+      <b>{axis.code}</b>
+      <span>{axis.label}</span>
+      <strong>{axis.value}</strong>
+      <p>{axis.detail}</p>
+    </div>
+  )
+}
+
+function ReportCheckColumn({ title, items }: { title: string; items: ReportCheckItem[] }) {
+  return (
+    <div className="report-check-column">
+      <span>{title}</span>
+      {items.map((item) => (
+        <div className={`report-check-item ${item.tone}`} key={`${title}-${item.label}`}>
+          <small>{item.label}</small>
+          <strong>{item.value}</strong>
+          <p>{item.detail}</p>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function RiskMatrix({ items }: { items: RiskMatrixItem[] }) {
+  return (
+    <div className="report-check-column risk-matrix-column">
+      <span>리스크 매트릭스</span>
+      {items.map((item) => (
+        <div className="risk-matrix-item" key={item.label}>
+          <div>
+            <strong>{item.label}</strong>
+            <p>{item.detail}</p>
+          </div>
+          <div>
+            <small>가능성 {item.probability}</small>
+            <small>영향 {item.impact}</small>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
 }
 
 type EvidencePackItem = {

@@ -1345,6 +1345,150 @@ button {
   background: #e2e8f0;
 }
 
+.report-insight-panel {
+  overflow: hidden;
+}
+
+.analysis-axis-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.analysis-axis-card {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.analysis-axis-card b {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: #e2e8f0;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.analysis-axis-card span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.analysis-axis-card strong {
+  overflow-wrap: anywhere;
+  font-size: 16px;
+}
+
+.analysis-axis-card p {
+  margin: 0;
+  color: #475569;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.analysis-axis-card.good {
+  border-color: #99f6e4;
+  background: #f0fdfa;
+}
+
+.analysis-axis-card.good b {
+  color: #ffffff;
+  background: #0f766e;
+}
+
+.analysis-axis-card.risk {
+  border-color: #fed7aa;
+  background: #fff7ed;
+}
+
+.analysis-axis-card.risk b {
+  color: #ffffff;
+  background: #b45309;
+}
+
+.report-check-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.report-check-column {
+  display: grid;
+  align-content: start;
+  gap: 9px;
+  min-width: 0;
+  padding: 13px;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.report-check-column > span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.report-check-item,
+.risk-matrix-item {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.report-check-item.good {
+  border-color: #99f6e4;
+}
+
+.report-check-item.risk {
+  border-color: #fed7aa;
+}
+
+.report-check-item small,
+.risk-matrix-item small {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.report-check-item strong,
+.risk-matrix-item strong {
+  overflow-wrap: anywhere;
+  font-size: 15px;
+}
+
+.report-check-item p,
+.risk-matrix-item p {
+  margin: 0;
+  color: #475569;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.risk-matrix-item {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.risk-matrix-item > div:last-child {
+  display: grid;
+  gap: 4px;
+  justify-items: end;
+}
+
 .gap-column p,
 .empty-source {
   margin: 0;
@@ -1892,6 +2036,35 @@ button {
   padding: 18px;
 }
 
+.card-pictogram {
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  color: #0f766e;
+  background: #ccfbf1;
+  border: 1px solid #99f6e4;
+}
+
+.card-pictogram.neutral {
+  color: #2563eb;
+  background: #dbeafe;
+  border-color: #bfdbfe;
+}
+
+.card-pictogram.good {
+  color: #0f766e;
+  background: #ccfbf1;
+  border-color: #99f6e4;
+}
+
+.card-pictogram.risk {
+  color: #b45309;
+  background: #ffedd5;
+  border-color: #fed7aa;
+}
+
 .national-kpi-card span,
 .national-kpi-card small {
   color: var(--muted);
@@ -2105,6 +2278,70 @@ button {
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   background: #f8fafc;
+}
+
+.constraint-card-head,
+.remodeling-card-head,
+.comparison-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.constraint-card-head > div,
+.remodeling-card-head > div,
+.comparison-label > div,
+.national-kpi-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.national-kpi-card-head {
+  justify-content: space-between;
+}
+
+.constraint-card-head .card-pictogram,
+.remodeling-card-head .card-pictogram,
+.comparison-label .card-pictogram {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+}
+
+.card-help-button {
+  display: inline-grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid #cbd5e1;
+  border-radius: 999px;
+  color: #64748b;
+  background: #ffffff;
+  cursor: help;
+}
+
+.card-help-button:hover,
+.card-help-button:focus-visible {
+  border-color: #93c5fd;
+  color: #2563eb;
+  background: #eff6ff;
+}
+
+.card-help-button.tooltip-target::after {
+  left: auto;
+  right: 0;
+  width: min(330px, calc(100vw - 32px));
+  text-align: left;
+}
+
+.card-help-button.tooltip-target::before {
+  left: auto;
+  right: 8px;
 }
 
 .constraint-card span {
@@ -3073,6 +3310,11 @@ button {
 
   .data-profile-grid.compact,
   .evidence-pack-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .analysis-axis-grid,
+  .report-check-grid {
     grid-template-columns: 1fr;
   }
 
