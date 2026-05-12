@@ -126,6 +126,7 @@ function App() {
   const accountingContributionRange = getContributionRange(diagnosis.finance.accountingSameSizeSettlement)
   const scenarioLabel = getScenarioStressLabel(scenario)
   const dataProfile = selected.dataProfile
+  const investmentThesis = useMemo(() => createInvestmentThesis(selected, diagnosis, scenario), [selected, diagnosis, scenario])
   const renewalMatch = useMemo(() => findRenewalMatch(liveEtlStatus?.renewalMatches ?? [], selected), [liveEtlStatus, selected])
   const officialStatus = useMemo(() => createOfficialStatus(renewalMatch), [renewalMatch])
   const selectedValidationIssues = useMemo(
@@ -360,15 +361,22 @@ function App() {
                   <Star size={18} fill={isFavorite ? 'currentColor' : 'none'} />
                 </button>
               </div>
-              <p>{selected.note}</p>
+              <p>{investmentThesis.summary}</p>
             </div>
-            <div className="score-gauge" style={{ '--score': `${diagnosis.businessScore * 3.6}deg` } as React.CSSProperties}>
-              <div>
-                <span>{diagnosis.businessScore.toFixed(0)}</span>
-                <small>순수 사업성</small>
-                <em>{officialStatus.shortLabel}</em>
-              </div>
+
+            <div className={`investment-hero-card ${investmentThesis.tone}`}>
+              <span>총투자금 대비 신축가치</span>
+              <strong>{formatCurrency(investmentThesis.expectedProfit)}</strong>
+              <small>{investmentThesis.expectedProfit >= 0 ? '기대차익' : '가치 부족'}</small>
+              <p>{investmentThesis.oneLine}</p>
             </div>
+
+            <div className="investment-mini-grid">
+              <InvestmentMetricCard label="총투자금" value={formatCurrency(investmentThesis.totalInvestment)} caption="현재 시세+정비사업식 정산" />
+              <InvestmentMetricCard label="완공 후 가치" value={formatCurrency(investmentThesis.futureValue)} caption={`${investmentThesis.allocatedPyeong}평 신축 예상`} />
+              <InvestmentMetricCard label="투자 매력도" value={`${investmentThesis.expectedReturn.toFixed(0)}%`} caption="기대차익/총투자금" tone={investmentThesis.tone} />
+            </div>
+
             <div
               className="summary-ratio-card tooltip-target"
               data-tooltip="정비사업식: (총수익-공사비-사업비)/종전자산. 시장가치식: 현재 구축 시세/동일평형 신축 원가. 두 값을 함께 봐야 실제 분담금과 시장 체감 차이를 구분할 수 있음"
@@ -386,8 +394,16 @@ function App() {
               <div className="section-heading">
                 <div>
                   <span>핵심 판단</span>
-                  <h2>순수 사업성 판단</h2>
+                  <h2>총투자금 대비 신축가치</h2>
                 </div>
+              </div>
+              <div className="investment-formula-card">
+                <div>
+                  <CircleDollarSign size={19} />
+                  <span>사업성≈완공 후 시세−(현재 자산가치+추가분담금)</span>
+                </div>
+                <strong>{formatCurrency(investmentThesis.futureValue)} - {formatCurrency(investmentThesis.totalInvestment)} = {formatCurrency(investmentThesis.expectedProfit)}</strong>
+                <p>{investmentThesis.formulaDetail}</p>
               </div>
               <div className="complex-info-card">
                 <span>단지정보</span>
@@ -448,10 +464,14 @@ function App() {
             <div className="analysis-panel calculator-panel">
               <div className="section-heading">
                 <div>
-                  <span>정산금 시나리오</span>
-                  <h2>정비사업식 / 시장가치식</h2>
+                  <span>총투자금 구성</span>
+                  <h2>분담금은 결론이 아니라 투자금의 일부</h2>
                 </div>
                 <Calculator size={18} />
+              </div>
+              <div className="investment-context-note">
+                <strong>{formatSettlementCurrency(investmentThesis.accountingSettlement)}</strong>
+                <p>분담금이 있어도 완공 후 신축가치가 더 크게 뛰면 사업성은 좋아질 수 있습니다. 아래 정산금은 총투자금 계산의 입력값으로 해석합니다.</p>
               </div>
               <div className="settlement-method-grid">
                 <SettlementMethodCard
@@ -1537,11 +1557,8 @@ function RemodelingOverview() {
           {REMODELING_COST_BANDS.map((item) => (
             <article className={`remodeling-cost-card ${item.tone}`} key={item.label}>
               <div className="remodeling-card-head">
-                <div>
-                  <CardPictogram tone={item.tone === 'risk' ? 'risk' : item.tone === 'good' ? 'good' : 'neutral'}>{getRemodelingCostIcon(item.label)}</CardPictogram>
-                  <span>{item.label}</span>
-                </div>
-                <CardHelp tooltip={`${item.label}: ${item.meaning} 리모델링 기준 ${item.remodeling}, 재건축 비교 기준 ${item.reconstruction}`} />
+                <CardPictogram tone={item.tone === 'risk' ? 'risk' : item.tone === 'good' ? 'good' : 'neutral'}>{getRemodelingCostIcon(item.label)}</CardPictogram>
+                <span>{item.label}</span>
               </div>
               <div>
                 <p>
@@ -1599,11 +1616,8 @@ function RemodelingOverview() {
         {REMODELING_PATHS.map((path) => (
           <article className={`remodeling-path-card ${path.tone}`} key={path.label}>
             <div className="remodeling-card-head">
-              <div>
-                <CardPictogram tone={path.tone === 'primary' ? 'good' : path.tone === 'limited' ? 'risk' : 'neutral'}>{getRemodelingPathIcon(path.label)}</CardPictogram>
-                <span>{path.label}</span>
-              </div>
-              <CardHelp tooltip={`${path.label}: ${path.value}. ${path.detail}`} />
+              <CardPictogram tone={path.tone === 'primary' ? 'good' : path.tone === 'limited' ? 'risk' : 'neutral'}>{getRemodelingPathIcon(path.label)}</CardPictogram>
+              <span>{path.label}</span>
             </div>
             <strong>{path.value}</strong>
             <p>{path.detail}</p>
@@ -1623,11 +1637,8 @@ function RemodelingOverview() {
           {REMODELING_COMPARISON.map((item) => (
             <article key={item.label}>
               <div className="comparison-label">
-                <div>
-                  <CardPictogram tone={item.label === '핵심 리스크' ? 'risk' : 'neutral'}>{getRemodelingComparisonIcon(item.label)}</CardPictogram>
-                  <strong>{item.label}</strong>
-                </div>
-                <CardHelp tooltip={`${item.label}: 리모델링은 ${item.remodeling} 재건축은 ${item.reconstruction}`} />
+                <CardPictogram tone={item.label === '핵심 리스크' ? 'risk' : 'neutral'}>{getRemodelingComparisonIcon(item.label)}</CardPictogram>
+                <strong>{item.label}</strong>
               </div>
               <p><span>리모델링</span>{item.remodeling}</p>
               <p><span>재건축</span>{item.reconstruction}</p>
@@ -1783,14 +1794,6 @@ function CardPictogram({ children, tone = 'neutral' }: { children: ReactNode; to
   return <div className={`card-pictogram ${tone}`}>{children}</div>
 }
 
-function CardHelp({ tooltip }: { tooltip: string }) {
-  return (
-    <button className="card-help-button tooltip-target" type="button" aria-label="카드 설명" data-tooltip={tooltip}>
-      <CircleHelp size={15} />
-    </button>
-  )
-}
-
 function NationalKpiCard({
   label,
   value,
@@ -1804,14 +1807,9 @@ function NationalKpiCard({
   tone?: 'neutral' | 'good' | 'risk'
   icon?: ReactNode
 }) {
-  const tooltip = `${label}: ${value}. ${caption}`
-
   return (
     <div className={`national-kpi-card ${tone}`}>
-      <div className="national-kpi-card-head">
-        {icon && <CardPictogram tone={tone}>{icon}</CardPictogram>}
-        <CardHelp tooltip={tooltip} />
-      </div>
+      {icon && <CardPictogram tone={tone}>{icon}</CardPictogram>}
       <span>{label}</span>
       <strong>{value}</strong>
       <small>{caption}</small>
@@ -1820,16 +1818,11 @@ function NationalKpiCard({
 }
 
 function ConstraintCard({ label, value, detail, tooltip, icon }: { label: string; value: string; detail: string; tooltip?: string; icon?: ReactNode }) {
-  const helpTooltip = tooltip ?? `${label}: ${value}. ${detail}`
-
   return (
-    <div className="constraint-card">
+    <div className={`constraint-card ${tooltip ? 'tooltip-target' : ''}`} data-tooltip={tooltip} tabIndex={tooltip ? 0 : undefined}>
       <div className="constraint-card-head">
-        <div>
-          {icon && <CardPictogram>{icon}</CardPictogram>}
-          <span>{label}</span>
-        </div>
-        <CardHelp tooltip={helpTooltip} />
+        {icon && <CardPictogram>{icon}</CardPictogram>}
+        <span>{label}</span>
       </div>
       <strong>{value}</strong>
       <p>{detail}</p>
@@ -2268,6 +2261,21 @@ type ProRataComparison = {
   detail: string
 }
 
+type InvestmentThesis = {
+  currentPrice: number
+  accountingSettlement: number
+  totalInvestment: number
+  futureValue: number
+  expectedProfit: number
+  expectedReturn: number
+  currentPyeong: number
+  allocatedPyeong: number
+  tone: 'good' | 'neutral' | 'risk'
+  summary: string
+  oneLine: string
+  formulaDetail: string
+}
+
 type AnalysisAxis = {
   code: 'P' | 'E' | 'M' | 'R' | 'Q'
   label: string
@@ -2396,6 +2404,64 @@ function createProRataComparison(complex: Complex, diagnosis: Diagnosis): ProRat
     title: '시장 체감이 사업수지보다 우호적',
     detail: `${complex.name}은 시장가치식이 ${Math.abs(gap).toFixed(0)}%p 높습니다. 현재 구축 시세나 주변 신축가 기대가 사업수지식보다 먼저 반영된 구간일 수 있습니다.`,
   }
+}
+
+function createInvestmentThesis(complex: Complex, diagnosis: Diagnosis, scenario: Scenario): InvestmentThesis {
+  const sameSizeScenario = diagnosis.finance.accountingSettlementScenarios[0]
+  const currentPyeong = sameSizeScenario?.currentPyeong ?? complex.representativeSupplyPyeong ?? Math.round(complex.landShare * (complex.currentFar / 100))
+  const allocatedPyeong = sameSizeScenario?.allocatedPyeong ?? currentPyeong
+  const accountingSettlement = diagnosis.finance.accountingSameSizeSettlement
+  const totalInvestment = complex.recentPrice + accountingSettlement
+  const expectedPricePerPyeong = estimateExpectedSalePricePerPyeong(complex, scenario)
+  const futureValue = (allocatedPyeong * expectedPricePerPyeong) / 10000
+  const expectedProfit = futureValue - totalInvestment
+  const expectedReturn = totalInvestment > 0 ? (expectedProfit / totalInvestment) * 100 : 0
+  const tone = expectedProfit >= 5 || expectedReturn >= 18 ? 'good' : expectedProfit >= 1.5 || expectedReturn >= 7 ? 'neutral' : 'risk'
+  const settlementPhrase = accountingSettlement > 0 ? `${formatCurrency(accountingSettlement)} 부담` : accountingSettlement < 0 ? `${formatCurrency(Math.abs(accountingSettlement))} 환급` : '정산 없음'
+  const oneLine =
+    expectedProfit >= 0
+      ? `분담금 반영 후에도 완공 후 신축가치가 총투자금보다 ${formatCurrency(expectedProfit)} 큼`
+      : `완공 후 신축가치가 총투자금보다 ${formatCurrency(Math.abs(expectedProfit))} 부족`
+  const summary =
+    expectedProfit >= 0
+      ? `핵심은 분담금 자체보다 총투자금 대비 신축가치입니다. 현재 가정에서는 ${settlementPhrase} 구조지만, 완공 후 예상 신축가치가 총투자금을 웃돕니다.`
+      : `현재 가정에서는 ${settlementPhrase}을 반영하면 완공 후 예상 신축가치가 총투자금을 충분히 넘기지 못합니다.`
+  const formulaDetail = `현재 시세 ${formatCurrency(complex.recentPrice)} + 동일평형 정산 ${settlementPhrase} = 총투자금 ${formatCurrency(totalInvestment)}. 완공 후 가치는 ${allocatedPyeong}평 × ${expectedPricePerPyeong.toLocaleString()}만원/평 기준입니다.`
+
+  return {
+    currentPrice: complex.recentPrice,
+    accountingSettlement,
+    totalInvestment,
+    futureValue,
+    expectedProfit,
+    expectedReturn,
+    currentPyeong,
+    allocatedPyeong,
+    tone,
+    summary,
+    oneLine,
+    formulaDetail,
+  }
+}
+
+function InvestmentMetricCard({
+  label,
+  value,
+  caption,
+  tone = 'neutral',
+}: {
+  label: string
+  value: string
+  caption: string
+  tone?: 'good' | 'neutral' | 'risk'
+}) {
+  return (
+    <div className={`investment-metric-card ${tone}`}>
+      <span>{label}</span>
+      <strong>{value}</strong>
+      <small>{caption}</small>
+    </div>
+  )
 }
 
 function createAnalysisAxes(

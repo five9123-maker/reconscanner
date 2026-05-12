@@ -550,11 +550,8 @@ button {
   color: #ffffff;
 }
 
-.summary-band > .score-gauge {
-  margin-left: auto;
-}
-
 .summary-copy {
+  flex: 1 1 360px;
   min-width: 0;
 }
 
@@ -604,6 +601,137 @@ button {
 .summary-band p {
   max-width: 620px;
   color: rgba(255, 255, 255, 0.78);
+}
+
+.investment-hero-card {
+  flex: 0 1 260px;
+  display: grid;
+  gap: 6px;
+  min-width: 230px;
+  padding: 18px;
+  border: 1px solid rgba(153, 246, 228, 0.42);
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.34);
+}
+
+.investment-hero-card.good {
+  border-color: rgba(94, 234, 212, 0.7);
+  background: rgba(20, 184, 166, 0.14);
+}
+
+.investment-hero-card.risk {
+  border-color: rgba(251, 191, 36, 0.68);
+  background: rgba(180, 83, 9, 0.16);
+}
+
+.investment-hero-card span,
+.investment-hero-card small,
+.investment-hero-card p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 12px;
+}
+
+.investment-hero-card strong {
+  color: #ffffff;
+  font-size: 36px;
+  line-height: 1.06;
+  letter-spacing: 0;
+}
+
+.investment-hero-card p {
+  line-height: 1.45;
+}
+
+.investment-mini-grid {
+  flex: 0 1 310px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.investment-metric-card {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.investment-metric-card span,
+.investment-metric-card small {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 11px;
+}
+
+.investment-metric-card strong {
+  color: #ffffff;
+  font-size: 20px;
+  line-height: 1.08;
+}
+
+.investment-metric-card.good strong {
+  color: #5eead4;
+}
+
+.investment-metric-card.risk strong {
+  color: #fbbf24;
+}
+
+.investment-formula-card {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding: 14px;
+  border: 1px solid #99f6e4;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #ffffff, #f0fdfa);
+}
+
+.investment-formula-card > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #0f766e;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.investment-formula-card strong {
+  color: #0f172a;
+  font-size: 19px;
+  line-height: 1.25;
+}
+
+.investment-formula-card p {
+  margin: 0;
+  color: #475569;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.investment-context-note {
+  display: grid;
+  gap: 5px;
+  margin-bottom: 12px;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.investment-context-note strong {
+  color: #0f766e;
+  font-size: 18px;
+}
+
+.investment-context-note p {
+  margin: 0;
+  color: #475569;
+  font-size: 12px;
+  line-height: 1.45;
 }
 
 .score-gauge {
@@ -2285,23 +2413,8 @@ button {
 .comparison-label {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 10px;
   min-width: 0;
-}
-
-.constraint-card-head > div,
-.remodeling-card-head > div,
-.comparison-label > div,
-.national-kpi-card-head {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-}
-
-.national-kpi-card-head {
-  justify-content: space-between;
 }
 
 .constraint-card-head .card-pictogram,
@@ -2310,38 +2423,6 @@ button {
   flex: 0 0 auto;
   width: 34px;
   height: 34px;
-}
-
-.card-help-button {
-  display: inline-grid;
-  flex: 0 0 auto;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  border: 1px solid #cbd5e1;
-  border-radius: 999px;
-  color: #64748b;
-  background: #ffffff;
-  cursor: help;
-}
-
-.card-help-button:hover,
-.card-help-button:focus-visible {
-  border-color: #93c5fd;
-  color: #2563eb;
-  background: #eff6ff;
-}
-
-.card-help-button.tooltip-target::after {
-  left: auto;
-  right: 0;
-  width: min(330px, calc(100vw - 32px));
-  text-align: left;
-}
-
-.card-help-button.tooltip-target::before {
-  left: auto;
-  right: 8px;
 }
 
 .constraint-card span {
@@ -3287,6 +3368,13 @@ button {
   .summary-band {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .investment-hero-card,
+  .investment-mini-grid,
+  .summary-ratio-card {
+    width: 100%;
+    flex-basis: auto;
   }
 
   .settlement-method-grid,
