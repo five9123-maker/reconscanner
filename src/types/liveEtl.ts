@@ -4,6 +4,7 @@ export type LiveEtlStatus = {
   generatedAt: string
   mode?: 'live_api' | 'fallback_with_skips'
   targets?: string[]
+  dealMonth?: string | number
   transactionLookbackMonths?: number
   seoulRenewal?: {
     rows: number

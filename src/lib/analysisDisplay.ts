@@ -98,9 +98,32 @@ export function getUnitTypeCountTooltip(complex: Complex, diagnostic?: Transacti
 }
 
 export function getStageTooltip(complex: Complex) {
-  const source = isInferredCandidate(complex) ? '분석 후보 레퍼런스 모델' : '정비사업 정보몽땅 / 지자체 공개자료 / 단지 공개자료'
+  const verifiedStageSignal = complex.dataProfile?.manualSignals.find((signal) => signal.label === '사업 단계')
+  const source = verifiedStageSignal
+    ? `${verifiedStageSignal.sourceName} (웹 교차검증: ${verifiedStageSignal.value})`
+    : isInferredCandidate(complex)
+      ? '분석 후보 레퍼런스 모델'
+      : '정비사업 정보몽땅 / 지자체 공개자료 / 단지 공개자료'
 
   return `출처: ${source}. 단계는 검토 → 추진위 → 조합설립 → 사업시행인가 → 관리처분인가 → 철거신고 → 착공신고 → 일반분양승인 → 준공인가 순으로 진행. 현재 ${complex.stage} 단계이며 추진력 점수와 일정 리스크에 반영`
+}
+
+export function findVerifiedSignal(complex: Complex, ...labels: string[]) {
+  return complex.dataProfile?.manualSignals.find((signal) => labels.some((label) => signal.label.includes(label)))
+}
+
+export function createProRataCardTooltip(complex: Complex) {
+  const base =
+    '정비사업식: (총수익-공사비-사업비)/종전자산. 시장가치식: 현재 구축 시세/동일평형 신축 원가. 두 값을 함께 봐야 실제 분담금과 시장 체감 차이를 구분할 수 있음'
+  const official = findVerifiedSignal(complex, '공식 비례율', '공식 사업성', '사업성 참고')
+
+  return official ? `${base}. 웹 교차검증: ${official.value} — 출처: ${official.sourceName}` : base
+}
+
+export function createSettlementVerificationSuffix(complex: Complex) {
+  const official = findVerifiedSignal(complex, '공식 분담금', '공식 사업성')
+
+  return official ? ` 웹 교차검증: ${official.value} — 출처: ${official.sourceName}` : ''
 }
 
 function estimateUnitTypeCount(complex: Complex) {

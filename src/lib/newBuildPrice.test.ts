@@ -9,7 +9,9 @@ describe('newBuildPrice', () => {
 
     expect(estimate.pricePerPyeong).toBeGreaterThanOrEqual(9000)
     expect(estimate.comparableCount).toBeGreaterThanOrEqual(3)
-    expect(estimate.description).toContain('하방선')
+    // 2026-06 웹 검증 비교 단지에는 보도 출처가 함께 표기된다
+    expect(estimate.description).toContain('출처')
+    expect(estimate.description).toContain('기준)')
   })
 
   it('applies comparable estimates without changing complex identity', () => {
@@ -31,8 +33,8 @@ describe('newBuildPrice', () => {
   })
 
   it('uses market-price reference bands when nearby comparables are missing', () => {
-    const bundang = complexes.find((complex) => complex.id === 'apt-029')!
-    const estimate = estimateNewBuildPrice(bundang, complexes)
+    const sanbon = complexes.find((complex) => complex.id === 'apt-022')!
+    const estimate = estimateNewBuildPrice(sanbon, complexes)
 
     expect(estimate.comparableCount).toBe(0)
     expect(estimate.method).not.toBe('direct_comparable')

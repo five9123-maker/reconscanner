@@ -88,11 +88,29 @@
   cursor: pointer;
 }
 
+.topbar-tabs button b {
+  display: inline-grid;
+  place-items: center;
+  width: 25px;
+  height: 22px;
+  border-radius: 7px;
+  color: #64748b;
+  background: #e2e8f0;
+  font-size: 11px;
+  font-weight: 950;
+  line-height: 1;
+}
+
 .topbar-tabs button:hover,
 .topbar-tabs button.active {
   color: #0f766e;
   background: #ffffff;
   box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+}
+
+.topbar-tabs button.active b {
+  color: #ffffff;
+  background: #0f766e;
 }
 
 button {
@@ -121,10 +139,10 @@ button {
 
 .workspace {
   min-height: calc(100vh - 68px);
-  width: min(100%, 1480px);
+  width: min(100%, 1640px);
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 348px minmax(560px, 1fr) 326px;
+  grid-template-columns: 300px minmax(720px, 1fr) 300px;
   gap: 16px;
   padding: 16px;
 }
@@ -540,9 +558,12 @@ button {
 .summary-band {
   min-height: 198px;
   padding: 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.58fr) minmax(220px, 0.42fr);
+  grid-template-areas:
+    "copy hero ratio"
+    "copy metrics ratio";
+  align-items: stretch;
   gap: 24px;
   background:
     linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(31, 41, 55, 0.86)),
@@ -551,7 +572,7 @@ button {
 }
 
 .summary-copy {
-  flex: 1 1 360px;
+  grid-area: copy;
   min-width: 0;
 }
 
@@ -569,13 +590,17 @@ button {
 
 .summary-band h1 {
   margin: 14px 0 10px;
-  font-size: 40px;
+  max-width: 760px;
+  font-size: clamp(36px, 4.4vw, 58px);
   line-height: 1.12;
   font-weight: 850;
+  word-break: keep-all;
+  overflow-wrap: normal;
 }
 
 .title-row h1 {
   min-width: 0;
+  flex: 0 1 auto;
 }
 
 .favorite-button {
@@ -601,13 +626,15 @@ button {
 .summary-band p {
   max-width: 620px;
   color: rgba(255, 255, 255, 0.78);
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 .investment-hero-card {
-  flex: 0 1 260px;
+  grid-area: hero;
   display: grid;
   gap: 6px;
-  min-width: 230px;
+  min-width: 0;
   padding: 18px;
   border: 1px solid rgba(153, 246, 228, 0.42);
   border-radius: 8px;
@@ -644,10 +671,11 @@ button {
 }
 
 .investment-mini-grid {
-  flex: 0 1 310px;
+  grid-area: metrics;
   display: grid;
   grid-template-columns: 1fr;
   gap: 8px;
+  min-width: 0;
 }
 
 .investment-metric-card {
@@ -772,8 +800,8 @@ button {
 }
 
 .summary-ratio-card {
-  width: min(240px, 100%);
-  flex: 0 0 220px;
+  grid-area: ratio;
+  width: 100%;
   display: grid;
   gap: 6px;
   padding: 16px;
@@ -2150,6 +2178,131 @@ button {
   padding: 16px;
 }
 
+.national-report-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 0.34fr);
+  gap: 28px;
+  align-items: end;
+  padding: 38px;
+  border: 1px solid rgba(15, 23, 42, 0.18);
+  border-radius: 10px;
+  color: #f8fafc;
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.92)),
+    radial-gradient(circle at 88% 8%, rgba(20, 184, 166, 0.28), transparent 32%);
+  box-shadow: 0 22px 52px rgba(15, 23, 42, 0.16);
+}
+
+.national-report-hero span {
+  display: inline-block;
+  color: rgba(226, 232, 240, 0.74);
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.national-report-hero h1 {
+  margin: 15px 0 17px;
+  max-width: 850px;
+  color: #ffffff;
+  font-size: clamp(36px, 4.4vw, 62px);
+  line-height: 1.06;
+  letter-spacing: -0.02em;
+  word-break: keep-all;
+}
+
+.national-report-hero h1 em {
+  color: #fbbf24;
+  font-style: normal;
+}
+
+.national-report-hero p {
+  max-width: 720px;
+  margin: 0;
+  color: rgba(226, 232, 240, 0.78);
+  font-size: 16px;
+  line-height: 1.65;
+  word-break: keep-all;
+}
+
+.national-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 26px;
+}
+
+.primary-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid #99f6e4;
+  border-radius: 8px;
+  color: #042f2e;
+  background: #ccfbf1;
+  font-weight: 950;
+  cursor: pointer;
+  transition:
+    background 0.16s ease,
+    transform 0.16s ease;
+}
+
+.primary-action:hover,
+.primary-action:focus-visible {
+  background: #99f6e4;
+  transform: translateY(-1px);
+}
+
+.national-hero-actions span {
+  color: rgba(226, 232, 240, 0.58);
+  font-size: 12px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.national-report-hero aside {
+  justify-self: end;
+  width: min(100%, 260px);
+  padding: 20px;
+  border: 1px solid rgba(251, 191, 36, 0.44);
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.34);
+}
+
+.national-report-hero aside small {
+  display: block;
+  color: rgba(226, 232, 240, 0.68);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.national-report-hero aside strong {
+  display: inline-block;
+  margin-top: 8px;
+  color: #fbbf24;
+  font-size: 58px;
+  line-height: 0.94;
+  letter-spacing: -0.04em;
+}
+
+.national-report-hero aside b {
+  margin-left: 4px;
+  color: #fef3c7;
+  font-size: 19px;
+}
+
+.national-report-hero aside p {
+  margin-top: 10px;
+  color: rgba(226, 232, 240, 0.66);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
 .national-kpi-card,
 .dashboard-panel {
   border: 1px solid var(--line);
@@ -2711,13 +2864,13 @@ button {
 }
 
 .primary-products {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr;
 }
 
 .renewal-product-card {
   display: grid;
-  gap: 15px;
-  padding: 18px;
+  gap: 18px;
+  padding: 24px;
   border: 1px solid #cbd5e1;
   border-radius: 8px;
   background: #ffffff;
@@ -2734,6 +2887,16 @@ button {
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.32);
+}
+
+.product-card-actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
 .product-card-head span {
@@ -2745,8 +2908,10 @@ button {
 .product-card-head h3 {
   margin: 4px 0 0;
   color: #0f172a;
-  font-size: 25px;
+  font-size: clamp(27px, 3vw, 38px);
   line-height: 1.18;
+  letter-spacing: -0.02em;
+  word-break: keep-all;
 }
 
 .product-card-head b {
@@ -2758,6 +2923,32 @@ button {
   font-size: 12px;
 }
 
+.product-official-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 30px;
+  padding: 6px 9px;
+  border: 1px solid #99f6e4;
+  border-radius: 8px;
+  color: #0f766e;
+  background: #f0fdfa;
+  font-size: 12px;
+  font-weight: 900;
+  text-decoration: none;
+  transition:
+    border-color 0.16s ease,
+    background 0.16s ease,
+    transform 0.16s ease;
+}
+
+.product-official-link:hover,
+.product-official-link:focus-visible {
+  border-color: #14b8a6;
+  background: #ccfbf1;
+  transform: translateY(-1px);
+}
+
 .product-facts,
 .product-facts dd {
   margin: 0;
@@ -2765,14 +2956,15 @@ button {
 
 .product-facts {
   display: grid;
-  gap: 9px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 22px;
 }
 
 .product-facts div {
   display: grid;
   grid-template-columns: 72px minmax(0, 1fr);
   gap: 12px;
-  padding-top: 9px;
+  padding: 13px 0;
   border-top: 1px solid rgba(148, 163, 184, 0.28);
 }
 
@@ -3053,7 +3245,7 @@ button {
 
 @media (max-width: 1180px) {
   .workspace {
-    grid-template-columns: 320px 1fr;
+    grid-template-columns: 280px minmax(0, 1fr);
   }
 
   .right-panel {
@@ -3067,6 +3259,15 @@ button {
   .national-grid,
   .national-grid.wide-left {
     grid-template-columns: 1fr;
+  }
+
+  .national-report-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .national-report-hero aside {
+    justify-self: stretch;
+    width: 100%;
   }
 
   .funnel-flow,
@@ -3084,6 +3285,20 @@ button {
   .renewal-product-row,
   .remodeling-comparison-table article {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1380px) {
+  .workspace {
+    grid-template-columns: 280px minmax(0, 1fr);
+  }
+
+  .right-panel {
+    grid-column: 1 / -1;
+  }
+
+  .summary-band {
+    grid-template-columns: minmax(0, 1fr) minmax(250px, 0.58fr) minmax(210px, 0.42fr);
   }
 }
 
@@ -3166,6 +3381,12 @@ button {
     min-height: 0;
     padding: 18px;
     gap: 16px;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "copy"
+      "hero"
+      "metrics"
+      "ratio";
   }
 
   .summary-band h1 {
@@ -3205,7 +3426,6 @@ button {
 
   .summary-ratio-card {
     width: 100%;
-    flex: 1 1 auto;
     padding: 14px;
   }
 
@@ -3361,20 +3581,20 @@ button {
     grid-template-columns: 1fr;
   }
 
+  .summary-band {
+    grid-template-areas:
+      "copy"
+      "hero"
+      "metrics"
+      "ratio";
+  }
+
   .complex-info-card .fact-row b {
     white-space: normal;
   }
 
-  .summary-band {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .investment-hero-card,
-  .investment-mini-grid,
-  .summary-ratio-card {
-    width: 100%;
-    flex-basis: auto;
+  .investment-mini-grid {
+    grid-template-columns: 1fr;
   }
 
   .settlement-method-grid,
@@ -3438,6 +3658,14 @@ button {
     padding: 10px;
   }
 
+  .national-report-hero {
+    padding: 22px;
+  }
+
+  .national-report-hero h1 {
+    font-size: 32px;
+  }
+
   .renewal-products,
   .remodeling-overview {
     min-height: calc(100vh - 108px);
@@ -3448,6 +3676,7 @@ button {
   .threshold-grid,
   .calculator-controls,
   .renewal-kpi-grid,
+  .product-facts,
   .remodeling-path-grid,
   .remodeling-cost-grid {
     grid-template-columns: 1fr;
@@ -3459,6 +3688,12 @@ button {
 
   .funnel-step:not(:last-child)::after {
     display: none;
+  }
+
+  .product-card-head,
+  .product-card-actions {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .remodeling-visual-frame img {

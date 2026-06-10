@@ -17,7 +17,7 @@ describe('sanitizeScenario', () => {
       }),
     ).toEqual({
       constructionCost: 1200,
-      salePrice: 80,
+      salePrice: 90,
       interestRate: baseScenario.interestRate,
       publicContribution: 0,
     })
@@ -33,6 +33,6 @@ describe('scenario helpers', () => {
   it('labels stressed scenario assumptions', () => {
     expect(getScenarioStressLabel(baseScenario)).toBe('기준')
     expect(getScenarioStressLabel({ ...baseScenario, constructionCost: 1100 })).toBe('보수')
-    expect(getScenarioStressLabel({ ...baseScenario, constructionCost: 820, salePrice: 106, interestRate: 3.6 })).toBe('낙관')
+    expect(getScenarioStressLabel({ ...baseScenario, constructionCost: 820, salePrice: 121, interestRate: 3.6 })).toBe('낙관')
   })
 })

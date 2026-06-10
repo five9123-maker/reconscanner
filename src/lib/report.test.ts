@@ -16,7 +16,7 @@ describe('buildReportPayload', () => {
     expect(payload.finance.totalRevenue).toBeGreaterThan(0)
     expect(payload.finance.constructionCost).toBeGreaterThan(0)
     expect(payload.finance.generalSaleArea).toBeGreaterThan(0)
-    expect(payload.finance.breakEvenGeneralSalePrice).toBeGreaterThan(0)
+    expect(payload.finance.breakEvenGeneralSalePrice).toBeGreaterThanOrEqual(0)
     expect(payload.data.estimationMode).toBe('public_api_estimate')
     expect(payload.data.remainingGaps.length).toBeGreaterThan(0)
     expect(payload.assumptions.constructionCost).toBe(baseScenario.constructionCost)

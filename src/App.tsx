@@ -3,7 +3,6 @@ import {
   Activity,
   AlertTriangle,
   ArrowRightLeft,
-  BarChart3,
   BadgeDollarSign,
   Building2,
   Calculator,
@@ -14,9 +13,9 @@ import {
   Coins,
   Database,
   Expand,
+  ExternalLink,
   FileText,
   Clock3,
-  Home,
   Hammer,
   Layers,
   MapPin,
@@ -39,8 +38,11 @@ import { QuickAccessGroup } from './components/QuickAccessGroup'
 import { useJsonResource } from './hooks/useJsonResource'
 import { useLocalStorageState } from './hooks/useLocalStorageState'
 import {
+  createProRataCardTooltip,
   createScenarioDelta,
   createScoreTooltip,
+  createSettlementVerificationSuffix,
+  findVerifiedSignal,
   getStageTooltip,
   getUnitTypeCountLabel,
   getUnitTypeCountTooltip,
@@ -48,11 +50,16 @@ import {
 import { baseScenario, calculateDiagnosis, formatCurrency, getContributionRange } from './lib/diagnosis'
 import { formatSettlementCurrency, formatSettlementDelta, formatSignedPoint, formatSourceType } from './lib/displayFormat'
 import { findRenewalMatch, findTransactionDiagnostic, formatMatchStrategy, mergeLiveComplexes } from './lib/livePayloadMerge'
+import { describeNewBuildComparables } from './lib/newBuildPrice'
+import { applyTransactionBasis } from './lib/transactionBasis'
 import {
+  describeCompletionMarketPricePerPyeong,
   describeCurrentPricePerPyeong,
-  describeExpectedSalePricePerPyeong,
+  describeNationalPyeongCompletionValue,
+  estimateCompletionMarketPricePerPyeong,
   estimateCurrentPricePerPyeong,
   estimateExpectedSalePricePerPyeong,
+  estimateNationalPyeongCompletionValue,
 } from './lib/marketPrice'
 import { validateApiEnrichmentPlan, validateLiveEtlStatus, validateSearchIndexPayload } from './lib/payloadValidation'
 import { calculateProjectFinance } from './lib/projectFinance'
@@ -92,7 +99,10 @@ function App() {
   const searchOnlyAnalysisCandidates = useMemo(() => createSearchOnlyAnalysisCandidates(searchIndex), [searchIndex])
 
   const repository = useMemo(
-    () => createComplexRepository(mergeLiveComplexes([...listComplexes(), ...searchOnlyAnalysisCandidates], liveEtlStatus?.complexes ?? []), []),
+    () =>
+      createComplexRepository(
+        applyTransactionBasis(mergeLiveComplexes([...listComplexes(), ...searchOnlyAnalysisCandidates], liveEtlStatus?.complexes ?? []), liveEtlStatus),
+      ),
     [liveEtlStatus, searchOnlyAnalysisCandidates],
   )
   const baseSelected = repository.getComplexById(selectedId) ?? repository.getComplexById(repository.getDefaultComplexId())!
@@ -127,6 +137,7 @@ function App() {
   const scenarioLabel = getScenarioStressLabel(scenario)
   const dataProfile = selected.dataProfile
   const investmentThesis = useMemo(() => createInvestmentThesis(selected, diagnosis, scenario), [selected, diagnosis, scenario])
+  const farVerification = useMemo(() => findVerifiedSignal(selected, '허용 용적률'), [selected])
   const renewalMatch = useMemo(() => findRenewalMatch(liveEtlStatus?.renewalMatches ?? [], selected), [liveEtlStatus, selected])
   const officialStatus = useMemo(() => createOfficialStatus(renewalMatch), [renewalMatch])
   const selectedValidationIssues = useMemo(
@@ -194,40 +205,44 @@ function App() {
           </div>
           <div>
             <strong>Recon Scanner</strong>
-            <span>재건축 사업성/리스크 진단 MVP</span>
+            <span>한국 노후 아파트 사업성·리스크 진단 리포트</span>
           </div>
         </div>
         <nav className="topbar-tabs" aria-label="화면 이동">
           <button
             className={activeView === 'national' ? 'active' : ''}
             type="button"
+            aria-label="전국 대시보드"
             onClick={() => setActiveView('national')}
           >
-            <BarChart3 size={16} />
+            <b>01</b>
             <span>전국 대시보드</span>
           </button>
           <button
             className={activeView === 'scanner' ? 'active' : ''}
             type="button"
+            aria-label="단지 스캐너"
             onClick={() => setActiveView('scanner')}
           >
-            <Home size={16} />
+            <b>02</b>
             <span>단지 스캐너</span>
           </button>
           <button
             className={activeView === 'remodeling' ? 'active' : ''}
             type="button"
+            aria-label="리모델링"
             onClick={() => setActiveView('remodeling')}
           >
-            <Wrench size={16} />
+            <b>03</b>
             <span>리모델링</span>
           </button>
           <button
             className={activeView === 'renewalProducts' ? 'active' : ''}
             type="button"
+            aria-label="리뉴얼(수선)"
             onClick={() => setActiveView('renewalProducts')}
           >
-            <Building2 size={16} />
+            <b>04</b>
             <span>리뉴얼(수선)</span>
           </button>
         </nav>
@@ -248,7 +263,7 @@ function App() {
       </header>
 
       {activeView === 'national' ? (
-        <NationalDashboard stats={nationalDashboard} />
+        <NationalDashboard stats={nationalDashboard} onGoScanner={() => setActiveView('scanner')} />
       ) : activeView === 'remodeling' ? (
         <RemodelingOverview />
       ) : activeView === 'renewalProducts' ? (
@@ -379,7 +394,7 @@ function App() {
 
             <div
               className="summary-ratio-card tooltip-target"
-              data-tooltip="정비사업식: (총수익-공사비-사업비)/종전자산. 시장가치식: 현재 구축 시세/동일평형 신축 원가. 두 값을 함께 봐야 실제 분담금과 시장 체감 차이를 구분할 수 있음"
+              data-tooltip={createProRataCardTooltip(selected)}
               tabIndex={0}
             >
               <TrendingUp size={19} />
@@ -413,7 +428,9 @@ function App() {
                   <FactRow
                     label="현재/허용 용적률"
                     value={`${selected.currentFar}% / ${selected.allowedFar}%`}
-                    tooltip="현재 용적률: 기존 단지 사용 용적률. 허용 용적률: 재건축 후 추정 상한. 용도: 일반분양 여력"
+                    tooltip={`현재 용적률: 기존 단지 사용 용적률. 허용 용적률: 재건축 후 추정 상한. 용도: 일반분양 여력${
+                      farVerification ? `. 웹 교차검증: ${farVerification.value} — 출처: ${farVerification.sourceName}` : ''
+                    }`}
                   />
                   <FactRow
                     label="평균 대지지분"
@@ -426,9 +443,14 @@ function App() {
                     tooltip={describeCurrentPricePerPyeong(selected)}
                   />
                   <FactRow
-                    label="평당 예상 분양가"
-                    value={`${estimateExpectedSalePricePerPyeong(selected, scenario).toLocaleString()}만원/평`}
-                    tooltip={describeExpectedSalePricePerPyeong(selected, scenario)}
+                    label="국평 완공가치"
+                    value={formatCurrency(estimateNationalPyeongCompletionValue(selected, scenario))}
+                    tooltip={describeNationalPyeongCompletionValue(selected, scenario)}
+                  />
+                  <FactRow
+                    label="평당 완공가치"
+                    value={`${estimateCompletionMarketPricePerPyeong(selected, scenario).toLocaleString()}만원/평`}
+                    tooltip={`${describeCompletionMarketPricePerPyeong(selected, scenario)} 신축 기준가 출처: ${describeNewBuildComparables(selected)}`}
                   />
                   <FactRow
                     label="평형 종류"
@@ -508,7 +530,7 @@ function App() {
                     <div
                       key={`${accountingItem.label}-${accountingItem.allocatedPyeong}`}
                       className="dual-settlement-row tooltip-target"
-                      data-tooltip={`정비사업식: ${accountingItem.sourceName}. 신뢰도 ${accountingItem.confidence}%. 시장가치식: ${marketItem?.sourceName ?? '미상'}. 신뢰도 ${marketItem?.confidence ?? 0}%`}
+                      data-tooltip={`정비사업식: ${accountingItem.sourceName}. 신뢰도 ${accountingItem.confidence}%. 시장가치식: ${marketItem?.sourceName ?? '미상'}. 신뢰도 ${marketItem?.confidence ?? 0}%.${createSettlementVerificationSuffix(selected)}`}
                       tabIndex={0}
                     >
                       <span>
@@ -883,11 +905,11 @@ function App() {
           <Control
             label="일반분양가"
             value={scenario.salePrice}
-            min={80}
-            max={125}
+            min={90}
+            max={130}
             step={1}
             suffix="%"
-            tooltip="기준: 주변 신축 아파트 평당 시세 대비 일반분양가 배율. 100%는 현재 주변 신축 기준가 그대로 적용. 영향: 일반분양수익, 비례율, 사업성 점수"
+            tooltip={`기준: 현재 평당 실거래가 대비 일반분양가 배율. 115%는 ${estimateCurrentPricePerPyeong(selected).toLocaleString()}만원/평 × 1.15로 계산. 현재 추정 일반분양가 ${estimateExpectedSalePricePerPyeong(selected, scenario).toLocaleString()}만원/평`}
             onChange={(value) => setScenario((current) => sanitizeScenario({ ...current, salePrice: value }))}
           />
           <Control
@@ -1240,6 +1262,21 @@ const RENEWAL_PRODUCTS: RenewalProduct[] = [
   },
 ]
 
+const RENEWAL_PRODUCT_LINKS = [
+  {
+    company: '현대건설',
+    product: '더 뉴 하우스',
+    description: 'THE NEW HOUSE 공식 공개 자료',
+    href: 'https://newsroom.hdec.kr/kr/company/press_view.aspx?CompanyPressSeq=607',
+  },
+  {
+    company: '삼성물산',
+    product: '넥스트 리모델링',
+    description: 'Next Remodeling 공식 뉴스룸',
+    href: 'https://news.samsungcnt.com/ko/%EC%A0%84%EC%B2%B4%EA%B8%B0%EC%82%AC/%EA%B1%B4%EC%84%A4%EB%B6%80%EB%AC%B8/2025-09-%EC%82%BC%EC%84%B1%EB%AC%BC%EC%82%B0-%CE%84%EB%84%A5%EC%8A%A4%ED%8A%B8-%EB%A6%AC%EB%AA%A8%EB%8D%B8%EB%A7%81%CE%84%EC%9C%BC%EB%A1%9C-%EB%85%B8%ED%9B%84-%EC%95%84%ED%8C%8C%ED%8A%B8-%EC%83%88-%EA%B8%B8/',
+  },
+]
+
 const REMODELING_PATHS: RemodelingPath[] = [
   {
     label: '대수선·비증축형',
@@ -1315,7 +1352,7 @@ const REMODELING_COST_BANDS: RemodelingCostBand[] = [
   },
 ]
 
-function NationalDashboard({ stats }: { stats: NationalDashboardStats }) {
+function NationalDashboard({ stats, onGoScanner }: { stats: NationalDashboardStats; onGoScanner: () => void }) {
   const [calculatorInput, setCalculatorInput] = useState<DashboardCalculatorInput>(stats.benchmarks[0])
   const simulation = useMemo(() => calculateDashboardSimulation(calculatorInput), [calculatorInput])
 
@@ -1325,11 +1362,37 @@ function NationalDashboard({ stats }: { stats: NationalDashboardStats }) {
 
   return (
     <section className="national-dashboard">
+      <section className="national-report-hero">
+        <div>
+          <span>Issue · 정책 공백 · 2026 Q2</span>
+          <h1>
+            전국 노후 아파트의 <em>83%</em>는<br />
+            재건축이 작동하지 않습니다
+          </h1>
+          <p>
+            비례율 100% 미만 단지는 일반분양으로 공사비를 회수하기 어렵고, 조합원 분담금이 직접 부담으로 돌아옵니다. 이 화면은 “어디가 가능한가”보다 “왜 대부분 어려운가”를 먼저 보여줍니다.
+          </p>
+          <div className="national-hero-actions">
+            <button className="primary-action" type="button" onClick={onGoScanner}>
+              <Search size={16} />
+              단지 스캐너로 확인
+            </button>
+            <span>2024 인구주택총조사 · 자체 정비사업 시뮬레이션</span>
+          </div>
+        </div>
+        <aside aria-label="전국 노후 아파트 사업성 부족 요약">
+          <small>사업성 부족 추정</small>
+          <strong>208.3</strong>
+          <b>만호</b>
+          <p>30년 이상 아파트 251만호 중 83%</p>
+        </aside>
+      </section>
+
       <section className="dashboard-panel funnel-panel">
         <div className="section-heading">
           <div>
             <span>분석 프레임</span>
-            <h2>전국 노후 아파트 중 재건축 사업성이 있는 곳은 얼마나 될까?</h2>
+            <h2>1,987만호에서 사업성 부족 208.3만호로 좁혀 봅니다</h2>
           </div>
           <FileText size={18} />
         </div>
@@ -1656,23 +1719,6 @@ function RenewalProducts() {
 
   return (
     <section className="renewal-products">
-      <section className="renewal-hero dashboard-panel">
-        <div className="section-heading">
-          <div>
-            <span>리뉴얼(수선)</span>
-            <h2>재건축과 증축 리뉴얼 사이의 저비용 선택지</h2>
-            <p>첨부 자료 기준으로 주요 건설사의 비증축·대수선형 상품과 인접 상품을 구분했습니다.</p>
-          </div>
-          <Building2 size={18} />
-        </div>
-        <div className="renewal-kpi-grid">
-          <NationalKpiCard label="핵심 모델" value="비증축" caption="골조·층수 유지, 외관·공용부 개선" />
-          <NationalKpiCard label="대표 비용" value="~1억" caption="현대건설 제시 기준, 단지별 변동" tone="good" />
-          <NationalKpiCard label="대표 기간" value="2년" caption="이주 없는 대수선형 목표" />
-          <NationalKpiCard label="검증 상태" value="초기" caption="1호 사업지 실증 전 단계" tone="risk" />
-        </div>
-      </section>
-
       <section className="renewal-grid primary-products">
         {primaryProducts.map((product) => (
           <RenewalProductCard key={product.product} product={product} />
@@ -1729,6 +1775,8 @@ function RenewalProducts() {
 }
 
 function RenewalProductCard({ product }: { product: RenewalProduct }) {
+  const productLink = RENEWAL_PRODUCT_LINKS.find((link) => link.company === product.company)
+
   return (
     <article className={`renewal-product-card ${product.tone}`}>
       <div className="product-card-head">
@@ -1736,7 +1784,15 @@ function RenewalProductCard({ product }: { product: RenewalProduct }) {
           <span>{product.company}</span>
           <h3>{product.product}</h3>
         </div>
-        <b>{product.track}</b>
+        <div className="product-card-actions">
+          <b>{product.track}</b>
+          {productLink ? (
+            <a className="product-official-link" href={productLink.href} rel="noreferrer" target="_blank">
+              공식 자료
+              <ExternalLink aria-hidden="true" size={14} />
+            </a>
+          ) : null}
+        </div>
       </div>
       <dl className="product-facts">
         <div>
@@ -2412,8 +2468,8 @@ function createInvestmentThesis(complex: Complex, diagnosis: Diagnosis, scenario
   const allocatedPyeong = sameSizeScenario?.allocatedPyeong ?? currentPyeong
   const accountingSettlement = diagnosis.finance.accountingSameSizeSettlement
   const totalInvestment = complex.recentPrice + accountingSettlement
-  const expectedPricePerPyeong = estimateExpectedSalePricePerPyeong(complex, scenario)
-  const futureValue = (allocatedPyeong * expectedPricePerPyeong) / 10000
+  const completionPricePerPyeong = estimateCompletionMarketPricePerPyeong(complex, scenario)
+  const futureValue = (allocatedPyeong * completionPricePerPyeong) / 10000
   const expectedProfit = futureValue - totalInvestment
   const expectedReturn = totalInvestment > 0 ? (expectedProfit / totalInvestment) * 100 : 0
   const tone = expectedProfit >= 5 || expectedReturn >= 18 ? 'good' : expectedProfit >= 1.5 || expectedReturn >= 7 ? 'neutral' : 'risk'
@@ -2426,7 +2482,7 @@ function createInvestmentThesis(complex: Complex, diagnosis: Diagnosis, scenario
     expectedProfit >= 0
       ? `핵심은 분담금 자체보다 총투자금 대비 신축가치입니다. 현재 가정에서는 ${settlementPhrase} 구조지만, 완공 후 예상 신축가치가 총투자금을 웃돕니다.`
       : `현재 가정에서는 ${settlementPhrase}을 반영하면 완공 후 예상 신축가치가 총투자금을 충분히 넘기지 못합니다.`
-  const formulaDetail = `현재 시세 ${formatCurrency(complex.recentPrice)} + 동일평형 정산 ${settlementPhrase} = 총투자금 ${formatCurrency(totalInvestment)}. 완공 후 가치는 ${allocatedPyeong}평 × ${expectedPricePerPyeong.toLocaleString()}만원/평 기준입니다.`
+  const formulaDetail = `현재 시세 ${formatCurrency(complex.recentPrice)} + 동일평형 정산 ${settlementPhrase} = 총투자금 ${formatCurrency(totalInvestment)}. 완공 후 가치는 ${allocatedPyeong}평 × ${completionPricePerPyeong.toLocaleString()}만원/평 기준입니다.`
 
   return {
     currentPrice: complex.recentPrice,
@@ -2711,12 +2767,12 @@ function createEvidencePack(
         : '공식 매칭 없음은 사업성 감점이 아니라 추진 근거 미확인으로만 표시합니다.',
     },
     {
-      label: '신축 비교가',
-      value: `${estimateExpectedSalePricePerPyeong(complex, scenario).toLocaleString()}만원/평`,
+      label: '완공 후 가치',
+      value: `${estimateCompletionMarketPricePerPyeong(complex, scenario).toLocaleString()}만원/평`,
       sourceType: 'inferred',
-      sourceName: '국토부 실거래가 기반 신축 비교 모델',
+      sourceName: '현재 시세·신축 비교가 기반 완공가치 모델',
       confidence: complex.newBuildPrice > 0 ? 66 : 48,
-      method: describeExpectedSalePricePerPyeong(complex, scenario),
+      method: describeCompletionMarketPricePerPyeong(complex, scenario),
     },
     {
       label: '분담금/비례율',

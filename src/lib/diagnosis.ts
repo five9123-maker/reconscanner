@@ -5,7 +5,7 @@ import { SCORING_CONFIG } from './scoringConfig'
 
 export const baseScenario: Scenario = {
   constructionCost: 930,
-  salePrice: 100,
+  salePrice: 115,
   interestRate: 4.3,
   publicContribution: 12,
 }
@@ -84,7 +84,7 @@ export function calculateDiagnosis(complex: Complex, scenario: Scenario, referen
 }
 
 function calculateSalesPowerScore(complex: Complex, scenario: Scenario) {
-  const adjustedNewBuildPrice = complex.newBuildPrice * (scenario.salePrice / 100)
+  const adjustedNewBuildPrice = estimateScenarioSalePricePerPyeong(complex, scenario)
   const targetUnitPyeong = complex.landShare >= 15 ? 34.2 : 30.7
   const estimatedNewUnitPrice = (adjustedNewBuildPrice * targetUnitPyeong) / 10000
   const replacementPremium = estimatedNewUnitPrice - complex.recentPrice
@@ -98,6 +98,13 @@ function calculateSalesPowerScore(complex: Complex, scenario: Scenario) {
       replacementPremiumScore * SCORING_CONFIG.salesPowerWeights.replacementPremium +
       scarcityPriceSignal * SCORING_CONFIG.salesPowerWeights.scarcityPriceSignal,
   )
+}
+
+function estimateScenarioSalePricePerPyeong(complex: Complex, scenario: Scenario) {
+  const representativePyeong = complex.representativeSupplyPyeong ?? complex.landShare * (complex.currentFar / 100)
+  const currentPricePerPyeong = representativePyeong > 0 ? (complex.recentPrice * 10000) / representativePyeong : complex.newBuildPrice
+
+  return currentPricePerPyeong * (scenario.salePrice / 100)
 }
 
 export function getContributionRange(contribution: number) {

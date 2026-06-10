@@ -101,13 +101,21 @@ describe('complexRepository', () => {
   })
 
   it('uses formula-based assumptions when manual project overrides are absent', () => {
-    const complex = getComplexById('apt-002')
-    const ranked = getRankedComplexes(baseScenario)
-    const diagnosis = ranked.find((item) => item.complex.id === 'apt-002')?.diagnosis
+    const complex = getComplexById('apt-010')
 
     expect(complex?.dataProfile?.estimationMode).toBe('public_api_estimate')
     expect(complex?.dataProfile?.manualSignals.length).toBe(0)
     expect(complex?.financeOverride).toBeUndefined()
+  })
+
+  it('enriches representative complexes with web cross-checked signals and sources', () => {
+    const complex = getComplexById('apt-002')
+    const ranked = getRankedComplexes(baseScenario)
+    const diagnosis = ranked.find((item) => item.complex.id === 'apt-002')?.diagnosis
+
+    expect(complex?.dataProfile?.estimationMode).toBe('manual_enriched')
+    expect(complex?.dataProfile?.manualSignals.some((signal) => signal.label === '공식 분담금')).toBe(true)
+    expect(complex?.dataProfile?.manualSignals.every((signal) => signal.sourceName.length > 0)).toBe(true)
     expect(diagnosis?.finance.sameSizeSettlement).toBeLessThan(0)
   })
 

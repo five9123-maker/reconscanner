@@ -4,7 +4,7 @@ import type { Scenario } from '../types'
 export function sanitizeScenario(scenario: Partial<Scenario>): Scenario {
   return {
     constructionCost: clampNumber(scenario.constructionCost, 760, 1200, baseScenario.constructionCost),
-    salePrice: clampNumber(scenario.salePrice, 80, 125, baseScenario.salePrice),
+    salePrice: clampNumber(scenario.salePrice, 90, 130, baseScenario.salePrice),
     interestRate: clampNumber(scenario.interestRate, 2.5, 7, baseScenario.interestRate),
     publicContribution: clampNumber(scenario.publicContribution, 0, 25, baseScenario.publicContribution),
   }

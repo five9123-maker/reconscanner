@@ -1,8 +1,11 @@
 import type { Complex, ProjectFinance, Scenario } from '../types'
+import { estimateExpectedSalePricePerPyeong } from './marketPrice'
 
 const PYEONG_PER_UNIT_EQUIVALENT = 29
 const GROSS_TO_SALEABLE_MULTIPLIER = 1.72
-const MEMBER_SALE_PRICE_DISCOUNT = 0.78
+// 2026-06 웹 검증: 공사비 급등 이후 조합원분양가는 일반분양가 대비 5~15% 할인 수준
+// (성산시영 보도 '약 85%', 은마 추정 분담금 역산 시 ~100%). 과거 계수 0.78에서 상향.
+const MEMBER_SALE_PRICE_DISCOUNT = 0.9
 const RENTAL_SALE_PRICE_PER_PYEONG = 1000
 const COMMERCIAL_AREA_RATIO = 0.025
 const COMMERCIAL_PRICE_RATIO = 0.72
@@ -27,7 +30,7 @@ export function calculateProjectFinance(complex: Complex, scenario: Scenario): P
   )
   const generalSaleArea = requestedGeneralSaleArea ?? Math.max(saleableFloorArea - memberSaleArea - housingAndCommercialArea, 0)
 
-  const generalSalePricePerPyeong = complex.newBuildPrice * (scenario.salePrice / 100)
+  const generalSalePricePerPyeong = estimateExpectedSalePricePerPyeong(complex, scenario)
   const memberSalePricePerPyeong = generalSalePricePerPyeong * MEMBER_SALE_PRICE_DISCOUNT
   const commercialPricePerPyeong = generalSalePricePerPyeong * COMMERCIAL_PRICE_RATIO
 
@@ -65,7 +68,7 @@ export function calculateProjectFinance(complex: Complex, scenario: Scenario): P
     previousAssetValue,
     memberSalePricePerPyeong,
   )
-  const breakEvenGeneralSalePrice = generalSaleArea > 0 ? ((totalCost - memberSalesRevenue - rentalHousingRevenue - commercialRevenue) * 10000) / generalSaleArea : 0
+  const breakEvenGeneralSalePrice = generalSaleArea > 0 ? Math.max(0, ((totalCost - memberSalesRevenue - rentalHousingRevenue - commercialRevenue) * 10000) / generalSaleArea) : 0
 
   return {
     plan: {

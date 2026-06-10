@@ -48,6 +48,12 @@ export function estimateNewBuildPrice(complex: Complex, peers: Complex[] = []): 
   const averageSimilarity = candidates.reduce((sum, item) => sum + item.similarity, 0) / candidates.length
   const contextDescription = context.description ? `, ${context.description} 반영` : ''
 
+  const comparableLabels = candidates
+    .slice(0, 3)
+    .map((item) => (item.asOf ? `${item.name}(${item.asOf} 기준)` : item.name))
+  const sourceLabels = [...new Set(candidates.map((item) => item.source).filter(Boolean))].slice(0, 3)
+  const sourceDescription = sourceLabels.length > 0 ? ` 출처: ${sourceLabels.join(' / ')}` : ''
+
   return {
     pricePerPyeong,
     reliabilityBoost: candidates.length >= 3 && averageSimilarity >= 0.75 ? 2 : 1,
@@ -55,7 +61,7 @@ export function estimateNewBuildPrice(complex: Complex, peers: Complex[] = []): 
     comparableNames: candidates.map((item) => item.name),
     method: 'direct_comparable',
     confidence: candidates.length >= 3 && averageSimilarity >= 0.75 ? 82 : 72,
-    description: `${candidates.map((item) => item.name).slice(0, 3).join(', ')} ${candidates.length}개 단지의 거리·유사도 가중 평균${contextDescription}`,
+    description: `${comparableLabels.join(', ')} ${candidates.length}개 단지의 거리·유사도 가중 평균${contextDescription}.${sourceDescription}`,
   }
 }
 

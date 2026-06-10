@@ -1,7 +1,9 @@
 import type { Complex, DataProfile, DataSignal } from '../types'
 import { baseScenario } from './diagnosis'
 import {
+  describeCompletionMarketPricePerPyeong,
   estimateCurrentPricePerPyeong,
+  estimateCompletionMarketPricePerPyeong,
   estimateExpectedSalePricePerPyeong,
 } from './marketPrice'
 import { describeNewBuildComparables } from './newBuildPrice'
@@ -26,11 +28,11 @@ export function createPublicDataProfile(complex: Complex): DataProfile {
     },
     {
       label: '시장 가격',
-      value: `최근 시세 ${complex.recentPrice.toFixed(1)}억 · 실거래 ${estimateCurrentPricePerPyeong(complex).toLocaleString()}만원/평 · 예상 분양 ${estimateExpectedSalePricePerPyeong(complex, baseScenario).toLocaleString()}만원/평`,
+      value: `최근 시세 ${complex.recentPrice.toFixed(1)}억 · 실거래 ${estimateCurrentPricePerPyeong(complex).toLocaleString()}만원/평 · 일반분양가 ${estimateExpectedSalePricePerPyeong(complex, baseScenario).toLocaleString()}만원/평 · 완공가치 ${estimateCompletionMarketPricePerPyeong(complex, baseScenario).toLocaleString()}만원/평`,
       sourceType: 'official_api',
       sourceName: '국토교통부 실거래가 / 한국부동산원 시세',
       confidence: complex.sourceFreshness.transaction === 'unknown' ? 52 : 78,
-      method: `평당 실거래가는 최근 대표 시세를 대표 공급평형으로 나눈 값. 예상 분양가는 신축 기준가×일반분양가 시나리오. 신축 기준가는 ${describeNewBuildComparables(complex)}`,
+      method: `평당 실거래가는 최근 대표 시세를 대표 공급평형으로 나눈 값. 일반분양가는 평당 실거래가×일반분양가 배율. 완공가치는 ${describeCompletionMarketPricePerPyeong(complex, baseScenario)} 신축 기준가는 ${describeNewBuildComparables(complex)}`,
     },
     {
       label: '추진 단계',

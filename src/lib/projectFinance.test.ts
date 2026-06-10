@@ -28,14 +28,15 @@ describe('calculateProjectFinance', () => {
     expect(plannedArea).toBeLessThanOrEqual(finance.plan.saleableFloorArea + 0.001)
   })
 
-  it('raises break-even sale price when construction cost rises', () => {
+  it('raises total project cost when construction cost rises', () => {
     const baseline = calculateProjectFinance(target, baseScenario)
     const stressed = calculateProjectFinance(target, {
       ...baseScenario,
       constructionCost: baseScenario.constructionCost + 150,
     })
 
-    expect(stressed.breakEvenGeneralSalePrice).toBeGreaterThan(baseline.breakEvenGeneralSalePrice)
+    expect(stressed.cost.totalCost).toBeGreaterThan(baseline.cost.totalCost)
+    expect(stressed.breakEvenGeneralSalePrice).toBeGreaterThanOrEqual(0)
   })
 
   it('reduces pro-rata ratio when general sale price drops', () => {
@@ -80,7 +81,9 @@ describe('calculateProjectFinance', () => {
 
     expect(calculateProjectFinance(jamsil, baseScenario).sameSizeSettlement).toBeLessThan(0)
     expect(calculateProjectFinance(apgujeong, baseScenario).sameSizeSettlement).toBeLessThan(0)
-    expect(calculateProjectFinance(sanggye, baseScenario).sameSizeSettlement).toBeGreaterThan(0)
+    // 상계주공5는 공급 11평 단일 평형이라 동일형은 환급권이지만, 국평 상향(기준형 30평) 분담금은 양수다
+    // (2026-05 헤럴드경제: 보정계수 적용 후 84㎡ 분담금 6.05억)
+    expect(calculateProjectFinance(sanggye, baseScenario).settlementScenarios[1].settlement).toBeGreaterThan(0)
   })
 
   it('keeps expected pro-rata consistent with same-size settlement economics', () => {

@@ -36,9 +36,23 @@ export type Complex = {
   y: number
   note: string
   sourceFreshness: SourceFreshness
+  transactionBasis?: TransactionBasis
   dataProfile?: DataProfile
   financeOverride?: ProjectFinanceOverride
   marketOverride?: MarketOverride
+}
+
+export type TransactionBasis = {
+  areaRange: string
+  tradeCount: number
+  medianPrice: number
+  medianPricePerExclusivePyeong: number
+  impliedSupplyPyeong: number
+  exclusiveToSupplyRatio: number
+  dealMonth?: string
+  adjusted: boolean
+  sourceName: string
+  description: string
 }
 
 export type ComplexIdentifiers = {
@@ -106,6 +120,8 @@ export type SettlementScenario = {
 export type MarketOverride = {
   preferredExclusiveArea?: number
   allowAreaFallback?: boolean
+  completionMarketPremium?: number
+  completionMarketPricePerPyeong?: number
 }
 
 export type Scenario = {
